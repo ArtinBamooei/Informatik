@@ -56,9 +56,15 @@ const THEMES = {
   },
   forest: {
     name:'جنگل کوهستانی', bg:'#041008',
-    grad:'radial-gradient(800px 500px at 85% -10%,rgba(16,185,129,.28),transparent 60%),radial-gradient(700px 400px at 5% 5%,rgba(132,204,22,.18),transparent 60%)',
+    grad:'radial-gradient(800px 500px at 85% -10%,rgba(16,185,129,.28),transparent 60%),radial-gradient(700px 400px at 5% 5%,rgba(132,204,110,.16),transparent 60%)',
     card:'rgba(16,185,129,.06)', accent:'#10b981', accent2:'#84cc16',
     text:'#e7fbec', dim:'#82a895', line:'rgba(16,185,129,.2)'
+  },
+  light: {
+    name:'روشن مینیمال', bg:'#f5f7fb',
+    grad:'radial-gradient(800px 500px at 85% -10%,rgba(124,58,237,.12),transparent 60%),radial-gradient(700px 400px at 5% 5%,rgba(6,182,212,.08),transparent 60%)',
+    card:'rgba(255,255,255,.82)', accent:'#7c3aed', accent2:'#0891b2',
+    text:'#111827', dim:'#667085', line:'rgba(17,24,39,.10)'
   }
 };
 
@@ -347,7 +353,9 @@ function bestStreak(){
    THEME
    ═══════════════════════════════════════════ */
 function applyTheme(){
-  const t = THEMES[s.theme] || THEMES.violet;
+  const themeKey = THEMES[s.theme] ? s.theme : 'violet';
+  const t = THEMES[themeKey];
+  document.documentElement.dataset.theme = themeKey;
   const root = document.documentElement.style;
   root.setProperty('--bg', t.bg);
   root.setProperty('--bg-grad', t.grad);
@@ -930,6 +938,21 @@ document.getElementById('themeBtn').addEventListener('click', () => {
   document.getElementById('themeModal').classList.add('open');
 });
 
+document.getElementById('moreBtn').addEventListener('click', e => {
+  e.stopPropagation();
+  const menu=document.getElementById('moreMenu');
+  const open=menu.classList.toggle('open');
+  e.currentTarget.setAttribute('aria-expanded',String(open));
+});
+document.addEventListener('click', e => {
+  if(!e.target.closest('.more-wrap')){
+    const menu=document.getElementById('moreMenu');
+    if(menu) menu.classList.remove('open');
+    const btn=document.getElementById('moreBtn');
+    if(btn) btn.setAttribute('aria-expanded','false');
+  }
+});
+
 /* ═══════════════════════════════════════════
    MODAL CLOSE
    ═══════════════════════════════════════════ */
@@ -944,6 +967,8 @@ document.querySelectorAll('.mb').forEach(mb => {
 document.addEventListener('keydown', e => {
   if (e.key === 'Escape'){
     document.querySelectorAll('.mb.open').forEach(m => m.classList.remove('open'));
+    const menu=document.getElementById('moreMenu');
+    if(menu) menu.classList.remove('open');
     if (focusId) closeFocus();
   }
 });
@@ -974,6 +999,7 @@ function loadTimer(){
           timer.running = true;
           timer.endTime = t.endTime;
           timer.sessionStart = Date.now();
+    timer.sessionCommittedAt = timer.sessionStart;
           timer.remaining = left;
         } else {
           timer.running = false;
@@ -999,12 +1025,15 @@ function saveTimer(){
 // Add session time to current skill
 function commitSessionTime(){
   if (!timer.skillId || !timer.sessionStart) return;
-  const elapsed = (Date.now() - timer.sessionStart) / 1000;
-  if (elapsed > 1){
-    s.skillTime[timer.skillId] = (s.skillTime[timer.skillId] || 0) + elapsed;
+  const now=Date.now();
+  const from=Number(timer.sessionCommittedAt||timer.sessionStart);
+  const elapsed=Math.max(0,(now-from)/1000);
+  if(elapsed>0.25){
+    s.skillTime[timer.skillId]=(s.skillTime[timer.skillId]||0)+elapsed;
     save();
   }
-  timer.sessionStart = null;
+  timer.sessionCommittedAt=now;
+  timer.sessionStart=null;
 }
 
 const PRESETS = [
@@ -1736,6 +1765,7 @@ function init(){
           saveTimer();
         } else {
           timer.sessionStart = Date.now();
+          timer.sessionCommittedAt = timer.sessionStart;
         }
       }
       renderTimer();
