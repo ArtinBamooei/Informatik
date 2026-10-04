@@ -472,3 +472,22 @@ button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-vis
 @media(max-width:560px){.toolbar{display:grid;grid-template-columns:1fr 1fr;gap:7px}.toolbar .tool,.more-wrap{width:100%}.more-wrap>.tool{width:100%;justify-content:center}.more-menu{left:0;right:0;min-width:0}}
 @media(min-width:561px){.toolbar .tool{min-height:40px}}
 @media(prefers-reduced-motion:reduce){.streak-fire{animation:none}}
+
+/* Light theme surface overrides */
+[data-theme="light"] body{color:#111827}
+[data-theme="light"] .feature-box,[data-theme="light"] .timer-box,[data-theme="light"] .ach-box,
+[data-theme="light"] .tool,[data-theme="light"] .section,[data-theme="light"] .modal{
+  box-shadow:0 10px 30px rgba(17,24,39,.06);
+}
+[data-theme="light"] .ring .track{stroke:rgba(17,24,39,.10)}
+[data-theme="light"] .card-summary .icon{background:rgba(17,24,39,.035);border-color:rgba(17,24,39,.08)}
+[data-theme="light"] .card-summary .state::before{box-shadow:0 0 6px var(--status)}
+[data-theme="light"] .card.done{box-shadow:0 8px 24px -16px var(--status)}
+[data-theme="light"] .timer-display{color:#111827}
+[data-theme="light"] .timer-bar{background:rgba(17,24,39,.08)}
+[data-theme="light"] .filter{background:rgba(255,255,255,.72)}
+[data-theme="light"] .filter.active{background:color-mix(in srgb,var(--accent) 12%,white)}
+[data-theme="light"] .theme-option.active{border-color:#111827}
+[data-theme="light"] .modal-close{color:#667085}
+[data-theme="light"] .quote-author{color:#667085}
+[data-theme="light"] .toast{box-shadow:0 12px 30px rgba(17,24,39,.18)}
