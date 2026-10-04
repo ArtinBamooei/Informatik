@@ -1,4 +1,4 @@
-const CACHE='informatik-v1';
+const CACHE='informatik-v2';
 const APP_SHELL=['./','./index.html','./css/style.css','./js/app.js','./manifest.json','./icon.svg'];
 self.addEventListener('install',event=>event.waitUntil(caches.open(CACHE).then(c=>c.addAll(APP_SHELL)).then(()=>self.skipWaiting())));
 self.addEventListener('activate',event=>event.waitUntil(self.clients.claim()));
