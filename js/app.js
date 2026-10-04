@@ -1623,7 +1623,7 @@ document.getElementById('syncSave').addEventListener('click', () => {
 document.getElementById('syncPush').addEventListener('click', async () => {
   const token = document.getElementById('syncToken').value.trim();
   let gistId = document.getElementById('syncGist').value.trim();
-  if (!token || token.length > 300){ toast('توکن نامعتبر است'); return; }
+  if (!/^(?:gh[pousr]_[A-Za-z0-9_]{20,300}|github_pat_[A-Za-z0-9_]{20,300})$/.test(token)){ toast('توکن GitHub نامعتبر است'); return; }
   if (gistId && !/^[A-Za-z0-9_-]{20,100}$/.test(gistId)){ toast('Gist ID نامعتبر است'); return; }
 
   const payload = {
@@ -1658,7 +1658,7 @@ document.getElementById('syncPush').addEventListener('click', async () => {
     const res = await fetch(url, {
       method,
       headers: {
-        'Authorization': 'token ' + token,
+        'Authorization': 'Bearer ' + token,
         'Content-Type': 'application/json',
         'Accept': 'application/vnd.github+json'
       },
@@ -1669,6 +1669,7 @@ document.getElementById('syncPush').addEventListener('click', async () => {
       throw new Error(err.message || ('HTTP ' + res.status));
     }
     const data = await res.json();
+    if(!data||typeof data.id!=='string'||!/^[A-Za-z0-9_-]{20,100}$/.test(data.id)) throw new Error('پاسخ GitHub نامعتبر است');
     syncToken = token;
     s.sync.gistId = data.id;
     s.sync.lastSync = Date.now();
@@ -1691,13 +1692,14 @@ document.getElementById('syncPull').addEventListener('click', async () => {
   try {
     const res = await fetch(`https://api.github.com/gists/${gistId}`, {
       headers: {
-        'Authorization': 'token ' + token,
+        'Authorization': 'Bearer ' + token,
         'Accept': 'application/vnd.github+json'
       }
     });
     if (!res.ok) throw new Error('HTTP ' + res.status);
     const data = await res.json();
-    const file = data.files && data.files['learning-path.json'];
+    if(!data||typeof data!=='object'||!data.files||typeof data.files!=='object') throw new Error('پاسخ GitHub نامعتبر است');
+    const file = data.files['learning-path.json'];
     if (!file) throw new Error('فایل پیدا نشد');
     const content = file.content || '';
     const parsed = JSON.parse(content);
