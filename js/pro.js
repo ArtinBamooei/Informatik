@@ -273,6 +273,52 @@ function exportCSV(){
   const csv='﻿'+rows.map(r=>r.map(v=>'"'+String(v??'').replace(/"/g,'""')+'"').join(',')).join('\\n');
   download('informatik-skills.csv','text/csv;charset=utf-8',csv);
 }
+
+function backupPayload(){
+  const s=readState();if(!s)throw new Error('داده‌ای وجود ندارد');
+  const copy=JSON.parse(JSON.stringify(s));
+  if(copy.sync)delete copy.sync.token;
+  return JSON.stringify(copy);
+}
+function passwordBytes(password){return new TextEncoder().encode(password)}
+async function deriveKey(password,salt){
+  const base=await crypto.subtle.importKey('raw',passwordBytes(password),'PBKDF2',false,['deriveKey']);
+  return crypto.subtle.deriveKey({name:'PBKDF2',salt,iterations:250000,hash:'SHA-256'},base,{name:'AES-GCM',length:256},false,['encrypt','decrypt']);
+}
+function b64(bytes){let s='';const a=new Uint8Array(bytes);for(let i=0;i<a.length;i+=0x8000)s+=String.fromCharCode(...a.subarray(i,i+0x8000));return btoa(s)}
+function unb64(value){const s=atob(value);const out=new Uint8Array(s.length);for(let i=0;i<s.length;i++)out[i]=s.charCodeAt(i);return out}
+async function exportEncrypted(){
+  if(!crypto?.subtle){alert('Web Crypto در این مرورگر در دسترس نیست.');return}
+  const password=prompt('برای پشتیبان رمزنگاری‌شده یک رمز عبور قوی وارد کن:');
+  if(!password||password.length<10){alert('رمز عبور باید حداقل ۱۰ کاراکتر باشد.');return}
+  const salt=crypto.getRandomValues(new Uint8Array(16));
+  const iv=crypto.getRandomValues(new Uint8Array(12));
+  const key=await deriveKey(password,salt);
+  const data=new TextEncoder().encode(backupPayload());
+  const encrypted=await crypto.subtle.encrypt({name:'AES-GCM',iv},key,data);
+  const packet={format:'informatik-encrypted-backup',version:1,kdf:'PBKDF2-SHA256',iterations:250000,cipher:'AES-256-GCM',salt:b64(salt),iv:b64(iv),data:b64(encrypted)};
+  download('informatik-backup.encrypted.json','application/json;charset=utf-8',JSON.stringify(packet,null,2));
+}
+function importEncrypted(){
+  const input=document.createElement('input');input.type='file';input.accept='.json,application/json';
+  input.onchange=async()=>{
+    const file=input.files?.[0];if(!file)return;
+    try{
+      if(file.size>2*1024*1024)throw new Error('فایل بزرگ است');
+      const packet=JSON.parse(await file.text());
+      if(!packet||packet.format!=='informatik-encrypted-backup'||packet.version!==1||packet.kdf!=='PBKDF2-SHA256'||packet.cipher!=='AES-256-GCM'||packet.iterations!==250000)throw new Error('فرمت رمزنگاری نامعتبر است');
+      const password=prompt('رمز عبور پشتیبان را وارد کن:');if(!password)throw new Error('رمز عبور وارد نشد');
+      const key=await deriveKey(password,unb64(packet.salt));
+      const plain=await crypto.subtle.decrypt({name:'AES-GCM',iv:unb64(packet.iv)},key,unb64(packet.data));
+      const parsed=JSON.parse(new TextDecoder().decode(plain));
+      if(!parsed||typeof parsed!=='object'||!Array.isArray(parsed.skills)||parsed.skills.length>200)throw new Error('داده نامعتبر است');
+      if(!confirm('داده‌های فعلی جایگزین شوند؟'))return;
+      localStorage.setItem(STATE_KEY,JSON.stringify(parsed));
+      location.reload();
+    }catch(e){alert('بازیابی ناموفق: '+(e.message||'رمز عبور یا فایل نادرست است'))}
+  };
+  input.click();
+}
 function importJSON(){
   const input=document.createElement('input');input.type='file';input.accept='application/json,.json';
   input.onchange=async()=>{
@@ -331,7 +377,9 @@ async function loadGitHub(){
     if(!ghCache){
       const res=await fetch('https://api.github.com/users/'+encodeURIComponent(GH_USER)+'/repos?per_page=100&sort=updated',{headers:{Accept:'application/vnd.github+json'}});
       if(!res.ok)throw new Error('HTTP '+res.status);
-      ghCache=await res.json();
+      const data=await res.json();
+      if(!Array.isArray(data))throw new Error('GitHub response invalid');
+      ghCache=data.filter(x=>x&&typeof x==='object'&&typeof x.name==='string'&&typeof x.html_url==='string'&&/^https:\/\/github\.com\//.test(x.html_url));
     }
     const repos=ghCache.filter(x=>!x.fork).slice(0,8);
     state.textContent=repos.length+' repository';
@@ -353,6 +401,8 @@ function pwaInfo(){
 function handleAction(a){
   if(a==='json')exportJSON();
   if(a==='csv')exportCSV();
+  if(a==='enc-export')exportEncrypted();
+  if(a==='enc-import')importEncrypted();
   if(a==='import')importJSON();
   if(a==='refresh'){searchQuery='';sortMode='default';renderTab('overview')}
   if(a==='clearsearch'){searchQuery='';const i=document.getElementById('proSearch');if(i)i.value='';applySearch()}

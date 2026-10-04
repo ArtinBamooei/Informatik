@@ -228,6 +228,19 @@ s.order = s.order.filter(id => s.skills.some(sk => sk.id === id));
 s = s = normalizeState(s);
 
 function sanitizePlainRecord(value){if(!value||typeof value!=='object'||Array.isArray(value))return {};const out={};Object.keys(value).slice(0,2000).forEach(k=>{if(k.length<=120)out[k]=value[k];});return out;}
+function sanitizeStateMaps(out){
+  const ids=new Set(out.skills.map(x=>x.id));
+  const filterKeys=value=>{
+    const src=sanitizePlainRecord(value),clean={};
+    Object.keys(src).forEach(k=>{if(ids.has(k))clean[k]=src[k]});
+    return clean;
+  };
+  out.progress=filterKeys(out.progress);
+  out.notes=filterKeys(out.notes);
+  out.subs=filterKeys(out.subs);
+  out.skillTime=filterKeys(out.skillTime);
+  out.targetLevels=filterKeys(out.targetLevels);
+}
 function normalizeState(input){
   const base=(input&&typeof input==='object'&&!Array.isArray(input))?input:{};
   const rawSkills=Array.isArray(base.skills)?base.skills.slice(0,200):[];
@@ -278,6 +291,7 @@ function normalizeState(input){
     out.targetLevels[sk.id]=['beginner','intermediate','advanced'].includes(out.targetLevels[sk.id])?out.targetLevels[sk.id]:'intermediate';
     if(typeof out.notes[sk.id]==='string') out.notes[sk.id]=out.notes[sk.id].slice(0,20000); else delete out.notes[sk.id];
   });
+  sanitizeStateMaps(out);
   const ids=new Set(out.skills.map(x=>x.id));
   out.order=[...out.order.filter(id=>ids.has(id)),...out.skills.map(x=>x.id).filter(id=>!out.order.includes(id))];
   delete out.sync.token;
@@ -1609,7 +1623,7 @@ document.getElementById('syncSave').addEventListener('click', () => {
 document.getElementById('syncPush').addEventListener('click', async () => {
   const token = document.getElementById('syncToken').value.trim();
   let gistId = document.getElementById('syncGist').value.trim();
-  if (!token || token.length > 300){ toast('توکن نامعتبر است'); return; }
+  if (!/^(?:gh[pousr]_[A-Za-z0-9_]{20,300}|github_pat_[A-Za-z0-9_]{20,300})$/.test(token)){ toast('توکن GitHub نامعتبر است'); return; }
   if (gistId && !/^[A-Za-z0-9_-]{20,100}$/.test(gistId)){ toast('Gist ID نامعتبر است'); return; }
 
   const payload = {
@@ -1644,7 +1658,7 @@ document.getElementById('syncPush').addEventListener('click', async () => {
     const res = await fetch(url, {
       method,
       headers: {
-        'Authorization': 'token ' + token,
+        'Authorization': 'Bearer ' + token,
         'Content-Type': 'application/json',
         'Accept': 'application/vnd.github+json'
       },
@@ -1655,6 +1669,7 @@ document.getElementById('syncPush').addEventListener('click', async () => {
       throw new Error(err.message || ('HTTP ' + res.status));
     }
     const data = await res.json();
+    if(!data||typeof data.id!=='string'||!/^[A-Za-z0-9_-]{20,100}$/.test(data.id)) throw new Error('پاسخ GitHub نامعتبر است');
     syncToken = token;
     s.sync.gistId = data.id;
     s.sync.lastSync = Date.now();
@@ -1671,19 +1686,20 @@ document.getElementById('syncPush').addEventListener('click', async () => {
 document.getElementById('syncPull').addEventListener('click', async () => {
   const token = document.getElementById('syncToken').value.trim();
   const gistId = document.getElementById('syncGist').value.trim();
-  if (!token || token.length > 300 || !gistId){ toast('توکن و Gist ID لازمه'); return; }
+  if (!/^(?:gh[pousr]_[A-Za-z0-9_]{20,300}|github_pat_[A-Za-z0-9_]{20,300})$/.test(token) || !gistId){ toast('توکن یا Gist ID نامعتبر است'); return; }
   if (!/^[A-Za-z0-9_-]{20,100}$/.test(gistId)){ toast('Gist ID نامعتبر است'); return; }
 
   try {
     const res = await fetch(`https://api.github.com/gists/${gistId}`, {
       headers: {
-        'Authorization': 'token ' + token,
+        'Authorization': 'Bearer ' + token,
         'Accept': 'application/vnd.github+json'
       }
     });
     if (!res.ok) throw new Error('HTTP ' + res.status);
     const data = await res.json();
-    const file = data.files && data.files['learning-path.json'];
+    if(!data||typeof data!=='object'||!data.files||typeof data.files!=='object') throw new Error('پاسخ GitHub نامعتبر است');
+    const file = data.files['learning-path.json'];
     if (!file) throw new Error('فایل پیدا نشد');
     const content = file.content || '';
     const parsed = JSON.parse(content);
