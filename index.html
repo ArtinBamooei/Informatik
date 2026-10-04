@@ -116,6 +116,19 @@
     <div class="field"><label>دسته</label>
       <select class="input select" id="skillCat"></select>
     </div>
+    <div class="goal-grid">
+      <div class="field">
+        <label>هدف پیشرفت</label>
+        <div class="goal-range-wrap">
+          <input class="goal-range" id="skillTarget" type="range" min="0" max="100" step="5" value="100">
+          <span class="goal-value" id="skillTargetValue">100%</span>
+        </div>
+      </div>
+      <div class="field">
+        <label>مهلت هدف</label>
+        <input class="input" id="skillDeadline" type="date">
+      </div>
+    </div>
     <div class="preview-row">
       <div class="pv-icon" id="pvIcon">🎯</div>
       <div>
