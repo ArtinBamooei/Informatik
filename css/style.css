@@ -671,3 +671,14 @@ h1{font-size:clamp(32px,7vw,44px);letter-spacing:-.035em}
   h1{animation:none}
   .panel,.feature-box,.timer-box,.ach-box,.card,.tool,.filter{transition:none}
 }
+
+/* Personal visual identity */
+.badge{letter-spacing:.8px}
+.badge::before{content:'•';color:var(--accent2);margin-left:6px}
+.streak-fire{font-size:20px;font-family:'Space Grotesk',sans-serif}
+.card-summary .icon,.pv-icon,.focus-icon{font-family:'Space Grotesk',ui-monospace,monospace;font-weight:800;letter-spacing:-.04em}
+.card-summary .icon{font-size:12px}
+.icon-grid{grid-template-columns:repeat(6,1fr)}
+.icon-grid .icon-option{font-family:'Space Grotesk',ui-monospace,monospace;font-weight:800;font-size:12px}
+.tools-row .tool-btn{font-family:'Vazirmatn',sans-serif;font-size:10px;min-width:54px}
+.feature-title,.timer-title,.ach-title{font-family:'Vazirmatn',sans-serif;letter-spacing:.4px}
