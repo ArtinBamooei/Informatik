@@ -1074,14 +1074,15 @@ function beginTimerSession(){
 function commitSessionTime(){
   if(!timer.skillId || !timer.sessionStart) return;
   const now=Date.now();
+  const commitAt=timer.endTime ? Math.min(now,timer.endTime) : now;
   const from=Number(timer.sessionCommittedAt||timer.sessionStart);
-  const elapsed=Math.max(0,(now-from)/1000);
+  const elapsed=Math.max(0,(commitAt-from)/1000);
   if(elapsed>0.25){
     s.skillTime[timer.skillId]=(s.skillTime[timer.skillId]||0)+elapsed;
     save();
   }
-  timer.sessionCommittedAt=now;
-  timer.sessionStart=timer.running ? now : null;
+  timer.sessionCommittedAt=commitAt;
+  timer.sessionStart=timer.running ? commitAt : null;
 }
 
 const PRESETS = [
@@ -1321,7 +1322,6 @@ document.getElementById('focusTimerBtn').addEventListener('click', () => {
     startTimerTick();
     renderTimer();
     updateFocus();
-    recordActivity();
     checkAchievements();
     vibrate(12);
   }
@@ -1818,7 +1818,6 @@ function init(){
   // Save timer on hide
   document.addEventListener('visibilitychange', () => {
     if (document.hidden){
-      if (timer.running) commitSessionTime();
       saveTimer();
     } else {
       if (timer.running){
@@ -1826,6 +1825,7 @@ function init(){
         if (left <= 0){
           timer.running = false;
           timer.remaining = timer.duration;
+          commitSessionTime();
           clearInterval(timerInterval);
           timerInterval = null;
           saveTimer();
