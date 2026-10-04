@@ -223,7 +223,7 @@ s.skills.forEach(sk => {
   if (!s.order.includes(sk.id)) s.order.push(sk.id);
 });
 s.order = s.order.filter(id => s.skills.some(sk => sk.id === id));
-s = normalizeState(s);
+s = s = normalizeState(s);
 
 function normalizeState(input){
   const base=(input&&typeof input==='object'&&!Array.isArray(input))?input:{};
@@ -245,6 +245,8 @@ function normalizeState(input){
     notes:base.notes&&typeof base.notes==='object'&&!Array.isArray(base.notes)?{...base.notes}:{},
     subs:base.subs&&typeof base.subs==='object'&&!Array.isArray(base.subs)?{...base.subs}:{},
     skillTime:base.skillTime&&typeof base.skillTime==='object'&&!Array.isArray(base.skillTime)?{...base.skillTime}:{},
+    targets:base.targets&&typeof base.targets==='object'&&!Array.isArray(base.targets)?{...base.targets}:{},
+    deadlines:base.deadlines&&typeof base.deadlines==='object'&&!Array.isArray(base.deadlines)?{...base.deadlines}:{},
     order:Array.isArray(base.order)?[...base.order.filter(x=>typeof x==='string')]:[],
     dates:Array.isArray(base.dates)?[...new Set(base.dates.filter(x=>/^\d{4}-\d{2}-\d{2}$/.test(x)))]:[],
     theme:(base.theme&&Object.prototype.hasOwnProperty.call(THEMES,base.theme))?base.theme:'violet',
@@ -270,6 +272,8 @@ function normalizeState(input){
     if(!Array.isArray(out.subs[sk.id])) out.subs[sk.id]=[];
     out.subs[sk.id]=out.subs[sk.id].filter(x=>x&&typeof x==='object'&&typeof x.text==='string').map(x=>({...x,done:!!x.done}));
     out.skillTime[sk.id]=Number.isFinite(Number(out.skillTime[sk.id]))?Math.max(0,Number(out.skillTime[sk.id])):0;
+    out.targets[sk.id]=Number.isFinite(Number(out.targets[sk.id]))?Math.min(100,Math.max(0,Number(out.targets[sk.id]))):100;
+    out.deadlines[sk.id]=/^\d{4}-\d{2}-\d{2}$/.test(out.deadlines[sk.id]||'')?out.deadlines[sk.id]:'';
   });
   const ids=new Set(out.skills.map(x=>x.id));
   out.order=[...out.order.filter(id=>ids.has(id)),...out.skills.map(x=>x.id).filter(id=>!out.order.includes(id))];
@@ -534,6 +538,9 @@ function buildCard(sk){
   const subDone = subs.filter(x => x.done).length;
   const hasNote = (s.notes[id] || '').trim().length > 0;
   const skillSeconds = s.skillTime[id] || 0;
+  const target = Number(s.targets[id] ?? 100);
+  const deadline = s.deadlines[id] || '';
+  const targetReached = val >= target;
   const isTimed = timer && timer.running && timer.skillId === id;
 
   const card = document.createElement('article');
@@ -543,6 +550,8 @@ function buildCard(sk){
 
   const stateExtra = subs.length > 0 ? ` · ${subDone}/${subs.length}` : '';
   const timeBadge = skillSeconds >= 60 ? `<span class="time-badge">⏱ ${formatTime(skillSeconds)}</span>` : '';
+  const goalBadge = `<span class="goal-badge ${targetReached?'reached':''}">هدف ${target}%</span>`;
+  const deadlineBadge = deadline ? `<span class="deadline-badge">تا ${esc(deadline)}</span>` : '';
 
   const statusBtns = STAT_ORDER.map(k => {
     const S = STAT[k];
@@ -557,6 +566,7 @@ function buildCard(sk){
       <div class="info">
         <h3>${esc(sk.name)}${timeBadge}</h3>
         <div class="state">${stData.label}${stateExtra}</div>
+        <div class="card-goal">${goalBadge}${deadlineBadge}</div>
       </div>
       <div class="mini">
         <svg viewBox="0 0 52 52">
@@ -646,6 +656,13 @@ function updateOverall(){
 /* ═══════════════════════════════════════════
    CARD INTERACTIONS
    ═══════════════════════════════════════════ */
+container.addEventListener('pointermove', e => {
+  const card=e.target.closest('.card');
+  if(!card) return;
+  const r=card.getBoundingClientRect();
+  card.style.setProperty('--mx', ((e.clientX-r.left)/r.width*100)+'%');
+  card.style.setProperty('--my', ((e.clientY-r.top)/r.height*100)+'%');
+});
 container.addEventListener('click', e => {
   const card = e.target.closest('.card');
   if (!card) return;
@@ -872,13 +889,18 @@ function openAddModal(presetCat, id){
     document.getElementById('skillName').value = sk.name;
     sel.value = sk.cat;
     selectedIcon = sk.icon;
+    document.getElementById('skillTarget').value = String(s.targets[id] ?? 100);
+    document.getElementById('skillDeadline').value = s.deadlines[id] || '';
   } else {
     document.getElementById('addModalTitle').textContent = 'مهارت جدید';
     document.getElementById('skillName').value = '';
     if (typeof presetCat === 'string') sel.value = presetCat;
     else sel.value = CATS[0].id;
     selectedIcon = '🎯';
+    document.getElementById('skillTarget').value = '100';
+    document.getElementById('skillDeadline').value = '';
   }
+  updateSkillTargetLabel();
   buildIconGrid();
   updateSkillPreview();
   document.getElementById('addModal').classList.add('open');
@@ -899,6 +921,15 @@ function buildIconGrid(){
   };
 }
 
+function updateSkillTargetLabel(){
+  const input=document.getElementById('skillTarget');
+  const label=document.getElementById('skillTargetValue');
+  if(!input || !label) return;
+  label.textContent=input.value+'%';
+  input.style.setProperty('--goal-fill', input.value+'%');
+}
+document.getElementById('skillTarget').addEventListener('input', updateSkillTargetLabel);
+
 function updateSkillPreview(){
   const name = document.getElementById('skillName').value.trim() || 'نام مهارت';
   const catId = document.getElementById('skillCat').value;
@@ -914,6 +945,8 @@ document.getElementById('skillCat').addEventListener('change', updateSkillPrevie
 document.getElementById('skillSave').addEventListener('click', () => {
   const name = document.getElementById('skillName').value.trim();
   const catId = document.getElementById('skillCat').value;
+  const target = Math.min(100, Math.max(0, Number(document.getElementById('skillTarget').value) || 0));
+  const deadline = document.getElementById('skillDeadline').value || '';
   if (!name){
     const inp = document.getElementById('skillName');
     inp.focus();
@@ -924,6 +957,8 @@ document.getElementById('skillSave').addEventListener('click', () => {
   if (editingId){
     const sk = skillById(editingId);
     if (sk){ sk.name = name; sk.cat = catId; sk.icon = selectedIcon; }
+    s.targets[editingId] = target;
+    s.deadlines[editingId] = deadline;
     toast('✓ ویرایش شد');
   } else {
     const id = uid();
@@ -932,6 +967,8 @@ document.getElementById('skillSave').addEventListener('click', () => {
     s.progress[id] = 'todo';
     s.subs[id] = [];
     s.skillTime[id] = 0;
+    s.targets[id] = target;
+    s.deadlines[id] = deadline;
     s.customCount = (s.customCount || 0) + 1;
     toast('✓ اضافه شد');
   }
@@ -1061,7 +1098,7 @@ document.addEventListener('keydown', e => {
   if (e.key === 'Escape'){
     document.querySelectorAll('.mb.open').forEach(m => m.classList.remove('open'));
     const menu=document.getElementById('moreMenu');
-    if(menu) menu.classList.remove('open');
+    if(menu && typeof closeMoreMenu === 'function') closeMoreMenu();
     if (focusId) closeFocus();
   }
 });
