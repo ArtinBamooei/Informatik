@@ -228,6 +228,19 @@ s.order = s.order.filter(id => s.skills.some(sk => sk.id === id));
 s = s = normalizeState(s);
 
 function sanitizePlainRecord(value){if(!value||typeof value!=='object'||Array.isArray(value))return {};const out={};Object.keys(value).slice(0,2000).forEach(k=>{if(k.length<=120)out[k]=value[k];});return out;}
+function sanitizeStateMaps(out){
+  const ids=new Set(out.skills.map(x=>x.id));
+  const filterKeys=value=>{
+    const src=sanitizePlainRecord(value),clean={};
+    Object.keys(src).forEach(k=>{if(ids.has(k))clean[k]=src[k]});
+    return clean;
+  };
+  out.progress=filterKeys(out.progress);
+  out.notes=filterKeys(out.notes);
+  out.subs=filterKeys(out.subs);
+  out.skillTime=filterKeys(out.skillTime);
+  out.targetLevels=filterKeys(out.targetLevels);
+}
 function normalizeState(input){
   const base=(input&&typeof input==='object'&&!Array.isArray(input))?input:{};
   const rawSkills=Array.isArray(base.skills)?base.skills.slice(0,200):[];
@@ -278,6 +291,7 @@ function normalizeState(input){
     out.targetLevels[sk.id]=['beginner','intermediate','advanced'].includes(out.targetLevels[sk.id])?out.targetLevels[sk.id]:'intermediate';
     if(typeof out.notes[sk.id]==='string') out.notes[sk.id]=out.notes[sk.id].slice(0,20000); else delete out.notes[sk.id];
   });
+  sanitizeStateMaps(out);
   const ids=new Set(out.skills.map(x=>x.id));
   out.order=[...out.order.filter(id=>ids.has(id)),...out.skills.map(x=>x.id).filter(id=>!out.order.includes(id))];
   delete out.sync.token;
