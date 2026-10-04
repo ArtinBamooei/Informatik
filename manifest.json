@@ -1,0 +1,13 @@
+{
+  "name": "Informatik — مسیر یادگیری",
+  "short_name": "Informatik",
+  "description": "Personal learning path and skill tracker",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#08090d",
+  "theme_color": "#08090d",
+  "dir": "rtl",
+  "lang": "fa",
+  "icons": [{"src":"icon.svg","sizes":"any","type":"image/svg+xml","purpose":"any maskable"}]
+}
