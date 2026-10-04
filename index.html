@@ -460,6 +460,9 @@
   .cele{position:fixed;inset:0;z-index:996;display:grid;place-items:center;pointer-events:none;opacity:0;transition:opacity .4s}
   .cele.show{opacity:1}.cele div{text-align:center;font-size:20px;font-weight:800;text-shadow:0 0 30px #000;padding:20px}
   .cele span{display:block;font-size:64px}
+  .bars{display:flex;align-items:flex-end;gap:2px;height:90px;margin:6px 0 4px}
+  .bars i{flex:1;border-radius:3px 3px 0 0;min-height:2px;background:var(--c)}
+  .cap{display:flex;justify-content:space-between;font-size:11px;color:var(--dim);margin-top:10px}
 </style>
 </head>
 <body>
@@ -507,6 +510,7 @@
 <div class="container" id="container"></div>
 
 <div class="tools">
+  <button class="tool" id="chartBtn">📈 chart</button>
   <button class="tool" id="themeBtn">🎨 theme</button>
   <button class="tool" id="achBtn">🏆 badges</button>
   <button class="tool" id="exportBtn">↑ backup</button>
@@ -589,6 +593,20 @@
     {id:'b5',i:'🚀',t:'سریع',d:'در یک روز ۳ مهارت را جلو ببر',f:function(s){return s.fast;}},
     {id:'b4',i:'🎨',t:'سلیقه‌ای',d:'تم یا آیکون را عوض کن',f:function(s){return s.style;}}
   ];
+  var DEFAULT_SUBS = {
+    numpy:['Array basics','Indexing & slicing','Broadcasting','Aggregations','Linear algebra'],
+    pandas:['Series','DataFrame','Indexing (loc/iloc)','Groupby','Merge & Join','Missing values'],
+    mpl:['Line & bar plots','Subplots','Labels & legends','Styling','Saving figures'],
+    seaborn:['Distribution plots','Categorical plots','Heatmap','Pairplot','Themes'],
+    sql:['SELECT & WHERE','JOIN','GROUP BY','Subqueries','Window functions'],
+    dbase:['Normalization','Keys & relations','Indexes','Transactions','Schema design'],
+    etl:['Extract','Transform','Load','Scheduling','Data quality checks'],
+    api:['REST basics','HTTP methods','Authentication','JSON','Build a simple API'],
+    docker:['Images & containers','Dockerfile','Volumes','Networks','Docker Compose'],
+    git:['Commit & push','Branches','Merge & rebase','Pull requests','Resolve conflicts'],
+    ml:['Regression','Classification','Train/test split','Evaluation metrics','Overfitting','Feature engineering'],
+    powerbi:['Import data','Data modeling','DAX basics','Visuals','Dashboards']
+  };
   var ACTS = '<div class="acts"><button class="act" data-a="note"></button><button class="act" data-a="subs"></button><button class="act" data-a="tm">⏱</button><button class="act mv" data-a="up">▲</button><button class="act mv" data-a="dn">▼</button><span class="tt"></span></div><div class="panel"></div>';
 
   var XKEY = 'learning-path-x1', ISO = /^\d{4}-\d{2}-\d{2}$/;
@@ -602,7 +620,7 @@
   }
   function normX(o){
     o = o && typeof o === 'object' ? o : {};
-    var r = {notes:{},subs:{},order:{},icons:{},time:{},days:{},ach:{},theme:'auto',sort:'manual',sp:'',timer:null,adv:null,ms:0}, k;
+    var r = {notes:{},subs:{},order:{},icons:{},time:{},days:{},ach:{},theme:'auto',sort:'manual',sp:'',timer:null,adv:null,ms:0,cd:{},hist:{},lb:'',rm:''}, k;
     SKILLS.forEach(function(s){
       var id = s.id;
       if (o.notes && typeof o.notes[id] === 'string' && o.notes[id]) r.notes[id] = o.notes[id].slice(0,2000);
@@ -621,6 +639,9 @@
     if (typeof o.sp === 'string') r.sp = o.sp.slice(0,40);
     if (o.adv && typeof o.adv === 'object' && ISO.test(o.adv.d) && Array.isArray(o.adv.ids)) r.adv = {d:o.adv.d, ids:o.adv.ids.filter(skillOk).slice(0,20)};
     if ([25,50,75,100].indexOf(o.ms) >= 0) r.ms = o.ms;
+    if (o.cd && typeof o.cd === 'object') SKILLS.forEach(function(q){ if (ISO.test(o.cd[q.id])) r.cd[q.id] = o.cd[q.id]; });
+    if (o.hist && typeof o.hist === 'object') for (k in o.hist) if (ISO.test(k) && isFinite(o.hist[k])) r.hist[k] = Math.max(0, Math.min(100, Math.round(+o.hist[k])));
+    ['lb','rm'].forEach(function(f){ if (ISO.test(o[f])) r[f] = o[f]; });
     var t = o.timer;
     if (t && typeof t === 'object' && skillOk(t.sid)) r.timer = {sid:t.sid, run:!!t.run, st:num(t.st,1e14), acc:num(t.acc,43200000)};
     return r;
@@ -645,6 +666,11 @@
     var h = Math.floor(m/60);
     return fa(h) + ' ساعت' + (m % 60 ? ' و ' + fa(m % 60) + ' دقیقه' : '');
   }
+  function fmtDate(k){
+    var p = k.split('-');
+    try { return new Date(+p[0], +p[1] - 1, +p[2]).toLocaleDateString('fa-IR'); } catch(e){ return k; }
+  }
+  function markBackup(){ x.lb = dk(); saveX(); }
   function streak(){
     var d = new Date(); d.setHours(12,0,0,0);
     if (!x.days[dk(d)]) d.setDate(d.getDate() - 1);
@@ -706,6 +732,9 @@
       saveX();
     }
     var f = flags(), hit = 0;
+    if (stOf(id) === 'done'){ if (!x.cd[id]) x.cd[id] = dk(); } else delete x.cd[id];
+    x.hist[dk()] = f.pct; saveX();
+    var cc = cardOf(id); if (cc) xCard(cc);
     [25,50,75,100].forEach(function(t){ if (pre.pct < t && f.pct >= t && t > x.ms) hit = t; });
     if (hit){
       x.ms = hit; saveX();
@@ -1072,7 +1101,7 @@
     var data = JSON.stringify({v:5, state:state, x:x});
     if (navigator.clipboard && navigator.clipboard.writeText){
       navigator.clipboard.writeText(data)
-        .then(function(){ showToast('✓ backup copied'); })
+        .then(function(){ markBackup(); showToast('✓ backup copied'); })
         .catch(function(){ prompt('copy:', data); });
     } else {
       prompt('copy:', data);
@@ -1115,7 +1144,7 @@
     card.querySelector('.ic').textContent = x.icons[id] || skOf(id).icon;
     card.querySelector('[data-a="subs"]').textContent = '☑ ' + (subs.length ? fa(dn) + '/' + fa(subs.length) : 'چک‌لیست');
     card.querySelector('[data-a="note"]').textContent = x.notes[id] ? '📝 ✓' : '📝 یادداشت';
-    card.querySelector('.tt').textContent = x.time[id] ? '⏱ ' + fmtDur(x.time[id]) : '';
+    card.querySelector('.tt').textContent = [x.cd[id] && stOf(id) === 'done' ? '✅ ' + fmtDate(x.cd[id]) : '', x.time[id] ? '⏱ ' + fmtDur(x.time[id]) : ''].filter(Boolean).join(' · ');
   }
   function mk(tag, cls, txt){ var e = document.createElement(tag); if (cls) e.className = cls; if (txt != null) e.textContent = txt; return e; }
 
@@ -1136,6 +1165,9 @@
       });
       var w = mk('div', 'sub'), inp = mk('input', 'subin'); inp.type = 'text'; inp.maxLength = 80; inp.placeholder = 'زیرموضوع جدید + Enter';
       w.appendChild(inp); p.appendChild(w);
+      if (!(x.subs[id] || []).length && DEFAULT_SUBS[id]){
+        var pb = mk('button', 'chip', '＋ زیرموضوع‌های پیشنهادی'); pb.dataset.sp = '1'; pb.style.marginTop = '8px'; p.appendChild(pb);
+      }
     }
   }
 
@@ -1164,6 +1196,10 @@
       else if (k === 'tm') useTimer(id);
       else move(id, k === 'up' ? -1 : 1);
       return;
+    }
+    if (e.target.closest('[data-sp]')){
+      subChange(card, function(){ x.subs[id] = DEFAULT_SUBS[id].map(function(n){ return {t:n, d:false}; }); });
+      showToast('از حالا درصد از چک‌لیست محاسبه می‌شود'); return;
     }
     if ((t = e.target.closest('[data-sc]'))){
       var q = (x.subs[id] || [])[+t.dataset.sc];
@@ -1343,6 +1379,29 @@
       b.appendChild(rs);
     });
   }
+  function barsEl(vals, max, color, fmt){
+    var w = mk('div', 'bars'); w.style.setProperty('--c', color);
+    vals.forEach(function(v){ var i = mk('i'); i.style.height = (max ? Math.max(v > 0 ? 3 : 0, v / max * 100) : 0) + '%'; i.title = fmt(v); w.appendChild(i); });
+    return w;
+  }
+  function chartSheet(){
+    openSheet('نمودار ۳۰ روز اخیر', function(b){
+      var keys = [], d = new Date(); d.setHours(12,0,0,0); d.setDate(d.getDate() - 29);
+      for (var i = 0; i < 30; i++){ keys.push(dk(d)); d.setDate(d.getDate() + 1); }
+      var mins = keys.map(function(k){ return x.days[k] ? Math.round(x.days[k].m / 60) : 0; });
+      var hk = Object.keys(x.hist).sort().filter(function(k){ return k < keys[0]; });
+      var prev = hk.length ? x.hist[hk[hk.length - 1]] : 0;
+      var pct = keys.map(function(k){ if (x.hist[k] != null) prev = x.hist[k]; return prev; });
+      var act = keys.filter(function(k){ return x.days[k]; }).length;
+      var tot = mins.reduce(function(a, c){ return a + c; }, 0);
+      b.appendChild(mk('div', 'cap', 'پیشرفت کلی (٪)')); b.appendChild(barsEl(pct, 100, '#a78bfa', fa));
+      b.appendChild(mk('div', 'cap', 'زمان مطالعه (دقیقه در روز)')); b.appendChild(barsEl(mins, Math.max.apply(null, mins), '#22d3ee', fa));
+      var c = mk('div', 'cap');
+      c.appendChild(mk('span', '', fmtDate(keys[0]))); c.appendChild(mk('span', '', fa(act) + ' روز فعال · ' + fmtDur(tot * 60))); c.appendChild(mk('span', '', fmtDate(keys[29])));
+      b.appendChild(c);
+    });
+  }
+  document.getElementById('chartBtn').addEventListener('click', chartSheet);
   document.getElementById('themeBtn').addEventListener('click', themeSheet);
   document.getElementById('achBtn').addEventListener('click', function(){
     openSheet('نشان‌ها و دستاوردها', function(b){
@@ -1386,6 +1445,14 @@
   }
   reorder(); setSortUI(); renderTimer(); renderWidget(); checkAch(true);
   setTimeout(specialDay, 1500);
+  function backupNudge(){
+    var k = dk(); if (x.rm === k || !Object.keys(x.days).length) return;
+    var u = function(q){ var p = q.split('-'); return Date.UTC(+p[0], +p[1] - 1, +p[2]); };
+    if (x.lb && (u(k) - u(x.lb)) / 864e5 < 7) return;
+    x.rm = k; saveX();
+    showToast(x.lb ? '💾 بیش از ۷ روز از آخرین backup گذشته' : '💾 هنوز backup نگرفته‌ای');
+  }
+  setTimeout(backupNudge, 4500);
 
   /* ═══════════ SERVICE WORKER ═══════════ */
   if ('serviceWorker' in navigator){
