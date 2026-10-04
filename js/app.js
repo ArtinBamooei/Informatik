@@ -13,18 +13,18 @@ const CATS = [
 ];
 
 const DEFAULT_SKILLS = [
-  {id:'numpy',   cat:'data',   name:'NumPy',            icon:'🔢'},
-  {id:'pandas',  cat:'data',   name:'Pandas',           icon:'🐼'},
-  {id:'mpl',     cat:'data',   name:'Matplotlib',       icon:'📈'},
-  {id:'seaborn', cat:'data',   name:'Seaborn',          icon:'🎨'},
-  {id:'sql',     cat:'db',     name:'SQL',              icon:'🗄️'},
-  {id:'dbase',   cat:'db',     name:'Database',         icon:'💾'},
-  {id:'etl',     cat:'db',     name:'ETL',              icon:'🔄'},
-  {id:'api',     cat:'devops', name:'API',              icon:'🔌'},
-  {id:'docker',  cat:'devops', name:'Docker',           icon:'🐳'},
-  {id:'git',     cat:'devops', name:'Git / GitHub',     icon:'🌿'},
-  {id:'ml',      cat:'ml',     name:'Machine Learning', icon:'🤖'},
-  {id:'powerbi', cat:'ml',     name:'Power BI',         icon:'📊'}
+  {id:'numpy',   cat:'data',   name:'NumPy',            icon:'NP'},
+  {id:'pandas',  cat:'data',   name:'Pandas',           icon:'PD'},
+  {id:'mpl',     cat:'data',   name:'Matplotlib',       icon:'MP'},
+  {id:'seaborn', cat:'data',   name:'Seaborn',          icon:'SB'},
+  {id:'sql',     cat:'db',     name:'SQL',              icon:'SQL'},
+  {id:'dbase',   cat:'db',     name:'Database',         icon:'DB'},
+  {id:'etl',     cat:'db',     name:'ETL',              icon:'ETL'},
+  {id:'api',     cat:'devops', name:'API',              icon:'API'},
+  {id:'docker',  cat:'devops', name:'Docker',           icon:'DK'},
+  {id:'git',     cat:'devops', name:'Git / GitHub',     icon:'GH'},
+  {id:'ml',      cat:'ml',     name:'Machine Learning', icon:'ML'},
+  {id:'powerbi', cat:'ml',     name:'Power BI',         icon:'BI'}
 ];
 
 const STAT = {
@@ -69,55 +69,20 @@ const THEMES = {
 };
 
 const ICONS = [
-  '🔢','🐼','📈','🎨','🗄️','💾','🔄','🔌','🐳','🌿','🤖','📊','🧠','💻',
-  '📚','📝','🧪','⚙️','🛠️','🧩','📦','🔬','🖥️','🌐','🚀','🎯','📐','📋',
-  '🐍','🔮','⚡','🔥','💡','🎓','🏆','⭐','💎','🎪','🎭','🎬','🎵','🎮',
-  '☁️','🌍','🧬','🔐','📷','☕','🍕','🌊'
+  'NP','PD','MP','SB','SQL','DB','ETL','API','DK','GH','ML','BI',
+  'PY','DS','AI','DL','DE','CV','NLP','BIO','WEB','CLI','SYS','NET',
+  'CSV','JSON','REST','GIT','PWA','LAB','UI','DB1','DB2','ML1'
 ];
 
 const QUOTES = [
-  {t:'پیشرفت کوچک روزانه از جهش‌های گاه‌به‌گاه پایدارتر است.', a:'ناشناس'},
-  {t:'ثبات، مزیت رقابتی یادگیری است.', a:'ناشناس'},
-  {t:'پروژه، آزمون واقعی فهم است.', a:'ناشناس'},
-  {t:'اول درست بفهم؛ بعد سریع اجرا کن.', a:'ناشناس'},
-  {t:'یک ساعت عمیق از چند ساعت پراکنده ارزشمندتر است.', a:'کال نیوپورت'},
-  {t:'هر مهارت با تکرار از دانستن به توانستن تبدیل می‌شود.', a:'ناشناس'},
-  {t:'امروز کاری رو بکن که دیگران نمی‌کنن، فردا کارهایی رو بکن که دیگران نمی‌تونن.', a:'جری رایس'},
-  {t:'بهترین زمان برای شروع، همین لحظه‌ست.', a:'ناشناس'},
-  {t:'موفقیت، مجموع تلاش‌های کوچیک روزانه‌ست.', a:'رابرت کولیر'},
-  {t:'اگه می‌خوای سریع بری، تنها برو. اگه می‌خوای دور بری، با هم برو.', a:'ضرب‌المثل آفریقایی'},
-  {t:'تنها راه یادگیری سریع، اشتباه کردن سریعه.', a:'ناشناس'},
-  {t:'زنجیر عادت‌ها در روز اول خیلی سبک‌تر از روز آخرشه.', a:'وارن بافت'},
-  {t:'آدمی که هرگز اشتباه نکرده، هرگز چیز جدیدی رو امتحان نکرده.', a:'اینشتین'},
-  {t:'مغزت مثل عضله‌ست، هر چقدر بیشتر تمرین بدی قوی‌تر می‌شه.', a:'ناشناس'},
-  {t:'سرمایه‌گذاری روی خودت، بهترین سرمایه‌گذاریه.', a:'بنجامین فرانکلین'},
-  {t:'کسانی که فکر می‌کنن می‌تونن و کسانی که فکر می‌کنن نمی‌تونن، هر دو راست می‌گن.', a:'هنری فورد'},
-  {t:'اگه یاد نگیری، تکرار می‌کنی.', a:'ناشناس'},
-  {t:'دانش، قدرت است.', a:'فرانسیس بیکن'},
-  {t:'وقتی تدریس می‌کنی، دو بار یاد می‌گیری.', a:'ژوزف ژوبرت'},
-  {t:'کسی که هر روز کمی جلو بره، سالی ۳۶۵ قدم جلوتره.', a:'ناشناس'},
-  {t:'کار سخت، شانس رو شکست می‌ده.', a:'ناشناس'},
-  {t:'تنها مانع بین تو و هدفت، خودته.', a:'ناشناس'},
-  {t:'یادگیری، سرمایه‌گذاریه که هیچ‌وقت ارزشش رو از دست نمی‌ده.', a:'ناشناس'},
-  {t:'چیزی که اندازه‌گیری نشه، بهبود پیدا نمی‌کنه.', a:'پیتر دراکر'},
-  {t:'دانستن کافی نیست، باید به کار ببندی.', a:'گوته'},
-  {t:'هر روز که بیدار می‌شی، یه فرصت جدید داری.', a:'ناشناس'},
-  {t:'سختی امروز، آسونی فرداست.', a:'ناشناس'},
-  {t:'شکست، پله‌ی موفقیت است، نه پایان راه.', a:'ناشناس'},
-  {t:'بهترین سرمایه‌گذاری، روی خودته.', a:'وارن بافت'},
-  {t:'آدم موفق کسیه که از اشتباهاتش درس می‌گیره.', a:'ناشناس'},
-  {t:'تغییر، سخته ولی موندن توی جای بد، سخت‌تره.', a:'ناشناس'},
-  {t:'اگه کاری رو دوست نداری، حداقل درست انجامش بده.', a:'ناشناس'},
-  {t:'موفقیت یه شبه نمیاد، از تلاش‌های پشت‌سرهم میاد.', a:'ناشناس'},
-  {t:'زمانی که به یادگیری اختصاص می‌دی، هرگز هدر نمی‌ره.', a:'ناشناس'},
-  {t:'خودت رو با دیروزت مقایسه کن، نه با دیگران.', a:'ناشناس'},
-  {t:'کارهای بزرگ، از قدم‌های کوچیک شروع می‌شن.', a:'ناشناس'},
-  {t:'اگه امروز سخت کار نکنی، فردا سخت‌تر می‌شه.', a:'ناشناس'},
-  {t:'عادت‌های کوچیک، نتایج بزرگ می‌سازن.', a:'جیمز کلیر'},
-  {t:'بهترین راه یادگیری، انجام دادنه.', a:'ناشناس'},
-  {t:'درسی که با سختی یاد بگیری، فراموش نمی‌شه.', a:'ناشناس'},
-  {t:'آینده متعلق به کسانی‌ست که امروز یاد می‌گیرن.', a:'ناشناس'},
-  {t:'اگه رؤیاش رو داری، پس انجامش بده.', a:'ناشناس'}
+  {t:'امروز فقط یک بخش را جلو ببر؛ کامل بودن لازم نیست.', a:'Informatik'},
+  {t:'اگر چیزی را یاد گرفتی، با یک پروژه امتحانش کن.', a:'Informatik'},
+  {t:'اول پایه را محکم کن، بعد سراغ ابزار بعدی برو.', a:'Informatik'},
+  {t:'زمان مطالعه وقتی ارزش دارد که ثبت و مرور شود.', a:'Informatik'},
+  {t:'ابزار مهم است، اما مسئله‌ای که حل می‌کنی مهم‌تر است.', a:'Informatik'},
+  {t:'هر زیرموضوع تمام‌شده، یک قدم واقعی در مسیر است.', a:'Informatik'},
+  {t:'به‌جای جمع کردن دوره‌ها، چیزی بساز که بتوانی نشانش بدهی.', a:'Informatik'},
+  {t:'اگر وقت کم است، کوتاه‌تر کار کن؛ ولی مسیر را قطع نکن.', a:'Informatik'}
 ];
 
 const ACH = [
@@ -245,6 +210,7 @@ function normalizeState(input){
   const base=(input&&typeof input==='object'&&!Array.isArray(input))?input:{};
   const rawSkills=Array.isArray(base.skills)?base.skills.slice(0,200):[];
   const skills=rawSkills.length?rawSkills:DEFAULT_SKILLS.slice();
+  const iconMigration={'🔢':'NP','🐼':'PD','📈':'MP','🎨':'SB','🗄️':'SQL','💾':'DB','🔄':'ETL','🔌':'API','🐳':'DK','🌿':'GH','🤖':'ML','📊':'BI','🎯':'LAB'};
   const validStatuses=new Set(['todo','learning','practice','done']);
   const seenIds=new Set();
   const validCats=new Set(CATS.map(c=>c.id));
@@ -256,7 +222,7 @@ function normalizeState(input){
     }).map(x=>({
       id:x.id.trim().slice(0,80),name:x.name.trim().slice(0,80),
       cat:validCats.has(x.cat)?x.cat:CATS[0].id,
-      icon:typeof x.icon==='string'&&x.icon.length<=8?x.icon:'🎯'
+      icon:typeof x.icon==='string'&&x.icon.length<=8?(iconMigration[x.icon]||x.icon):'LAB'
     })),
     progress:sanitizePlainRecord(base.progress),
     notes:sanitizePlainRecord(base.notes),
@@ -573,7 +539,7 @@ function buildCard(sk){
   card.style.setProperty('--status', stData.color);
 
   const stateExtra = subs.length > 0 ? ` · ${subDone}/${subs.length}` : '';
-  const timeBadge = skillSeconds >= 60 ? `<span class="time-badge">⏱ ${formatTime(skillSeconds)}</span>` : '';
+  const timeBadge = skillSeconds >= 60 ? `<span class="time-badge">${formatTime(skillSeconds)}</span>` : '';
   const levelNames={beginner:'مقدماتی',intermediate:'متوسط',advanced:'حرفه‌ای'};
   const levelButtons=['beginner','intermediate','advanced'].map(level =>
     `<button class="target-level ${level} ${targetLevel===level?'active':''}" data-target-level="${level}" title="هدف: ${levelNames[level]}">${levelNames[level]}</button>`
@@ -610,16 +576,16 @@ function buildCard(sk){
         <div class="statuses">${statusBtns}</div>
         <div class="tools-row">
           <button class="tool-btn${hasNote?' has-note':''}" data-tool="notes">
-            📝${hasNote?'<span class="dot-badge"></span>':''}
+            یادداشت${hasNote?'<span class="dot-badge"></span>':''}
           </button>
           <button class="tool-btn" data-tool="subs">
             ✓${subs.length?' '+subs.length:''}
           </button>
-          <button class="tool-btn focus-btn" data-tool="focus">🎯 تمرکز</button>
+          <button class="tool-btn focus-btn" data-tool="focus">تمرکز</button>
           <button class="tool-btn" data-tool="move-up" title="انتقال به بالا" aria-label="انتقال به بالا">↑</button>
           <button class="tool-btn" data-tool="move-down" title="انتقال به پایین" aria-label="انتقال به پایین">↓</button>
           <button class="tool-btn" data-tool="edit">✎</button>
-          <button class="tool-btn" data-tool="del" style="flex:0 0 auto">🗑</button>
+          <button class="tool-btn" data-tool="del" style="flex:0 0 auto">حذف</button>
         </div>
         <div class="panel-inner" data-panel="notes">
           <textarea class="note-area" placeholder="یادداشت این مهارت...">${esc(s.notes[id]||'')}</textarea>
@@ -1029,7 +995,7 @@ document.getElementById('skillSave').addEventListener('click', () => {
     const sk = skillById(editingId);
     if (sk){ sk.name = name; sk.cat = catId; sk.icon = selectedIcon; }
     s.targetLevels[editingId] = targetLevel;
-    toast('✓ ویرایش شد');
+    toast('ویرایش شد');
   } else {
     const id = uid();
     s.skills.push({ id, name, cat: catId, icon: selectedIcon });
@@ -1039,7 +1005,7 @@ document.getElementById('skillSave').addEventListener('click', () => {
     s.skillTime[id] = 0;
     s.targetLevels[id] = targetLevel;
     s.customCount = (s.customCount || 0) + 1;
-    toast('✓ اضافه شد');
+    toast('مهارت اضافه شد');
   }
   save();
   document.getElementById('addModal').classList.remove('open');
@@ -1286,7 +1252,7 @@ function renderTimer(){
   if (timer.skillId && skillById(timer.skillId)){
     const sk = skillById(timer.skillId);
     skillBtn.classList.remove('empty');
-    skillName.textContent = sk.icon + ' ' + sk.name;
+    skillName.textContent = sk.name;
   } else {
     skillBtn.classList.add('empty');
     skillName.textContent = 'انتخاب مهارت...';
@@ -1324,7 +1290,7 @@ function startTimerTick(){
       updateOverall();
       checkAchievements();
       burst(document.getElementById('timerDisplay'));
-      toast('🎉 تایمر تموم شد!');
+      toast('جلسه مطالعه تمام شد');
       vibrate([40, 60, 40]);
       return;
     }
@@ -1404,7 +1370,7 @@ function openSkillPicker(){
   renderTimer();
   render();
   vibrate(10);
-  toast('✓ ' + s.skills[i].name);
+  toast(s.skills[i].name + ' انتخاب شد');
 }
 
 /* ═══════════════════════════════════════════
@@ -1452,7 +1418,7 @@ function checkAchievements(){
     renderAchievements();
     newOnes.forEach((a, i) => {
       setTimeout(() => {
-        toast('🏆 ' + a.name);
+        toast('دستاورد جدید: ' + a.name);
       }, i * 500);
     });
     vibrate([30, 50, 30]);
@@ -1526,11 +1492,11 @@ function renderStats(){
       </div>
     </div>
     <div style="margin-bottom:18px">
-      <div class="chart-title">⏱ زمان هر مهارت</div>
+      <div class="chart-title">زمان مطالعه هر مهارت</div>
       ${chartHTML}
     </div>
     <div>
-      <div class="chart-title">📅 ۲۸ روز اخیر</div>
+      <div class="chart-title">۲۸ روز اخیر</div>
       <div class="days-grid">${daysHTML}</div>
     </div>
   `;
@@ -1573,7 +1539,7 @@ document.getElementById('reminderOn').addEventListener('click', async () => {
   s.reminder.enabled = true;
   save();
   updateReminderUI();
-  toast('✓ یادآوری فعال شد');
+  toast('یادآوری فعال شد');
 });
 
 document.getElementById('reminderOff').addEventListener('click', () => {
@@ -1587,7 +1553,7 @@ document.getElementById('reminderSave').addEventListener('click', () => {
   s.reminder.time = document.getElementById('reminderTime').value || '20:00';
   save();
   document.getElementById('reminderModal').classList.remove('open');
-  toast('✓ ذخیره شد');
+  toast('ذخیره شد');
 });
 
 function checkReminder(){
@@ -1624,7 +1590,7 @@ document.getElementById('syncSave').addEventListener('click', () => {
   s.sync.gistId = document.getElementById('syncGist').value.trim();
   save();
   document.getElementById('syncModal').classList.remove('open');
-  toast('✓ ذخیره شد');
+  toast('ذخیره شد');
 });
 
 document.getElementById('syncPush').addEventListener('click', async () => {
