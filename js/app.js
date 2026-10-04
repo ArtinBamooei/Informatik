@@ -569,6 +569,8 @@ function buildCard(sk){
             ✓${subs.length?' '+subs.length:''}
           </button>
           <button class="tool-btn focus-btn" data-tool="focus">🎯 تمرکز</button>
+          <button class="tool-btn" data-tool="move-up" title="انتقال به بالا" aria-label="انتقال به بالا">↑</button>
+          <button class="tool-btn" data-tool="move-down" title="انتقال به پایین" aria-label="انتقال به پایین">↓</button>
           <button class="tool-btn" data-tool="edit">✎</button>
           <button class="tool-btn" data-tool="del" style="flex:0 0 auto">🗑</button>
         </div>
@@ -694,6 +696,18 @@ container.addEventListener('click', e => {
       vibrate(15);
       return;
     }
+    if (tool === 'move-up' || tool === 'move-down'){
+      const sk=skillById(id);
+      if(!sk) return;
+      const sameCat=s.order.filter(oid=>{const x=skillById(oid);return x&&x.cat===sk.cat;});
+      const pos=sameCat.indexOf(id);
+      const target=tool==='move-up'?pos-1:pos+1;
+      if(pos<0||target<0||target>=sameCat.length){vibrate(5);return;}
+      const other=sameCat[target];
+      const a=s.order.indexOf(id),b=s.order.indexOf(other);
+      [s.order[a],s.order[b]]=[s.order[b],s.order[a]];
+      save(); render(); vibrate(8); return;
+    }
     if (tool === 'edit'){ openAddModal(null, id); return; }
     if (tool === 'focus'){ openFocus(id); return; }
     const panel = card.querySelector(`.panel-inner[data-panel="${tool}"]`);
@@ -721,6 +735,7 @@ container.addEventListener('input', e => {
   if (e.target.classList.contains('note-area')){
     s.notes[card.dataset.id] = e.target.value;
     save();
+    if(e.target.value.trim()) recordActivity();
     const chip = card.querySelector('[data-tool="notes"]');
     const val = e.target.value.trim();
     chip.classList.toggle('has-note', val.length > 0);
@@ -744,6 +759,7 @@ container.addEventListener('click', e => {
     if (!s.subs[id]) s.subs[id] = [];
     s.subs[id].push({ text: txt, done: false });
     save();
+    recordActivity();
     input.value = '';
     const wasExpanded = expanded.has(id);
     const wrapper = card.parentNode;
@@ -782,6 +798,7 @@ container.addEventListener('change', e => {
   if (!s.subs[id] || !s.subs[id][i]) return;
   s.subs[id][i].done = e.target.checked;
   save();
+  if(e.target.checked) recordActivity();
   rerenderCard(id);
   updateOverall();
   checkAchievements();
