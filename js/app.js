@@ -1686,7 +1686,7 @@ document.getElementById('syncPush').addEventListener('click', async () => {
 document.getElementById('syncPull').addEventListener('click', async () => {
   const token = document.getElementById('syncToken').value.trim();
   const gistId = document.getElementById('syncGist').value.trim();
-  if (!token || token.length > 300 || !gistId){ toast('توکن و Gist ID لازمه'); return; }
+  if (!/^(?:gh[pousr]_[A-Za-z0-9_]{20,300}|github_pat_[A-Za-z0-9_]{20,300})$/.test(token) || !gistId){ toast('توکن یا Gist ID نامعتبر است'); return; }
   if (!/^[A-Za-z0-9_-]{20,100}$/.test(gistId)){ toast('Gist ID نامعتبر است'); return; }
 
   try {
