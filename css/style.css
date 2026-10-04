@@ -504,3 +504,44 @@ button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-vis
 [data-theme="light"] .modal-close{color:#667085}
 [data-theme="light"] .quote-author{color:#667085}
 [data-theme="light"] .toast{box-shadow:0 12px 30px rgba(17,24,39,.18)}
+
+/* ═══ MODERN MOTION SYSTEM ═══ */
+:root{--motion-fast:.18s;--motion-med:.38s;--motion-slow:.7s}
+body::before{content:"";position:fixed;inset:-20%;pointer-events:none;z-index:-1;background:radial-gradient(circle at 15% 20%,color-mix(in srgb,var(--accent) 10%,transparent),transparent 24%),radial-gradient(circle at 85% 70%,color-mix(in srgb,var(--accent2) 8%,transparent),transparent 26%);filter:blur(35px);animation:ambientDrift 16s ease-in-out infinite alternate}
+@keyframes ambientDrift{0%{transform:translate3d(-2%,0,0) scale(1)}50%{transform:translate3d(3%,-2%,0) scale(1.05)}100%{transform:translate3d(-1%,3%,0) scale(1.02)}}
+.wrap>header{animation:heroReveal .8s cubic-bezier(.16,1,.3,1) both}
+@keyframes heroReveal{from{opacity:0;transform:translateY(28px) scale(.97);filter:blur(8px)}to{opacity:1;transform:none;filter:blur(0)}}
+.panel{animation:panelReveal .85s .08s cubic-bezier(.16,1,.3,1) both;transition:transform .45s cubic-bezier(.16,1,.3,1),box-shadow .45s ease}
+.panel:hover{transform:translateY(-3px);box-shadow:0 24px 70px -35px var(--accent)}
+@keyframes panelReveal{from{opacity:0;transform:translateY(22px) scale(.985)}to{opacity:1;transform:none}}
+.feature-box,.timer-box,.ach-box,.section{transition:transform .4s cubic-bezier(.16,1,.3,1),box-shadow .4s ease}
+.feature-box:hover,.timer-box:hover,.ach-box:hover{transform:translateY(-3px)}
+.card{--mx:50%;--my:50%;isolation:isolate;overflow:hidden;transition:transform .42s cubic-bezier(.16,1,.3,1),border-color .3s ease,box-shadow .42s ease,background .3s ease}
+.card::before{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;background:radial-gradient(180px circle at var(--mx) var(--my),color-mix(in srgb,var(--accent) 12%,transparent),transparent 72%);opacity:0;transition:opacity .35s ease}
+.card::after{content:"";position:absolute;top:0;left:-120%;width:70%;height:100%;pointer-events:none;background:linear-gradient(100deg,transparent,rgba(255,255,255,.07),transparent);transform:skewX(-18deg);transition:left .8s cubic-bezier(.16,1,.3,1)}
+.card:hover{transform:translateY(-5px) scale(1.008);box-shadow:0 20px 45px -28px var(--status)}
+.card:hover::before{opacity:1}.card:hover::after{left:150%}
+.card.expanded{box-shadow:0 24px 60px -30px var(--status)}
+.card.done{animation:doneGlow 1.2s ease both}
+@keyframes doneGlow{0%{box-shadow:0 0 0 rgba(52,211,153,0)}45%{box-shadow:0 0 34px -10px var(--status)}100%{box-shadow:0 8px 28px -24px var(--status)}}
+.card .mini .f{transition:stroke-dashoffset .9s cubic-bezier(.16,1,.3,1),filter .4s ease}
+.card:hover .mini .f{filter:drop-shadow(0 0 7px var(--status))}
+.tool,.tool-btn,.status,.filter,.timer-controls button,.timer-presets button{transition:transform .22s cubic-bezier(.16,1,.3,1),box-shadow .25s ease,border-color .25s ease,background .25s ease,color .25s ease}
+.tool:hover,.tool-btn:hover,.filter:hover{transform:translateY(-2px)}.tool:active,.tool-btn:active,.filter:active{transform:scale(.94)}
+.btn-save{position:relative;overflow:hidden}.btn-save::after{content:"";position:absolute;inset:-100%;background:linear-gradient(110deg,transparent 35%,rgba(255,255,255,.45) 50%,transparent 65%);transform:translateX(-45%) rotate(8deg);animation:buttonSheen 2.8s ease-in-out infinite}
+@keyframes buttonSheen{0%,55%{transform:translateX(-55%) rotate(8deg)}100%{transform:translateX(55%) rotate(8deg)}}
+.modal{animation:modalSpring .55s cubic-bezier(.16,1,.3,1) both}
+@keyframes modalSpring{0%{opacity:0;transform:translateY(28px) scale(.94) rotateX(5deg);filter:blur(5px)}65%{opacity:1;transform:translateY(-3px) scale(1.012) rotateX(0);filter:blur(0)}100%{transform:none}}
+.mb.open{animation:modalBackdrop .35s ease both}
+@keyframes modalBackdrop{from{opacity:0;backdrop-filter:blur(0)}to{opacity:1;backdrop-filter:blur(10px)}}
+.more-menu.open{animation:menuSpring .32s cubic-bezier(.16,1,.3,1) both;transform-origin:top right}
+@keyframes menuSpring{0%{opacity:0;transform:translateY(-8px) scale(.92)}70%{opacity:1;transform:translateY(2px) scale(1.015)}100%{opacity:1;transform:none}}
+.goal-grid{display:grid;grid-template-columns:1.2fr 1fr;gap:10px}.goal-range-wrap{display:flex;align-items:center;gap:10px}
+.goal-range{--goal-fill:100%;width:100%;height:7px;appearance:none;-webkit-appearance:none;border-radius:99px;outline:none;cursor:pointer;background:linear-gradient(90deg,var(--accent) var(--goal-fill),rgba(255,255,255,.09) var(--goal-fill))}
+.goal-range::-webkit-slider-thumb{appearance:none;-webkit-appearance:none;width:20px;height:20px;border-radius:50%;background:var(--accent);border:3px solid var(--bg);box-shadow:0 0 0 2px var(--accent),0 0 18px color-mix(in srgb,var(--accent) 55%,transparent);transition:transform .2s ease}.goal-range::-webkit-slider-thumb:hover{transform:scale(1.18)}
+.goal-range::-moz-range-thumb{width:15px;height:15px;border-radius:50%;background:var(--accent);border:3px solid var(--bg);box-shadow:0 0 0 2px var(--accent)}
+.goal-value{min-width:45px;text-align:center;font:800 12px 'Space Grotesk',monospace;color:var(--accent)}
+.card-goal{display:flex;gap:5px;flex-wrap:wrap;margin-top:5px}.goal-badge,.deadline-badge{display:inline-flex;align-items:center;padding:3px 7px;border-radius:99px;font:700 8.5px 'Space Grotesk',monospace;color:var(--dim);background:color-mix(in srgb,var(--accent) 7%,transparent);border:1px solid color-mix(in srgb,var(--accent) 20%,transparent)}
+.goal-badge.reached{color:#34d399;border-color:rgba(52,211,153,.35);background:rgba(52,211,153,.08)}.deadline-badge{color:#f59e0b;border-color:rgba(245,158,11,.25);background:rgba(245,158,11,.06)}
+@media(max-width:560px){.goal-grid{grid-template-columns:1fr}}
+@media(prefers-reduced-motion:reduce){body::before,.card::after,.btn-save::after{animation:none!important}.card:hover,.panel:hover,.feature-box:hover,.timer-box:hover,.ach-box:hover{transform:none}}
