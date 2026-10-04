@@ -209,7 +209,9 @@ s.theme = s.theme || 'violet';
 s.unlocked = Array.isArray(s.unlocked) ? s.unlocked : [];
 s.customCount = s.customCount || 0;
 s.reminder = s.reminder || { enabled: false, time: '20:00', lastNotified: null };
-s.sync = s.sync || { gistId: '', lastSync: null };
+s.sync = s.sync || { gistId: '', lastSync: null, remoteUpdatedAt: null, lastLocalChange: 0 };
+s.sync.remoteUpdatedAt = typeof s.sync.remoteUpdatedAt==='string' ? s.sync.remoteUpdatedAt : null;
+s.sync.lastLocalChange = Number.isFinite(Number(s.sync.lastLocalChange)) ? Number(s.sync.lastLocalChange) : 0;
 delete s.sync.token;
 s.timerStarted = s.timerStarted || 0;
 s.focusUsed = s.focusUsed || 0;
@@ -221,6 +223,7 @@ s.skills.forEach(sk => {
   if (!s.order.includes(sk.id)) s.order.push(sk.id);
 });
 s.order = s.order.filter(id => s.skills.some(sk => sk.id === id));
+s = normalizeState(s);
 
 function normalizeState(input){
   const base=(input&&typeof input==='object'&&!Array.isArray(input))?input:{};
@@ -256,8 +259,10 @@ function normalizeState(input){
     }:{enabled:false,time:'20:00',lastNotified:null},
     sync:base.sync&&typeof base.sync==='object'?{
       gistId:typeof base.sync.gistId==='string'?base.sync.gistId:'',
-      lastSync:Number.isFinite(Number(base.sync.lastSync))?Number(base.sync.lastSync):null
-    }:{gistId:'',lastSync:null}
+      lastSync:Number.isFinite(Number(base.sync.lastSync))?Number(base.sync.lastSync):null,
+      remoteUpdatedAt:typeof base.sync.remoteUpdatedAt==='string'?base.sync.remoteUpdatedAt:null,
+      lastLocalChange:Number.isFinite(Number(base.sync.lastLocalChange))?Number(base.sync.lastLocalChange):0
+    }:{gistId:'',lastSync:null,remoteUpdatedAt:null,lastLocalChange:0}
   };
   out.skills.forEach(sk=>{
     if(!validStatuses.has(out.progress[sk.id])) out.progress[sk.id]='todo';
@@ -272,7 +277,10 @@ function normalizeState(input){
 }
 
 function save(){
-  try { localStorage.setItem(KEY, JSON.stringify(s)); } catch(e){}
+  try {
+    if(s.sync && typeof s.sync==='object') s.sync.lastLocalChange=Date.now();
+    localStorage.setItem(KEY, JSON.stringify(s));
+  } catch(e){}
 }
 
 function totalTime(){
@@ -1595,6 +1603,18 @@ document.getElementById('syncPush').addEventListener('click', async () => {
   };
 
   try {
+    if(gistId && s.sync && s.sync.remoteUpdatedAt && s.sync.lastLocalChange > (s.sync.lastSync || 0)){
+      const check=await fetch(`https://api.github.com/gists/${gistId}`,{headers:{'Authorization':'token '+token,'Accept':'application/vnd.github+json'}});
+      if(check.ok){
+        const remote=await check.json();
+        const remoteMs=Date.parse(remote.updated_at||'');
+        const syncedMs=Date.parse(s.sync.remoteUpdatedAt||'');
+        if(Number.isFinite(remoteMs)&&Number.isFinite(syncedMs)&&remoteMs>syncedMs){
+          const proceed=confirm('این Gist بعد از آخرین همگام‌سازی روی دستگاه یا حساب دیگری تغییر کرده است. ارسال فعلی تغییرات محلی را جایگزین نسخه آنلاین می‌کند. ادامه؟');
+          if(!proceed) return;
+        }
+      }
+    }
     let url = 'https://api.github.com/gists';
     let method = 'POST';
     if (gistId){
@@ -1618,6 +1638,7 @@ document.getElementById('syncPush').addEventListener('click', async () => {
     syncToken = token;
     s.sync.gistId = data.id;
     s.sync.lastSync = Date.now();
+    s.sync.remoteUpdatedAt = data.updated_at || new Date().toISOString();
     save();
     document.getElementById('syncGist').value = data.id;
     toast('☁️ ارسال شد');
@@ -1665,6 +1686,7 @@ document.getElementById('syncPull').addEventListener('click', async () => {
     syncToken = token;
     s.sync.gistId = gistId;
     s.sync.lastSync = Date.now();
+    s.sync.remoteUpdatedAt = data.updated_at || new Date().toISOString();
     s.skills.forEach(sk => {
       if (!s.progress[sk.id]) s.progress[sk.id] = 'todo';
       if (!Array.isArray(s.subs[sk.id])) s.subs[sk.id] = [];
