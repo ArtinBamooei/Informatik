@@ -1222,9 +1222,7 @@ document.getElementById('timerSkillBtn').addEventListener('click', openSkillPick
 
 function openSkillPicker(){
   if (s.skills.length === 0){ toast('اول یه مهارت اضافه کن'); return; }
-  const options = s.skills.map(sk => `${sk.icon} ${sk.name}`).join('\n');
-  const names = s.skills.map(sk => sk.name);
-  // Use a select-like prompt (simple approach)
+  // Use a compact select-like prompt for broad browser compatibility
   const pick = prompt('کدوم مهارت؟ (شماره رو وارد کن)\n\n' + s.skills.map((sk, i) => (i+1) + '. ' + sk.icon + ' ' + sk.name).join('\n'));
   if (!pick) return;
   const i = parseInt(pick, 10) - 1;
@@ -1413,7 +1411,6 @@ function checkAchievements(){
     newOnes.forEach((a, i) => {
       setTimeout(() => {
         toast('🏆 ' + a.name);
-        const el = document.querySelector(`.ach-grid .ach:not(.unlocked)`);
       }, i * 500);
     });
     vibrate([30, 50, 30]);
@@ -1856,13 +1853,6 @@ function initAccessibility(){
   const labels={focusClose:'بستن حالت تمرکز',syncBtn:'همگام‌سازی با GitHub',backupBtn:'ایجاد پشتیبان',restoreBtn:'بازیابی پشتیبان',resetBtn:'بازنشانی داده‌ها',statsBtn:'نمایش آمار',reminderBtn:'تنظیم یادآور'};
   Object.entries(labels).forEach(([id,label])=>{const el=document.getElementById(id);if(el)el.setAttribute('aria-label',label);});
 }
-document.addEventListener('keydown',e=>{
-  if(e.key!=='Escape')return;
-  const open=document.querySelector('.mb.open');
-  if(open){open.classList.remove('open');return;}
-  if(document.getElementById('focusOverlay')?.classList.contains('open'))closeFocus();
-});
-
 initAccessibility();
 init();
 
