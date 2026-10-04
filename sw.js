@@ -1,4 +1,4 @@
-const CACHE='informatik-v4';
+const CACHE='informatik-v5';
 const APP_SHELL=['./','./index.html','./css/style.css','./js/app.js','./manifest.json','./icon.svg'];
 
 self.addEventListener('install',event=>{
