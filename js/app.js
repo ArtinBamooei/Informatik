@@ -203,6 +203,7 @@ s.progress = s.progress || {};
 s.notes = s.notes || {};
 s.subs = s.subs || {};
 s.skillTime = s.skillTime || {};
+s.targetLevels = s.targetLevels || {};
 s.order = Array.isArray(s.order) ? s.order : s.skills.map(x=>x.id);
 s.dates = Array.isArray(s.dates) ? s.dates : [];
 s.theme = s.theme || 'violet';
@@ -220,6 +221,7 @@ s.skills.forEach(sk => {
   if (!s.progress[sk.id]) s.progress[sk.id] = 'todo';
   if (!Array.isArray(s.subs[sk.id])) s.subs[sk.id] = [];
   if (!s.skillTime[sk.id]) s.skillTime[sk.id] = 0;
+  if (!s.targetLevels[sk.id]) s.targetLevels[sk.id] = 'intermediate';
   if (!s.order.includes(sk.id)) s.order.push(sk.id);
 });
 s.order = s.order.filter(id => s.skills.some(sk => sk.id === id));
@@ -247,6 +249,7 @@ function normalizeState(input){
     skillTime:base.skillTime&&typeof base.skillTime==='object'&&!Array.isArray(base.skillTime)?{...base.skillTime}:{},
     targets:base.targets&&typeof base.targets==='object'&&!Array.isArray(base.targets)?{...base.targets}:{},
     deadlines:base.deadlines&&typeof base.deadlines==='object'&&!Array.isArray(base.deadlines)?{...base.deadlines}:{},
+    targetLevels:base.targetLevels&&typeof base.targetLevels==='object'&&!Array.isArray(base.targetLevels)?{...base.targetLevels}:{},
     order:Array.isArray(base.order)?[...base.order.filter(x=>typeof x==='string')]:[],
     dates:Array.isArray(base.dates)?[...new Set(base.dates.filter(x=>/^\d{4}-\d{2}-\d{2}$/.test(x)))]:[],
     theme:(base.theme&&Object.prototype.hasOwnProperty.call(THEMES,base.theme))?base.theme:'violet',
@@ -274,6 +277,7 @@ function normalizeState(input){
     out.skillTime[sk.id]=Number.isFinite(Number(out.skillTime[sk.id]))?Math.max(0,Number(out.skillTime[sk.id])):0;
     out.targets[sk.id]=Number.isFinite(Number(out.targets[sk.id]))?Math.min(100,Math.max(0,Number(out.targets[sk.id]))):100;
     out.deadlines[sk.id]=/^\d{4}-\d{2}-\d{2}$/.test(out.deadlines[sk.id]||'')?out.deadlines[sk.id]:'';
+    out.targetLevels[sk.id]=['beginner','intermediate','advanced'].includes(out.targetLevels[sk.id])?out.targetLevels[sk.id]:'intermediate';
   });
   const ids=new Set(out.skills.map(x=>x.id));
   out.order=[...out.order.filter(id=>ids.has(id)),...out.skills.map(x=>x.id).filter(id=>!out.order.includes(id))];
@@ -540,6 +544,7 @@ function buildCard(sk){
   const skillSeconds = s.skillTime[id] || 0;
   const target = Number(s.targets[id] ?? 100);
   const deadline = s.deadlines[id] || '';
+  const targetLevel = s.targetLevels[id] || 'intermediate';
   const targetReached = val >= target;
   const isTimed = timer && timer.running && timer.skillId === id;
 
@@ -552,6 +557,10 @@ function buildCard(sk){
   const timeBadge = skillSeconds >= 60 ? `<span class="time-badge">⏱ ${formatTime(skillSeconds)}</span>` : '';
   const goalBadge = `<span class="goal-badge ${targetReached?'reached':''}">هدف ${target}%</span>`;
   const deadlineBadge = deadline ? `<span class="deadline-badge">تا ${esc(deadline)}</span>` : '';
+  const levelNames={beginner:'مقدماتی',intermediate:'متوسط',advanced:'حرفه‌ای'};
+  const levelButtons=['beginner','intermediate','advanced'].map(level =>
+    `<button class="target-level ${level} ${targetLevel===level?'active':''}" data-target-level="${level}" title="هدف: ${levelNames[level]}">${levelNames[level]}</button>`
+  ).join('');
 
   const statusBtns = STAT_ORDER.map(k => {
     const S = STAT[k];
@@ -567,6 +576,9 @@ function buildCard(sk){
         <h3>${esc(sk.name)}${timeBadge}</h3>
         <div class="state">${stData.label}${stateExtra}</div>
         <div class="card-goal">${goalBadge}${deadlineBadge}</div>
+        <div class="target-levels" role="group" aria-label="سطح هدف">
+          <span class="target-level-label">هدف سطح</span>${levelButtons}
+        </div>
       </div>
       <div class="mini">
         <svg viewBox="0 0 52 52">
@@ -624,6 +636,7 @@ function renderAll(){
   updateOverall();
   renderTimer();
   renderAchievements();
+  setTimeout(setupScrollEffects, 0);
 }
 
 /* ═══════════════════════════════════════════
@@ -667,6 +680,18 @@ container.addEventListener('click', e => {
   const card = e.target.closest('.card');
   if (!card) return;
   const id = card.dataset.id;
+
+  const levelBtn=e.target.closest('.target-level');
+  if(levelBtn){
+    e.stopPropagation();
+    const level=levelBtn.dataset.targetLevel;
+    if(['beginner','intermediate','advanced'].includes(level)){
+      s.targetLevels[id]=level;
+      save(); recordActivity(); render(); updateOverall();
+      toast('هدف سطح: '+({beginner:'مقدماتی',intermediate:'متوسط',advanced:'حرفه‌ای'}[level]));
+    }
+    return;
+  }
 
   const statusBtn = e.target.closest('.status');
   if (statusBtn){
@@ -891,6 +916,7 @@ function openAddModal(presetCat, id){
     selectedIcon = sk.icon;
     document.getElementById('skillTarget').value = String(s.targets[id] ?? 100);
     document.getElementById('skillDeadline').value = s.deadlines[id] || '';
+    document.getElementById('skillTargetLevel').value = s.targetLevels[id] || 'intermediate';
   } else {
     document.getElementById('addModalTitle').textContent = 'مهارت جدید';
     document.getElementById('skillName').value = '';
@@ -899,6 +925,7 @@ function openAddModal(presetCat, id){
     selectedIcon = '🎯';
     document.getElementById('skillTarget').value = '100';
     document.getElementById('skillDeadline').value = '';
+    document.getElementById('skillTargetLevel').value = 'intermediate';
   }
   updateSkillTargetLabel();
   buildIconGrid();
@@ -947,6 +974,7 @@ document.getElementById('skillSave').addEventListener('click', () => {
   const catId = document.getElementById('skillCat').value;
   const target = Math.min(100, Math.max(0, Number(document.getElementById('skillTarget').value) || 0));
   const deadline = document.getElementById('skillDeadline').value || '';
+  const targetLevel = document.getElementById('skillTargetLevel').value || 'intermediate';
   if (!name){
     const inp = document.getElementById('skillName');
     inp.focus();
@@ -959,6 +987,7 @@ document.getElementById('skillSave').addEventListener('click', () => {
     if (sk){ sk.name = name; sk.cat = catId; sk.icon = selectedIcon; }
     s.targets[editingId] = target;
     s.deadlines[editingId] = deadline;
+    s.targetLevels[editingId] = targetLevel;
     toast('✓ ویرایش شد');
   } else {
     const id = uid();
@@ -969,6 +998,7 @@ document.getElementById('skillSave').addEventListener('click', () => {
     s.skillTime[id] = 0;
     s.targets[id] = target;
     s.deadlines[id] = deadline;
+    s.targetLevels[id] = targetLevel;
     s.customCount = (s.customCount || 0) + 1;
     toast('✓ اضافه شد');
   }
@@ -1943,5 +1973,28 @@ function initAccessibility(){
 }
 initAccessibility();
 init();
+
+
+// Modern scroll effects fallback + progress
+const revealObserver = 'IntersectionObserver' in window ? new IntersectionObserver(entries=>{
+  entries.forEach(entry=>{ if(entry.isIntersecting) entry.target.classList.add('is-visible'); });
+},{threshold:.08,rootMargin:'0px 0px -8% 0px'}) : null;
+function setupScrollEffects(){
+  document.querySelectorAll('.card,.feature-box,.timer-box,.ach-box,.filters,.toolbar,.panel').forEach(el=>{
+    el.classList.add('reveal-scroll');
+    if(revealObserver) revealObserver.observe(el);
+    else el.classList.add('is-visible');
+  });
+}
+setupScrollEffects();
+let scrollTick=false;
+window.addEventListener('scroll',()=>{
+  if(scrollTick)return; scrollTick=true;
+  requestAnimationFrame(()=>{
+    const max=document.documentElement.scrollHeight-innerHeight;
+    document.body.style.setProperty('--scroll-progress',max>0?(scrollY/max):0);
+    scrollTick=false;
+  });
+},{passive:true});
 
 })();
