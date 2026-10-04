@@ -266,7 +266,7 @@ function normalizeState(input){
     order:Array.isArray(base.order)?[...base.order.filter(x=>typeof x==='string').slice(0,500)]:[],
     dates:Array.isArray(base.dates)?[...new Set(base.dates.filter(x=>/^\d{4}-\d{2}-\d{2}$/.test(x)).slice(-400))]:[],
     theme:(base.theme&&Object.prototype.hasOwnProperty.call(THEMES,base.theme))?base.theme:'violet',
-    unlocked:Array.isArray(base.unlocked)?[...new Set(base.unlocked.filter(x=>typeof x==='string'))]:[],
+    unlocked:Array.isArray(base.unlocked)?[...new Set(base.unlocked.filter(x=>typeof x==='string').slice(0,200))]:[],
     studyTime:Number.isFinite(Number(base.studyTime))?Math.max(0,Number(base.studyTime)):0,
     customCount:Number.isFinite(Number(base.customCount))?Math.max(0,Number(base.customCount)):0,
     timerStarted:Number.isFinite(Number(base.timerStarted))?Math.max(0,Number(base.timerStarted)):0,
@@ -294,6 +294,13 @@ function normalizeState(input){
   sanitizeStateMaps(out);
   const ids=new Set(out.skills.map(x=>x.id));
   out.order=[...out.order.filter(id=>ids.has(id)),...out.skills.map(x=>x.id).filter(id=>!out.order.includes(id))];
+  let noteBudget=500000;
+  Object.keys(out.notes).forEach(id=>{
+    if(noteBudget<=0){delete out.notes[id];return}
+    const value=typeof out.notes[id]==='string'?out.notes[id].slice(0,Math.min(20000,noteBudget)):'';
+    if(value)out.notes[id]=value;else delete out.notes[id];
+    noteBudget-=value.length;
+  });
   delete out.sync.token;
   delete out.targets;
   delete out.deadlines;
@@ -1626,12 +1633,14 @@ document.getElementById('syncPush').addEventListener('click', async () => {
   if (!/^(?:gh[pousr]_[A-Za-z0-9_]{20,300}|github_pat_[A-Za-z0-9_]{20,300})$/.test(token)){ toast('توکن GitHub نامعتبر است'); return; }
   if (gistId && !/^[A-Za-z0-9_-]{20,100}$/.test(gistId)){ toast('Gist ID نامعتبر است'); return; }
 
+  const serializedState=JSON.stringify(s);
+  if(serializedState.length>2*1024*1024){ toast('داده‌ها برای همگام‌سازی بیش از ۲MB هستند'); return; }
   const payload = {
     description: 'Learning Path — synced data',
     public: false,
     files: {
       'learning-path.json': {
-        content: JSON.stringify(s)
+        content: serializedState
       }
     }
   };
@@ -1702,6 +1711,7 @@ document.getElementById('syncPull').addEventListener('click', async () => {
     const file = data.files['learning-path.json'];
     if (!file) throw new Error('فایل پیدا نشد');
     const content = file.content || '';
+    if(content.length>2*1024*1024) throw new Error('داده Gist بیش از ۲MB است');
     const parsed = JSON.parse(content);
     if (typeof parsed !== 'object' || !parsed.skills) throw new Error('داده نامعتبر');
 
@@ -1761,7 +1771,7 @@ document.getElementById('backupBtn').addEventListener('click', async () => {
 
 document.getElementById('restoreBtn').addEventListener('click', () => {
   const x = prompt('متن پشتیبان رو پیست کن:');
-  if (!x) return;
+  if (!x || x.length>2*1024*1024){ toast('پشتیبان خالی یا بیش از ۲MB است'); return; }
   try {
     const parsed = JSON.parse(x);
     if (typeof parsed !== 'object' || parsed === null) throw 0;
