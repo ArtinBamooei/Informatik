@@ -82,7 +82,7 @@
 
   h1{
     font-size:clamp(30px,9vw,42px);font-weight:900;line-height:1.2;letter-spacing:-.03em;
-    background:linear-gradient(120deg,#fff 0%,#c4b5fd 25%,#67e8f9 50%,#f0abfc 75%,#fff 100%);
+    background:linear-gradient(120deg,#fff 0%,var(--t1,#c4b5fd) 25%,var(--t2,#67e8f9) 50%,var(--t3,#f0abfc) 75%,#fff 100%);
     background-size:250% 100%;
     -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
     animation:slide 8s linear infinite;
@@ -796,7 +796,10 @@
     root.setProperty('--a2', c[1]);
     root.setProperty('--a3', c[2]);
     // شفافیت aurora بیشتر بشه وقتی پیشرفت بالا میره
-    document.querySelector('.aurora').style.opacity = 0.4 + (prog/100) * 0.25;
+    var fixed = !!THEMES[x.theme], au = document.querySelector('.aurora');
+    au.style.opacity = fixed ? 0.75 : 0.4 + (prog/100) * 0.25;
+    Array.prototype.forEach.call(au.children, function(el, i){ el.style.background = 'radial-gradient(circle,' + c[i] + ',transparent 70%)'; });
+    [0,1,2].forEach(function(i){ if (fixed) root.setProperty('--t'+(i+1), c[i]); else root.removeProperty('--t'+(i+1)); });
   }
 
   /* ═══════════ BUILD UI ═══════════ */
