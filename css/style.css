@@ -454,3 +454,21 @@ button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-vis
 @media (max-width:420px){
 .panel{grid-template-columns:1fr;gap:12px}.ring{width:104px;height:104px}.statuses{grid-template-columns:repeat(2,1fr)}.icon-grid{grid-template-columns:repeat(6,1fr)}.toolbar{gap:5px}.tool{padding:9px 11px}
 }
+
+/* v2 visual polish */
+.more-wrap{position:relative;display:inline-flex}
+.more-menu{position:absolute;top:calc(100% + 7px);right:0;z-index:900;min-width:210px;padding:7px;
+  display:none;background:var(--bg);border:1px solid var(--line);border-radius:16px;
+  box-shadow:0 22px 55px -20px rgba(0,0,0,.65);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}
+.more-menu.open{display:grid;animation:up .18s ease both}
+.more-item{border:0;background:transparent;color:var(--dim);padding:10px 11px;border-radius:10px;
+  text-align:right;font:600 11px 'Vazirmatn',sans-serif;cursor:pointer}
+.more-item:hover{background:var(--card-bg);color:var(--text)}
+.more-item.danger:hover{color:#ef4444}
+[data-theme="light"] .stat,[data-theme="light"] .stat-tile,[data-theme="light"] .ach,[data-theme="light"] .status,
+[data-theme="light"] .tool-btn,[data-theme="light"] .note-area{background:rgba(17,24,39,.035)}
+[data-theme="light"] .ring .track{stroke:rgba(17,24,39,.10)}
+[data-theme="light"] .modal{box-shadow:0 30px 80px -20px rgba(17,24,39,.25)}
+@media(max-width:560px){.toolbar{display:grid;grid-template-columns:1fr 1fr;gap:7px}.toolbar .tool,.more-wrap{width:100%}.more-wrap>.tool{width:100%;justify-content:center}.more-menu{left:0;right:0;min-width:0}}
+@media(min-width:561px){.toolbar .tool{min-height:40px}}
+@media(prefers-reduced-motion:reduce){.streak-fire{animation:none}}
