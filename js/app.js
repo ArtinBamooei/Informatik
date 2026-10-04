@@ -230,7 +230,8 @@ s = s = normalizeState(s);
 function sanitizePlainRecord(value){if(!value||typeof value!=='object'||Array.isArray(value))return {};const out={};Object.keys(value).slice(0,2000).forEach(k=>{if(k.length<=120)out[k]=value[k];});return out;}
 function normalizeState(input){
   const base=(input&&typeof input==='object'&&!Array.isArray(input))?input:{};
-  const skills=Array.isArray(base.skills)&&base.skills.length?base.skills:DEFAULT_SKILLS.slice();
+  const rawSkills=Array.isArray(base.skills)?base.skills.slice(0,200):[];
+  const skills=rawSkills.length?rawSkills:DEFAULT_SKILLS.slice();
   const validStatuses=new Set(['todo','learning','practice','done']);
   const seenIds=new Set();
   const validCats=new Set(CATS.map(c=>c.id));
@@ -240,17 +241,17 @@ function normalizeState(input){
       if(!x||typeof x!=='object'||!id||typeof x.name!=='string'||!x.name.trim()||seenIds.has(id)) return false;
       seenIds.add(id); return true;
     }).map(x=>({
-      id:x.id.trim(),name:x.name.trim().slice(0,80),
+      id:x.id.trim().slice(0,80),name:x.name.trim().slice(0,80),
       cat:validCats.has(x.cat)?x.cat:CATS[0].id,
       icon:typeof x.icon==='string'&&x.icon.length<=8?x.icon:'🎯'
     })),
-    progress:base.progress&&typeof base.progress==='object'&&!Array.isArray(base.progress)?{...base.progress}:{},
-    notes:base.notes&&typeof base.notes==='object'&&!Array.isArray(base.notes)?{...base.notes}:{},
-    subs:base.subs&&typeof base.subs==='object'&&!Array.isArray(base.subs)?{...base.subs}:{},
-    skillTime:base.skillTime&&typeof base.skillTime==='object'&&!Array.isArray(base.skillTime)?{...base.skillTime}:{},
-    targetLevels:base.targetLevels&&typeof base.targetLevels==='object'&&!Array.isArray(base.targetLevels)?{...base.targetLevels}:{},
-    order:Array.isArray(base.order)?[...base.order.filter(x=>typeof x==='string')]:[],
-    dates:Array.isArray(base.dates)?[...new Set(base.dates.filter(x=>/^\d{4}-\d{2}-\d{2}$/.test(x)))]:[],
+    progress:sanitizePlainRecord(base.progress),
+    notes:sanitizePlainRecord(base.notes),
+    subs:sanitizePlainRecord(base.subs),
+    skillTime:sanitizePlainRecord(base.skillTime),
+    targetLevels:sanitizePlainRecord(base.targetLevels),
+    order:Array.isArray(base.order)?[...base.order.filter(x=>typeof x==='string').slice(0,500)]:[],
+    dates:Array.isArray(base.dates)?[...new Set(base.dates.filter(x=>/^\d{4}-\d{2}-\d{2}$/.test(x)).slice(-400))]:[],
     theme:(base.theme&&Object.prototype.hasOwnProperty.call(THEMES,base.theme))?base.theme:'violet',
     unlocked:Array.isArray(base.unlocked)?[...new Set(base.unlocked.filter(x=>typeof x==='string'))]:[],
     studyTime:Number.isFinite(Number(base.studyTime))?Math.max(0,Number(base.studyTime)):0,
@@ -272,9 +273,10 @@ function normalizeState(input){
   out.skills.forEach(sk=>{
     if(!validStatuses.has(out.progress[sk.id])) out.progress[sk.id]='todo';
     if(!Array.isArray(out.subs[sk.id])) out.subs[sk.id]=[];
-    out.subs[sk.id]=out.subs[sk.id].filter(x=>x&&typeof x==='object'&&typeof x.text==='string').map(x=>({...x,done:!!x.done}));
-    out.skillTime[sk.id]=Number.isFinite(Number(out.skillTime[sk.id]))?Math.max(0,Number(out.skillTime[sk.id])):0;
+    out.subs[sk.id]=out.subs[sk.id].slice(0,200).filter(x=>x&&typeof x==='object'&&typeof x.text==='string').map(x=>({text:x.text.trim().slice(0,300),done:!!x.done})).filter(x=>x.text);
+    out.skillTime[sk.id]=Number.isFinite(Number(out.skillTime[sk.id]))?Math.min(315360000,Math.max(0,Number(out.skillTime[sk.id]))):0;
     out.targetLevels[sk.id]=['beginner','intermediate','advanced'].includes(out.targetLevels[sk.id])?out.targetLevels[sk.id]:'intermediate';
+    if(typeof out.notes[sk.id]==='string') out.notes[sk.id]=out.notes[sk.id].slice(0,20000); else delete out.notes[sk.id];
   });
   const ids=new Set(out.skills.map(x=>x.id));
   out.order=[...out.order.filter(id=>ids.has(id)),...out.skills.map(x=>x.id).filter(id=>!out.order.includes(id))];
