@@ -456,15 +456,18 @@ button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-vis
 }
 
 /* v2 visual polish */
-.more-wrap{position:relative;display:inline-flex}
-.more-menu{position:absolute;top:calc(100% + 7px);right:0;z-index:900;min-width:210px;padding:7px;
+.toolbar{position:relative;z-index:50}
+.more-wrap{position:relative;display:inline-flex;z-index:60}
+.more-menu{position:absolute;top:calc(100% + 8px);inset-inline-end:0;z-index:10000;min-width:220px;padding:7px;
   display:none;background:var(--bg);border:1px solid var(--line);border-radius:16px;
   box-shadow:0 22px 55px -20px rgba(0,0,0,.65);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}
 .more-menu.open{display:grid;animation:up .18s ease both}
-.more-item{border:0;background:transparent;color:var(--dim);padding:10px 11px;border-radius:10px;
-  text-align:right;font:600 11px 'Vazirmatn',sans-serif;cursor:pointer}
+.more-item{border:0;background:transparent;color:var(--dim);padding:11px 12px;border-radius:10px;
+  text-align:right;font:600 11px 'Vazirmatn',sans-serif;cursor:pointer;position:relative;width:100%}
 .more-item:hover{background:var(--card-bg);color:var(--text)}
+.more-item:focus-visible{outline:2px solid var(--accent2);outline-offset:-2px}
 .more-item.danger:hover{color:#ef4444}
+.more-menu.open + *{position:relative;z-index:1}
 [data-theme="light"] .stat,[data-theme="light"] .stat-tile,[data-theme="light"] .ach,[data-theme="light"] .status,
 [data-theme="light"] .tool-btn,[data-theme="light"] .note-area{background:rgba(17,24,39,.035)}
 [data-theme="light"] .ring .track{stroke:rgba(17,24,39,.10)}
