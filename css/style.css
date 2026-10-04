@@ -473,6 +473,16 @@ button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-vis
 @media(min-width:561px){.toolbar .tool{min-height:40px}}
 @media(prefers-reduced-motion:reduce){.streak-fire{animation:none}}
 
+/* Final accessibility and theme polish */
+.theme-option{font:inherit;text-align:inherit;width:100%;cursor:pointer;color:inherit}
+.theme-option:focus-visible{outline:2px solid var(--accent2);outline-offset:2px}
+[data-theme="light"] .chart-row .bar-bg,[data-theme="light"] .day-cell{background:rgba(17,24,39,.07)}
+[data-theme="light"] .day-cell.active{color:#fff}
+[data-theme="light"] .focus-ring .t{stroke:rgba(17,24,39,.10)}
+[data-theme="light"] .focus-close,[data-theme="light"] .focus-actions button{background:rgba(17,24,39,.035)}
+[data-theme="light"] .toast{background:#111827;color:#fff;border-color:rgba(255,255,255,.12)}
+[data-theme="light"] .more-menu{box-shadow:0 22px 55px -20px rgba(17,24,39,.25)}
+
 /* Light theme surface overrides */
 [data-theme="light"] body{color:#111827}
 [data-theme="light"] .feature-box,[data-theme="light"] .timer-box,[data-theme="light"] .ach-box,
