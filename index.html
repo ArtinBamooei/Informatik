@@ -50,7 +50,7 @@
     <div class="feature-box">
       <div class="feature-title">Streak</div>
       <div class="streak-row">
-        <span class="streak-fire">🔥</span>
+        <span class="streak-fire" aria-hidden="true">✦</span>
         <div>
           <div class="streak-num" id="streakBig">0</div>
           <div class="streak-meta">روز پیاپی — بهترین: <span id="streakBest">0</span></div>
@@ -66,16 +66,16 @@
 
   <div class="toolbar">
     <button class="tool primary" id="addBtn">＋ مهارت جدید</button>
-    <button class="tool" id="statsBtn">📊 آمار</button>
-    <button class="tool" id="reminderBtn">🔔 یادآوری</button>
-    <button class="tool" id="themeBtn">🎨 تم</button>
+    <button class="tool" id="statsBtn">آمار</button>
+    <button class="tool" id="reminderBtn">یادآوری</button>
+    <button class="tool" id="themeBtn">تم</button>
     <div class="more-wrap">
       <button class="tool" id="moreBtn" aria-expanded="false" aria-controls="moreMenu" aria-haspopup="menu">••• بیشتر</button>
       <div class="more-menu" id="moreMenu" role="menu">
-        <button class="more-item" id="syncBtn" role="menuitem">☁️ همگام‌سازی GitHub</button>
-        <button class="more-item" id="backupBtn" role="menuitem">↑ پشتیبان‌گیری</button>
-        <button class="more-item" id="restoreBtn" role="menuitem">↓ بازیابی پشتیبان</button>
-        <button class="more-item danger" id="resetBtn" role="menuitem">↻ بازنشانی داده‌ها</button>
+        <button class="more-item" id="syncBtn" role="menuitem">همگام‌سازی GitHub</button>
+        <button class="more-item" id="backupBtn" role="menuitem">پشتیبان‌گیری</button>
+        <button class="more-item" id="restoreBtn" role="menuitem">بازیابی پشتیبان</button>
+        <button class="more-item danger" id="resetBtn" role="menuitem">بازنشانی داده‌ها</button>
       </div>
     </div>
   </div>
@@ -155,7 +155,7 @@
 <div class="mb" id="statsModal">
   <div class="modal">
     <div class="modal-head">
-      <h3>📊 آمار پیشرفت</h3>
+      <h3>آمار پیشرفت</h3>
       <button class="modal-close" data-close="statsModal" aria-label="بستن">✕</button>
     </div>
     <div id="statsContent"></div>
@@ -165,7 +165,7 @@
 <div class="mb" id="reminderModal">
   <div class="modal">
     <div class="modal-head">
-      <h3>🔔 یادآوری روزانه</h3>
+      <h3>یادآوری روزانه</h3>
       <button class="modal-close" data-close="reminderModal" aria-label="بستن">✕</button>
     </div>
     <div class="field">
@@ -180,7 +180,7 @@
       <input type="time" class="input" id="reminderTime" value="20:00">
     </div>
     <p style="font-size:11.5px;color:var(--dim);line-height:1.8;margin-bottom:14px">
-      🔔 برای اینکه یادآوری کار کنه، باید اجازه‌ی نوتیفیکیشن بدی. اگه مرورگر بسته باشه، نوتیفیکیشن نمیاد — ولی دفعه بعد که باز کنی، اگه ساعت گذشته باشه، یادآوری می‌بینی.
+      برای اینکه یادآوری کار کنه، باید اجازه‌ی نوتیفیکیشن بدی. اگه مرورگر بسته باشه، نوتیفیکیشن نمیاد — ولی دفعه بعد که باز کنی، اگه ساعت گذشته باشه، یادآوری می‌بینی.
     </p>
     <div class="modal-foot">
       <button class="btn btn-cancel" data-close="reminderModal">بستن</button>
@@ -192,7 +192,7 @@
 <div class="mb" id="syncModal">
   <div class="modal">
     <div class="modal-head">
-      <h3>☁️ همگام‌سازی بین دستگاه‌ها</h3>
+      <h3>همگام‌سازی بین دستگاه‌ها</h3>
       <button class="modal-close" data-close="syncModal" aria-label="بستن">✕</button>
     </div>
     <p style="font-size:11.5px;color:var(--dim);line-height:1.8;margin-bottom:14px">
