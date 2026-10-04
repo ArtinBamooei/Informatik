@@ -233,8 +233,9 @@ function normalizeState(input){
   const validCats=new Set(CATS.map(c=>c.id));
   const out={
     skills:skills.filter(x=>{
-      if(!x||typeof x!=='object'||typeof x.id!=='string'||!x.id||typeof x.name!=='string'||!x.name.trim()||seenIds.has(x.id)) return false;
-      seenIds.add(x.id); return true;
+      const id=typeof x?.id==='string'?x.id.trim():'';
+      if(!x||typeof x!=='object'||!id||typeof x.name!=='string'||!x.name.trim()||seenIds.has(id)) return false;
+      seenIds.add(id); return true;
     }).map(x=>({
       id:x.id.trim(),name:x.name.trim().slice(0,80),
       cat:validCats.has(x.cat)?x.cat:CATS[0].id,
