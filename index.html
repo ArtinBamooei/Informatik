@@ -15,6 +15,7 @@
 <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
+<div class="scroll-progress" aria-hidden="true"></div>
 
 <div class="wrap">
   <header>
@@ -115,6 +116,14 @@
     </div>
     <div class="field"><label>دسته</label>
       <select class="input select" id="skillCat"></select>
+    </div>
+    <div class="field">
+      <label>سطح هدف</label>
+      <select class="input select" id="skillTargetLevel">
+        <option value="beginner">مقدماتی</option>
+        <option value="intermediate" selected>متوسط</option>
+        <option value="advanced">حرفه‌ای</option>
+      </select>
     </div>
     <div class="goal-grid">
       <div class="field">
