@@ -8,6 +8,9 @@
 <meta name="description" content="مسیر یادگیری شخصی، پیگیری مهارت‌ها، زمان مطالعه و پیشرفت.">
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="mobile-web-app-capable" content="yes">
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600;700&family=Vazirmatn:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/style.css">
 </head>
@@ -61,11 +64,16 @@
     <button class="tool primary" id="addBtn">＋ مهارت جدید</button>
     <button class="tool" id="statsBtn">📊 آمار</button>
     <button class="tool" id="reminderBtn">🔔 یادآوری</button>
-    <button class="tool" id="syncBtn">☁️ همگام</button>
     <button class="tool" id="themeBtn">🎨 تم</button>
-    <button class="tool" id="backupBtn">↑ پشتیبان</button>
-    <button class="tool" id="restoreBtn">↓ بازیابی</button>
-    <button class="tool danger" id="resetBtn">↻ ریست</button>
+    <div class="more-wrap">
+      <button class="tool" id="moreBtn" aria-expanded="false" aria-controls="moreMenu">••• بیشتر</button>
+      <div class="more-menu" id="moreMenu">
+        <button class="more-item" id="syncBtn">☁️ همگام‌سازی GitHub</button>
+        <button class="more-item" id="backupBtn">↑ پشتیبان‌گیری</button>
+        <button class="more-item" id="restoreBtn">↓ بازیابی پشتیبان</button>
+        <button class="more-item danger" id="resetBtn">↻ بازنشانی داده‌ها</button>
+      </div>
+    </div>
   </div>
 
   <div class="filters" id="filters"></div>
