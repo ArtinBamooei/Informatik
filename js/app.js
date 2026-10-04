@@ -648,7 +648,7 @@ container.addEventListener('click', e => {
       const old = s.progress[id];
       s.progress[id] = st;
       save();
-      markDay();
+      recordActivity();
       rerenderCard(id);
       updateOverall();
       checkAchievements();
@@ -678,8 +678,13 @@ container.addEventListener('click', e => {
       delete s.skillTime[id];
       expanded.delete(id);
       if (timer && timer.skillId === id){
-        timer.running = false; timer.skillId = null;
+        if(timer.running) commitSessionTime();
+        timer.running = false;
+        timer.skillId = null;
+        timer.sessionStart = null;
+        timer.sessionCommittedAt = null;
         stopTimerTick();
+        saveTimer();
       }
       save();
       render();
@@ -1034,8 +1039,14 @@ function saveTimer(){
 }
 
 // Add session time to current skill
+function beginTimerSession(){
+  const now=Date.now();
+  timer.sessionStart=now;
+  timer.sessionCommittedAt=now;
+}
+
 function commitSessionTime(){
-  if (!timer.skillId || !timer.sessionStart) return;
+  if(!timer.skillId || !timer.sessionStart) return;
   const now=Date.now();
   const from=Number(timer.sessionCommittedAt||timer.sessionStart);
   const elapsed=Math.max(0,(now-from)/1000);
@@ -1044,7 +1055,7 @@ function commitSessionTime(){
     save();
   }
   timer.sessionCommittedAt=now;
-  timer.sessionStart=null;
+  timer.sessionStart=timer.running ? now : null;
 }
 
 const PRESETS = [
@@ -1154,13 +1165,14 @@ document.getElementById('timerToggle').addEventListener('click', () => {
     if (timer.remaining <= 0) timer.remaining = timer.duration;
     timer.endTime = Date.now() + timer.remaining * 1000;
     timer.running = true;
-    timer.sessionStart = Date.now();
+    beginTimerSession();
+    recordActivity();
     s.timerStarted = (s.timerStarted || 0) + 1;
     save();
     saveTimer();
     startTimerTick();
     renderTimer();
-    markDay();
+    recordActivity();
     checkAchievements();
     vibrate(12);
     // re-render cards to show timed badge
@@ -1196,8 +1208,12 @@ function openSkillPicker(){
   // if timer was running with another skill, commit time first
   if (timer.running && timer.skillId !== s.skills[i].id){
     commitSessionTime();
+    timer.skillId = s.skills[i].id;
+    beginTimerSession();
+  } else {
+    timer.skillId = s.skills[i].id;
+    if(timer.running) beginTimerSession();
   }
-  timer.skillId = s.skills[i].id;
   saveTimer();
   renderTimer();
   render();
@@ -1774,8 +1790,7 @@ function init(){
           timerInterval = null;
           saveTimer();
         } else {
-          timer.sessionStart = Date.now();
-          timer.sessionCommittedAt = timer.sessionStart;
+          beginTimerSession();
         }
       }
       renderTimer();
