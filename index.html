@@ -9,51 +9,42 @@
 <style>
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 :root{
-  --bg:#08090d;
-  --bg-grad:none;
-  --card-bg:rgba(255,255,255,.045);
-  --accent:#8b5cf6;
-  --accent2:#22d3ee;
-  --text:#f5f7fb;
-  --dim:#9298a8;
-  --dimmer:#5d6373;
-  --line:rgba(255,255,255,.09);
-  --line2:rgba(255,255,255,.05);
+  --bg:#08090d;--bg-grad:none;--card-bg:rgba(255,255,255,.045);
+  --accent:#8b5cf6;--accent2:#22d3ee;--text:#f5f7fb;--dim:#9298a8;
+  --dimmer:#5d6373;--line:rgba(255,255,255,.09);--line2:rgba(255,255,255,.05);
 }
 html,body{margin:0;padding:0}
 body{
-  background:var(--bg);
-  background-image:var(--bg-grad);
-  background-attachment:fixed;
-  color:var(--text);
-  font-family:'Vazirmatn',system-ui,-apple-system,sans-serif;
+  background:var(--bg);background-image:var(--bg-grad);background-attachment:fixed;
+  color:var(--text);font-family:'Vazirmatn',system-ui,-apple-system,sans-serif;
   padding:max(20px,env(safe-area-inset-top)) 14px calc(60px + env(safe-area-inset-bottom));
-  transition:background-color .45s ease,color .35s ease;
-  min-height:100vh;
-  -webkit-font-smoothing:antialiased;
+  transition:background-color .45s ease,color .35s ease;min-height:100vh;
+  -webkit-font-smoothing:antialiased;overflow-x:hidden;
 }
+body.focus-mode{overflow:hidden}
 button,input,textarea,select{font:inherit;color:inherit}
 button{cursor:pointer;background:none;border:none}
 .wrap{max-width:720px;margin:auto}
 
 /* ═══ HEADER ═══ */
 header{text-align:center;margin-bottom:18px;animation:up .7s cubic-bezier(.2,.8,.2,1) both}
-.badge{display:inline-block;padding:6px 13px;border:1px solid var(--line);border-radius:99px;color:var(--dim);font-size:10.5px;letter-spacing:1px;font-weight:600}
-.badge::before{content:'●';color:#34d399;margin-left:6px;font-size:8px}
+.badge{display:inline-block;padding:6px 13px;border:1px solid var(--line);border-radius:99px;
+  color:var(--dim);font-size:10.5px;letter-spacing:1px;font-weight:600}
+.badge::before{content:'●';color:#34d399;margin-left:6px;font-size:8px;
+  animation:blink 2s ease-in-out infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
 h1{margin:14px 0 4px;font-size:clamp(30px,7vw,40px);font-weight:900;letter-spacing:-.02em;
   background:linear-gradient(110deg,var(--text),var(--accent),var(--accent2),var(--text));
   background-size:250% 100%;-webkit-background-clip:text;background-clip:text;
   -webkit-text-fill-color:transparent;animation:hue 8s linear infinite}
 @keyframes hue{to{background-position:250% 0}}
-.sub{color:var(--dimmer);font-size:10px;letter-spacing:2.5px;font-weight:600;font-family:'Space Grotesk',monospace}
+.sub{color:var(--dimmer);font-size:10px;letter-spacing:2.5px;font-weight:600;
+  font-family:'Space Grotesk',monospace}
 
 /* ═══ PANELS ═══ */
 .panel,.card,.section,.timer-box,.ach-box,.feature-box,.tool{
-  background:var(--card-bg);
-  border:1px solid var(--line);
-  border-radius:20px;
-  backdrop-filter:blur(20px);
-  -webkit-backdrop-filter:blur(20px);
+  background:var(--card-bg);border:1px solid var(--line);border-radius:20px;
+  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
   transition:background .4s ease,border-color .4s ease;
 }
 .panel{padding:18px;display:grid;grid-template-columns:130px 1fr;gap:20px;align-items:center;
@@ -70,7 +61,9 @@ h1{margin:14px 0 4px;font-size:clamp(30px,7vw,40px);font-weight:900;letter-spaci
 .ring-text small{font-size:9.5px;color:var(--dim);letter-spacing:1px}
 
 .stats{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.stat{padding:11px;border:1px solid var(--line2);border-radius:13px;background:rgba(0,0,0,.1)}
+.stat{padding:11px;border:1px solid var(--line2);border-radius:13px;background:rgba(0,0,0,.1);
+  transition:all .3s ease}
+.stat:hover{border-color:var(--line);background:rgba(0,0,0,.2)}
 .stat b{display:block;font:800 20px 'Space Grotesk',monospace;letter-spacing:-.02em;color:var(--text)}
 .stat span{font-size:10px;color:var(--dim);font-weight:500}
 .stat.streak b{color:#fbbf24}
@@ -89,17 +82,22 @@ h1{margin:14px 0 4px;font-size:clamp(30px,7vw,40px);font-weight:900;letter-spaci
 .quote-text{font-size:12px;line-height:1.85;color:var(--text);font-weight:500}
 .quote-text::before{content:'« ';color:var(--accent);font-weight:700}
 .quote-text::after{content:' »';color:var(--accent);font-weight:700}
+.quote-author{font-size:9.5px;color:var(--dimmer);margin-top:5px;letter-spacing:1px;text-align:left}
 
 /* ═══ TOOLBAR ═══ */
-.toolbar{display:flex;gap:7px;flex-wrap:wrap;margin:14px 0;animation:up .7s .15s cubic-bezier(.2,.8,.2,1) both}
+.toolbar{display:flex;gap:7px;flex-wrap:wrap;margin:14px 0;
+  animation:up .7s .15s cubic-bezier(.2,.8,.2,1) both}
 .tool{padding:10px 14px;font-size:11.5px;font-weight:700;color:var(--dim);
   border-radius:12px;cursor:pointer;display:inline-flex;align-items:center;gap:6px;
-  transition:all .25s ease;white-space:nowrap}
+  transition:all .25s ease;white-space:nowrap;position:relative;overflow:hidden}
 .tool:hover{color:var(--text);border-color:var(--line);background:var(--card-bg)}
 .tool:active{transform:scale(.95)}
-.tool.primary{color:var(--text);border-color:var(--accent);background:color-mix(in srgb,var(--accent) 12%,transparent)}
-.tool.primary:hover{background:color-mix(in srgb,var(--accent) 20%,transparent)}
+.tool.primary{color:var(--text);border-color:var(--accent);
+  background:color-mix(in srgb,var(--accent) 12%,transparent)}
 .tool.danger:hover{color:#f87171;border-color:rgba(248,113,113,.4);background:rgba(248,113,113,.08)}
+.tool .badge-num{position:absolute;top:-3px;left:-3px;min-width:16px;height:16px;
+  border-radius:8px;background:#ec4899;color:#fff;font-size:9px;font-weight:800;
+  display:grid;place-items:center;padding:0 4px;box-shadow:0 0 8px -2px #ec4899}
 
 /* ═══ FILTERS ═══ */
 .filters{display:flex;gap:7px;overflow-x:auto;scrollbar-width:none;margin-bottom:16px;
@@ -120,13 +118,17 @@ h1{margin:14px 0 4px;font-size:clamp(30px,7vw,40px);font-weight:900;letter-spaci
 .section-head .cnt{font:700 10px 'Space Grotesk',monospace;color:var(--dim);
   background:rgba(0,0,0,.2);border:1px solid var(--line2);padding:3px 9px;border-radius:99px}
 
-/* ═══ CARD (COLLAPSIBLE) ═══ */
+/* ═══ CARD ═══ */
 .card{margin-bottom:8px;padding:0;overflow:hidden;position:relative;
-  transition:all .3s cubic-bezier(.2,.9,.2,1)}
+  transition:all .3s cubic-bezier(.2,.9,.2,1);animation:up .5s cubic-bezier(.2,.8,.2,1) backwards}
 .card::before{content:'';position:absolute;top:0;left:8%;right:8%;height:1px;
   background:linear-gradient(90deg,transparent,var(--status),transparent);opacity:.5}
 .card.done{border-color:color-mix(in srgb,var(--status) 35%,transparent);
   box-shadow:0 0 26px -12px var(--status)}
+.card.timed{border-color:#fbbf24;box-shadow:0 0 26px -8px #fbbf24}
+.card.timed::before{background:linear-gradient(90deg,transparent,#fbbf24,transparent);opacity:1;
+  animation:pulse-glow 1.6s ease-in-out infinite}
+@keyframes pulse-glow{0%,100%{opacity:.7}50%{opacity:1}}
 
 .card-summary{display:flex;align-items:center;gap:11px;padding:13px 14px;cursor:pointer;
   -webkit-user-select:none;user-select:none}
@@ -143,6 +145,9 @@ h1{margin:14px 0 4px;font-size:clamp(30px,7vw,40px);font-weight:900;letter-spaci
   display:flex;align-items:center;gap:5px;letter-spacing:.3px}
 .card-summary .state::before{content:'';width:5px;height:5px;border-radius:50%;
   background:var(--status);box-shadow:0 0 6px var(--status)}
+.time-badge{font-size:9.5px;color:#fbbf24;font-weight:700;margin-right:6px;
+  padding:1px 6px;background:rgba(251,191,36,.12);border-radius:99px;
+  font-family:'Space Grotesk',monospace}
 .mini{width:48px;height:48px;position:relative;flex:0 0 auto}
 .mini svg{width:100%;height:100%;transform:rotate(-90deg);overflow:visible}
 .mini circle{fill:none;stroke-width:3.5}
@@ -157,10 +162,9 @@ h1{margin:14px 0 4px;font-size:clamp(30px,7vw,40px);font-weight:900;letter-spaci
 .card.expanded .expand-arrow{transform:rotate(180deg);color:var(--accent)}
 
 .card-body{max-height:0;overflow:hidden;transition:max-height .4s cubic-bezier(.2,.9,.2,1)}
-.card.expanded .card-body{max-height:600px}
+.card.expanded .card-body{max-height:800px}
 .card-body-inner{padding:0 14px 14px;border-top:1px solid var(--line2);padding-top:12px}
 
-/* Status buttons */
 .statuses{display:grid;grid-template-columns:repeat(4,1fr);gap:5px}
 .status{padding:9px 3px;border-radius:11px;font-size:10.5px;font-weight:700;
   color:var(--dim);background:rgba(0,0,0,.15);border:1px solid var(--line2);
@@ -173,7 +177,6 @@ h1{margin:14px 0 4px;font-size:clamp(30px,7vw,40px);font-weight:900;letter-spaci
 .status.active .n{background:rgba(0,0,0,.2);color:#fff;border-color:transparent}
 .status:active{transform:scale(.94)}
 
-/* Card tools */
 .tools-row{display:flex;gap:6px;margin-top:9px}
 .tool-btn{flex:1;padding:9px 6px;border-radius:11px;font-size:11px;font-weight:700;
   color:var(--dim);background:rgba(0,0,0,.15);border:1px solid var(--line2);
@@ -183,10 +186,10 @@ h1{margin:14px 0 4px;font-size:clamp(30px,7vw,40px);font-weight:900;letter-spaci
 .tool-btn:active{transform:scale(.95)}
 .tool-btn.has-note{color:var(--accent);border-color:color-mix(in srgb,var(--accent) 35%,transparent);
   background:color-mix(in srgb,var(--accent) 8%,transparent)}
+.tool-btn.focus-btn{color:var(--accent2)}
 .tool-btn .dot-badge{position:absolute;top:5px;left:5px;width:5px;height:5px;border-radius:50%;
   background:currentColor;box-shadow:0 0 6px currentColor}
 
-/* Notes & Subtasks */
 .panel-inner{margin-top:10px;padding-top:10px;border-top:1px solid var(--line2);display:none}
 .panel-inner.open{display:block;animation:up .3s cubic-bezier(.2,.8,.2,1) both}
 .note-area{width:100%;min-height:70px;resize:vertical;background:rgba(0,0,0,.25);
@@ -209,10 +212,20 @@ h1{margin:14px 0 4px;font-size:clamp(30px,7vw,40px);font-weight:900;letter-spaci
 .sub-item .sub-rm:hover{color:#f87171}
 
 /* ═══ TIMER ═══ */
-.timer-box{margin-top:16px;padding:20px;text-align:center;animation:up .7s .25s cubic-bezier(.2,.8,.2,1) both}
+.timer-box{margin-top:16px;padding:20px;text-align:center;
+  animation:up .7s .25s cubic-bezier(.2,.8,.2,1) both}
 .timer-title{font:700 10px 'Space Grotesk',monospace;letter-spacing:1.8px;
   color:var(--dim);text-transform:uppercase;margin-bottom:14px}
-.timer-display{font:700 52px 'Space Grotesk',monospace;letter-spacing:-.04em;
+.timer-skill{display:inline-flex;align-items:center;gap:8px;padding:8px 14px;
+  background:rgba(0,0,0,.2);border:1px solid var(--line2);border-radius:99px;
+  margin-bottom:14px;font-size:12px;font-weight:700;cursor:pointer;
+  transition:all .25s ease}
+.timer-skill:hover{border-color:var(--accent)}
+.timer-skill .dot{width:7px;height:7px;border-radius:50%;
+  background:var(--accent);box-shadow:0 0 8px var(--accent)}
+.timer-skill.empty{color:var(--dim)}
+.timer-skill.empty .dot{background:var(--dimmer);box-shadow:none}
+.timer-display{font:700 56px 'Space Grotesk',monospace;letter-spacing:-.04em;
   line-height:1;color:var(--text);margin-bottom:6px;
   text-shadow:0 0 30px color-mix(in srgb,var(--accent) 40%,transparent)}
 .timer-display .cs{font-size:26px;color:var(--accent);margin-right:3px;
@@ -220,7 +233,8 @@ h1{margin:14px 0 4px;font-size:clamp(30px,7vw,40px);font-weight:900;letter-spaci
 .timer-display.running .cs{animation:pulse-cs .5s ease-in-out infinite}
 @keyframes pulse-cs{0%,100%{opacity:1}50%{opacity:.55}}
 .timer-bar{height:6px;background:rgba(0,0,0,.3);border-radius:99px;overflow:hidden;margin:14px 0}
-.timer-bar i{display:block;height:100%;width:100%;background:linear-gradient(90deg,var(--accent2),var(--accent));
+.timer-bar i{display:block;height:100%;width:100%;
+  background:linear-gradient(90deg,var(--accent2),var(--accent));
   transform-origin:right;transition:width .3s linear;border-radius:99px;
   box-shadow:0 0 12px var(--accent)}
 .timer-controls{display:flex;gap:8px;justify-content:center}
@@ -232,7 +246,8 @@ h1{margin:14px 0 4px;font-size:clamp(30px,7vw,40px);font-weight:900;letter-spaci
 .timer-presets{display:flex;gap:6px;justify-content:center;margin-bottom:14px;flex-wrap:wrap}
 .timer-presets button{padding:6px 12px;border-radius:99px;font-size:11px;font-weight:700;
   background:rgba(0,0,0,.2);border:1px solid var(--line2);color:var(--dim);transition:all .2s}
-.timer-presets button.active{color:var(--text);border-color:var(--accent2);background:color-mix(in srgb,var(--accent2) 12%,transparent)}
+.timer-presets button.active{color:var(--text);border-color:var(--accent2);
+  background:color-mix(in srgb,var(--accent2) 12%,transparent)}
 
 /* ═══ ACHIEVEMENTS ═══ */
 .ach-box{margin-top:16px;padding:18px;animation:up .7s .3s cubic-bezier(.2,.8,.2,1) both}
@@ -252,17 +267,19 @@ h1{margin:14px 0 4px;font-size:clamp(30px,7vw,40px);font-weight:900;letter-spaci
 .ach small{font-size:9.5px;color:var(--dim);line-height:1.4;display:block}
 .ach.unlocked::after{content:'✓';position:absolute;top:8px;left:8px;width:18px;height:18px;
   border-radius:50%;background:#34d399;color:#050508;display:grid;place-items:center;
-  font-size:10px;font-weight:900;box-shadow:0 0 10px -2px #34d399}
+  font-size:10px;font-weight:900;box-shadow:0 0 10px -2px #34d399;
+  animation:pop .5s cubic-bezier(.2,1.6,.4,1) both}
+@keyframes pop{from{transform:scale(0) rotate(-90deg)}to{transform:scale(1) rotate(0)}}
 
 /* ═══ MODAL ═══ */
 .mb{position:fixed;inset:0;background:rgba(0,0,0,.78);backdrop-filter:blur(10px);
   -webkit-backdrop-filter:blur(10px);z-index:1000;display:none;
-  align-items:center;justify-content:center;padding:16px}
+  align-items:center;justify-content:center;padding:16px;overflow-y:auto}
 .mb.open{display:flex;animation:fadeIn .3s ease}
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}
 .modal{width:min(520px,100%);max-height:88vh;overflow-y:auto;
   background:var(--bg);border:1px solid var(--line);border-radius:24px;padding:22px;
-  box-shadow:0 30px 80px -20px rgba(0,0,0,.85);
+  box-shadow:0 30px 80px -20px rgba(0,0,0,.85);margin:auto;
   animation:up .35s cubic-bezier(.2,.9,.2,1) both}
 .modal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;gap:10px}
 .modal-head h3{font-size:16px;font-weight:800;letter-spacing:-.01em;
@@ -302,13 +319,15 @@ h1{margin:14px 0 4px;font-size:clamp(30px,7vw,40px);font-weight:900;letter-spaci
 .preview-row .pv-cat{font-size:10.5px;color:var(--dim);margin-top:2px}
 
 .modal-foot{display:grid;grid-template-columns:1fr 1.5fr;gap:9px;margin-top:8px}
+.modal-foot.three{grid-template-columns:1fr 1fr 1.5fr}
 .btn{padding:13px;border-radius:13px;font-size:13.5px;font-weight:700;
   transition:all .25s;font-family:inherit}
 .btn-cancel{background:rgba(0,0,0,.2);color:var(--dim);border:1px solid var(--line)}
 .btn-cancel:hover{color:var(--text)}
 .btn-save{background:linear-gradient(120deg,var(--accent),var(--accent2));
-  color:#050508;font-weight:800;
-  box-shadow:0 8px 24px -8px var(--accent)}
+  color:#050508;font-weight:800;box-shadow:0 8px 24px -8px var(--accent)}
+.btn-secondary{background:rgba(0,0,0,.2);color:var(--text);border:1px solid var(--line)}
+.btn-secondary:hover{border-color:var(--accent)}
 .btn:active{transform:scale(.96)}
 
 /* ═══ THEME PICKER ═══ */
@@ -328,16 +347,94 @@ h1{margin:14px 0 4px;font-size:clamp(30px,7vw,40px);font-weight:900;letter-spaci
   place-items:center;font-size:12px;font-weight:900}
 .theme-option.active .th-check{display:grid}
 
+/* ═══ STATS ═══ */
+.stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
+.stat-tile{padding:14px;border-radius:14px;background:rgba(0,0,0,.2);
+  border:1px solid var(--line2);text-align:center}
+.stat-tile b{display:block;font:800 22px 'Space Grotesk',monospace;
+  color:var(--accent);letter-spacing:-.03em}
+.stat-tile span{font-size:10.5px;color:var(--dim);margin-top:4px;display:block}
+.chart-title{font:700 10px 'Space Grotesk',monospace;letter-spacing:1.5px;
+  text-transform:uppercase;color:var(--dim);margin-bottom:10px}
+.chart-row{display:flex;align-items:center;gap:10px;margin-bottom:8px;font-size:12px}
+.chart-row .label{width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+  font-weight:600;color:var(--text)}
+.chart-row .bar-bg{flex:1;height:10px;background:rgba(0,0,0,.3);border-radius:99px;overflow:hidden}
+.chart-row .bar-fill{height:100%;background:linear-gradient(90deg,var(--accent2),var(--accent));
+  border-radius:99px;transition:width 1s cubic-bezier(.2,.9,.2,1);min-width:2px;
+  box-shadow:0 0 8px var(--accent)}
+.chart-row .val{font-family:'Space Grotesk',monospace;font-size:10.5px;color:var(--dim);
+  font-weight:700;min-width:48px;text-align:left}
+.days-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-top:8px}
+.day-cell{aspect-ratio:1;border-radius:8px;background:rgba(0,0,0,.25);
+  border:1px solid var(--line2);display:grid;place-items:center;
+  font-size:9px;color:var(--dimmer);font-family:'Space Grotesk',monospace;
+  transition:all .3s}
+.day-cell.active{background:color-mix(in srgb,var(--accent) 25%,transparent);
+  border-color:var(--accent);color:#fff;font-weight:700;
+  box-shadow:0 0 10px -2px var(--accent)}
+.day-cell.today{border-color:var(--accent2);border-width:2px}
+
+/* ═══ FOCUS MODE ═══ */
+.focus-overlay{position:fixed;inset:0;z-index:2000;background:var(--bg);
+  background-image:var(--bg-grad);display:none;flex-direction:column;
+  align-items:center;justify-content:center;padding:24px;overflow-y:auto}
+.focus-overlay.open{display:flex;animation:fadeIn .35s ease}
+.focus-close{position:absolute;top:max(20px,env(safe-area-inset-top));left:20px;
+  width:44px;height:44px;border-radius:14px;background:rgba(255,255,255,.05);
+  border:1px solid var(--line);color:var(--text);font-size:18px;display:grid;place-items:center;
+  transition:all .25s;z-index:10}
+.focus-close:hover{background:rgba(248,113,113,.15);border-color:#f87171;color:#f87171}
+.focus-icon{font-size:90px;margin-bottom:16px;animation:float 3s ease-in-out infinite}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+.focus-name{font-size:32px;font-weight:900;letter-spacing:-.03em;text-align:center;
+  background:linear-gradient(120deg,var(--text),var(--accent),var(--accent2),var(--text));
+  background-size:250% 100%;-webkit-background-clip:text;background-clip:text;
+  -webkit-text-fill-color:transparent;animation:hue 6s linear infinite;
+  margin-bottom:10px;padding:0 20px}
+.focus-status{font-size:12px;color:var(--dim);margin-bottom:24px;font-weight:600;
+  display:flex;align-items:center;gap:6px}
+.focus-status::before{content:'';width:6px;height:6px;border-radius:50%;
+  background:var(--status);box-shadow:0 0 8px var(--status)}
+.focus-ring{width:200px;height:200px;position:relative;margin:0 auto 24px}
+.focus-ring svg{width:100%;height:100%;transform:rotate(-90deg);overflow:visible}
+.focus-ring circle{fill:none;stroke-width:10}
+.focus-ring .t{stroke:rgba(255,255,255,.06)}
+.focus-ring .f{stroke:var(--status);stroke-linecap:round;
+  stroke-dasharray:565;stroke-dashoffset:565;
+  transition:stroke-dashoffset .8s cubic-bezier(.2,.9,.2,1),stroke .4s;
+  filter:drop-shadow(0 0 12px var(--status))}
+.focus-ring .inner{position:absolute;inset:0;display:grid;place-content:center;text-align:center}
+.focus-ring .inner .num{font:800 44px 'Space Grotesk',monospace;letter-spacing:-.04em}
+.focus-ring .inner .lbl{font-size:10px;color:var(--dim);letter-spacing:2px;
+  text-transform:uppercase;margin-top:2px}
+.focus-timer{font:700 48px 'Space Grotesk',monospace;letter-spacing:-.04em;
+  color:#fbbf24;margin-bottom:16px;text-shadow:0 0 30px rgba(251,191,36,.5)}
+.focus-timer .cs{font-size:22px;color:#f59e0b;margin-right:3px}
+.focus-actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:12px;
+  max-width:400px}
+.focus-actions button{padding:12px 18px;border-radius:13px;font-size:12.5px;font-weight:700;
+  background:rgba(255,255,255,.05);border:1px solid var(--line);color:var(--dim);
+  transition:all .25s;display:flex;align-items:center;gap:6px}
+.focus-actions button:hover{color:var(--text);border-color:var(--accent)}
+.focus-actions button.primary{color:#050508;background:var(--accent);border-color:var(--accent)}
+.focus-actions button:active{transform:scale(.94)}
+.focus-total{font-size:11px;color:var(--dim);margin-top:14px;font-family:'Space Grotesk',monospace}
+.focus-total b{color:#fbbf24;font-weight:700}
+
 /* ═══ TOAST & CONFETTI ═══ */
 .toast{position:fixed;bottom:calc(24px + env(safe-area-inset-bottom));left:50%;
   transform:translate(-50%,90px);opacity:0;background:#181a22;color:#fff;
   border:1px solid rgba(255,255,255,.1);padding:12px 20px;border-radius:99px;
-  z-index:999;font-size:12px;font-weight:600;transition:all .4s cubic-bezier(.2,.9,.2,1);
+  z-index:9999;font-size:12px;font-weight:600;transition:all .4s cubic-bezier(.2,.9,.2,1);
   box-shadow:0 20px 50px -10px rgba(0,0,0,.9);pointer-events:none;
   white-space:nowrap;max-width:90vw;overflow:hidden;text-overflow:ellipsis}
 .toast.show{transform:translate(-50%,0);opacity:1}
-.conf{position:fixed;width:8px;height:8px;border-radius:2px;z-index:998;
+.conf{position:fixed;width:8px;height:8px;border-radius:2px;z-index:9998;
   pointer-events:none;will-change:transform,opacity}
+.ripple{position:absolute;border-radius:50%;background:currentColor;opacity:.35;
+  transform:scale(0);animation:ripple .6s ease-out;pointer-events:none}
+@keyframes ripple{to{transform:scale(4);opacity:0}}
 
 @keyframes up{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
 
@@ -350,10 +447,12 @@ h1{margin:14px 0 4px;font-size:clamp(30px,7vw,40px);font-weight:900;letter-spaci
   .statuses{grid-template-columns:1fr 1fr}
   .ach-grid{grid-template-columns:1fr}
   .modal-foot{grid-template-columns:1fr}
+  .modal-foot.three{grid-template-columns:1fr}
   .icon-grid{grid-template-columns:repeat(6,1fr)}
-}
-@media (min-width:600px){
-  .statuses{grid-template-columns:repeat(4,1fr)}
+  .focus-name{font-size:26px}
+  .focus-ring{width:160px;height:160px}
+  .focus-ring .inner .num{font-size:36px}
+  .stats-grid{grid-template-columns:1fr}
 }
 @media (prefers-reduced-motion:reduce){
   *{animation-duration:.001ms !important;transition-duration:.001ms !important}
@@ -363,7 +462,6 @@ h1{margin:14px 0 4px;font-size:clamp(30px,7vw,40px);font-weight:900;letter-spaci
 <body>
 
 <div class="wrap">
-
   <header>
     <div class="badge">AUTO SAVED</div>
     <h1>مسیر یادگیری</h1>
@@ -403,23 +501,30 @@ h1{margin:14px 0 4px;font-size:clamp(30px,7vw,40px);font-weight:900;letter-spaci
     <div class="feature-box">
       <div class="feature-title">Daily quote</div>
       <div class="quote-text" id="quote"></div>
+      <div class="quote-author" id="quoteAuthor"></div>
     </div>
   </div>
 
   <div class="toolbar">
     <button class="tool primary" id="addBtn">＋ مهارت جدید</button>
-    <button class="tool" id="themeBtn">🎨 تم رنگی</button>
+    <button class="tool" id="statsBtn">📊 آمار</button>
+    <button class="tool" id="reminderBtn">🔔 یادآوری</button>
+    <button class="tool" id="syncBtn">☁️ همگام</button>
+    <button class="tool" id="themeBtn">🎨 تم</button>
     <button class="tool" id="backupBtn">↑ پشتیبان</button>
     <button class="tool" id="restoreBtn">↓ بازیابی</button>
     <button class="tool danger" id="resetBtn">↻ ریست</button>
   </div>
 
   <div class="filters" id="filters"></div>
-
   <div id="container"></div>
 
   <section class="timer-box">
     <div class="timer-title">Study Timer</div>
+    <button class="timer-skill empty" id="timerSkillBtn">
+      <span class="dot"></span>
+      <span id="timerSkillName">انتخاب مهارت...</span>
+    </button>
     <div class="timer-display" id="timerDisplay">25:00<span class="cs">.00</span></div>
     <div class="timer-bar"><i id="timerBar"></i></div>
     <div class="timer-presets" id="timerPresets"></div>
@@ -433,10 +538,9 @@ h1{margin:14px 0 4px;font-size:clamp(30px,7vw,40px);font-weight:900;letter-spaci
     <div class="ach-title">Achievements</div>
     <div class="ach-grid" id="achGrid"></div>
   </section>
-
 </div>
 
-<!-- ═══ ADD SKILL MODAL ═══ -->
+<!-- ═══ MODALS ═══ -->
 <div class="mb" id="addModal">
   <div class="modal">
     <div class="modal-head">
@@ -466,7 +570,6 @@ h1{margin:14px 0 4px;font-size:clamp(30px,7vw,40px);font-weight:900;letter-spaci
   </div>
 </div>
 
-<!-- ═══ THEME MODAL ═══ -->
 <div class="mb" id="themeModal">
   <div class="modal">
     <div class="modal-head">
@@ -475,6 +578,97 @@ h1{margin:14px 0 4px;font-size:clamp(30px,7vw,40px);font-weight:900;letter-spaci
     </div>
     <div class="theme-list" id="themeList"></div>
   </div>
+</div>
+
+<div class="mb" id="statsModal">
+  <div class="modal">
+    <div class="modal-head">
+      <h3>📊 آمار پیشرفت</h3>
+      <button class="modal-close" data-close="statsModal">✕</button>
+    </div>
+    <div id="statsContent"></div>
+  </div>
+</div>
+
+<div class="mb" id="reminderModal">
+  <div class="modal">
+    <div class="modal-head">
+      <h3>🔔 یادآوری روزانه</h3>
+      <button class="modal-close" data-close="reminderModal">✕</button>
+    </div>
+    <div class="field">
+      <label>وضعیت</label>
+      <div class="modal-foot" style="grid-template-columns:1fr 1fr;gap:8px">
+        <button class="btn btn-secondary" id="reminderOn">فعال</button>
+        <button class="btn btn-cancel" id="reminderOff">غیرفعال</button>
+      </div>
+    </div>
+    <div class="field">
+      <label>ساعت یادآوری</label>
+      <input type="time" class="input" id="reminderTime" value="20:00">
+    </div>
+    <p style="font-size:11.5px;color:var(--dim);line-height:1.8;margin-bottom:14px">
+      🔔 برای اینکه یادآوری کار کنه، باید اجازه‌ی نوتیفیکیشن بدی. اگه مرورگر بسته باشه، نوتیفیکیشن نمیاد — ولی دفعه بعد که باز کنی، اگه ساعت گذشته باشه، یادآوری می‌بینی.
+    </p>
+    <div class="modal-foot">
+      <button class="btn btn-cancel" data-close="reminderModal">بستن</button>
+      <button class="btn btn-save" id="reminderSave">ذخیره</button>
+    </div>
+  </div>
+</div>
+
+<div class="mb" id="syncModal">
+  <div class="modal">
+    <div class="modal-head">
+      <h3>☁️ همگام‌سازی بین دستگاه‌ها</h3>
+      <button class="modal-close" data-close="syncModal">✕</button>
+    </div>
+    <p style="font-size:11.5px;color:var(--dim);line-height:1.8;margin-bottom:14px">
+      با GitHub Gist می‌تونی داده‌هات رو بین گوشی و لپ‌تاپ سینک کنی. فقط یه توکن از GitHub لازمه.
+    </p>
+    <div class="field">
+      <label>GitHub Token</label>
+      <input type="password" class="input" id="syncToken" placeholder="ghp_...">
+    </div>
+    <div class="field">
+      <label>Gist ID (اختیاری)</label>
+      <input type="text" class="input" id="syncGist" placeholder="خالی بذار تا خودش بسازه">
+    </div>
+    <p style="font-size:10.5px;color:var(--dimmer);line-height:1.7;margin-bottom:14px">
+      ساخت توکن: github.com/settings/tokens → Generate new token (classic) → فقط دسترسی <b>gist</b>
+    </p>
+    <div class="modal-foot three">
+      <button class="btn btn-secondary" id="syncPull">↓ دریافت</button>
+      <button class="btn btn-secondary" id="syncPush">↑ ارسال</button>
+      <button class="btn btn-save" id="syncSave">ذخیره</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ FOCUS OVERLAY ═══ -->
+<div class="focus-overlay" id="focusOverlay">
+  <button class="focus-close" id="focusClose">✕</button>
+  <div class="focus-icon" id="focusIcon">🎯</div>
+  <div class="focus-name" id="focusName">مهارت</div>
+  <div class="focus-status" id="focusStatus">شروع</div>
+  <div class="focus-ring">
+    <svg viewBox="0 0 200 200">
+      <circle class="t" cx="100" cy="100" r="90"/>
+      <circle class="f" id="focusRingFill" cx="100" cy="100" r="90"/>
+    </svg>
+    <div class="inner">
+      <div class="num" id="focusPct">0%</div>
+      <div class="lbl">پیشرفت</div>
+    </div>
+  </div>
+  <div class="focus-timer" id="focusTimer">25:00<span class="cs">.00</span></div>
+  <div class="focus-actions">
+    <button class="primary" id="focusTimerBtn">▶ شروع تایمر</button>
+    <button id="focusStatusBtn">تغییر وضعیت</button>
+    <button id="focusNotesBtn">📝 یادداشت</button>
+    <button id="focusSubsBtn">✓ زیرموضوع‌ها</button>
+  </div>
+  <div class="focus-total">زمان این مهارت: <b id="focusTotalTime">0m</b></div>
 </div>
 
 <div class="toast" id="toast"></div>
@@ -521,29 +715,25 @@ const THEMES = {
     name:'بنفش کهکشانی', bg:'#08090d',
     grad:'radial-gradient(800px 500px at 85% -10%,rgba(139,92,246,.22),transparent 60%),radial-gradient(700px 400px at 5% 5%,rgba(34,211,238,.12),transparent 60%)',
     card:'rgba(255,255,255,.045)', accent:'#8b5cf6', accent2:'#22d3ee',
-    text:'#f5f7fb', dim:'#9298a8',
-    line:'rgba(255,255,255,.09)'
+    text:'#f5f7fb', dim:'#9298a8', line:'rgba(255,255,255,.09)'
   },
   ocean: {
     name:'اقیانوس عمیق', bg:'#040d17',
     grad:'radial-gradient(800px 500px at 85% -10%,rgba(6,182,212,.28),transparent 60%),radial-gradient(700px 400px at 5% 5%,rgba(59,130,246,.18),transparent 60%)',
     card:'rgba(56,189,248,.06)', accent:'#06b6d4', accent2:'#3b82f6',
-    text:'#e0f2fe', dim:'#7ea3c2',
-    line:'rgba(56,189,248,.18)'
+    text:'#e0f2fe', dim:'#7ea3c2', line:'rgba(56,189,248,.18)'
   },
   sunset: {
     name:'غروب آتشین', bg:'#130604',
     grad:'radial-gradient(800px 500px at 85% -10%,rgba(249,115,22,.3),transparent 60%),radial-gradient(700px 400px at 5% 5%,rgba(236,72,153,.22),transparent 60%)',
     card:'rgba(249,115,22,.07)', accent:'#f97316', accent2:'#ec4899',
-    text:'#fef3e2', dim:'#c99e7e',
-    line:'rgba(249,115,22,.2)'
+    text:'#fef3e2', dim:'#c99e7e', line:'rgba(249,115,22,.2)'
   },
   forest: {
     name:'جنگل کوهستانی', bg:'#041008',
     grad:'radial-gradient(800px 500px at 85% -10%,rgba(16,185,129,.28),transparent 60%),radial-gradient(700px 400px at 5% 5%,rgba(132,204,22,.18),transparent 60%)',
     card:'rgba(16,185,129,.06)', accent:'#10b981', accent2:'#84cc16',
-    text:'#e7fbec', dim:'#82a895',
-    line:'rgba(16,185,129,.2)'
+    text:'#e7fbec', dim:'#82a895', line:'rgba(16,185,129,.2)'
   }
 };
 
@@ -551,18 +741,52 @@ const ICONS = [
   '🔢','🐼','📈','🎨','🗄️','💾','🔄','🔌','🐳','🌿','🤖','📊','🧠','💻',
   '📚','📝','🧪','⚙️','🛠️','🧩','📦','🔬','🖥️','🌐','🚀','🎯','📐','📋',
   '🐍','🔮','⚡','🔥','💡','🎓','🏆','⭐','💎','🎪','🎭','🎬','🎵','🎮',
-  '☁️','🌍','🧬','🔐','🎨','📷','☕','🍕'
+  '☁️','🌍','🧬','🔐','📷','☕','🍕','🌊'
 ];
 
 const QUOTES = [
-  'پیشرفت کوچک روزانه از جهش‌های گاه‌به‌گاه پایدارتر است.',
-  'ثبات، مزیت رقابتی یادگیری است.',
-  'پروژه، آزمون واقعی فهم است.',
-  'اول درست بفهم؛ بعد سریع اجرا کن.',
-  'یک ساعت عمیق از چند ساعت پراکنده ارزشمندتر است.',
-  'هر مهارت با تکرار از دانستن به توانستن تبدیل می‌شود.',
-  'امروز کاری رو بکن که دیگران نمی‌کنن، فردا کارهایی رو بکن که دیگران نمی‌تونن.',
-  'بهترین زمان برای شروع، همین لحظه‌ست.'
+  {t:'پیشرفت کوچک روزانه از جهش‌های گاه‌به‌گاه پایدارتر است.', a:'ناشناس'},
+  {t:'ثبات، مزیت رقابتی یادگیری است.', a:'ناشناس'},
+  {t:'پروژه، آزمون واقعی فهم است.', a:'ناشناس'},
+  {t:'اول درست بفهم؛ بعد سریع اجرا کن.', a:'ناشناس'},
+  {t:'یک ساعت عمیق از چند ساعت پراکنده ارزشمندتر است.', a:'کال نیوپورت'},
+  {t:'هر مهارت با تکرار از دانستن به توانستن تبدیل می‌شود.', a:'ناشناس'},
+  {t:'امروز کاری رو بکن که دیگران نمی‌کنن، فردا کارهایی رو بکن که دیگران نمی‌تونن.', a:'جری رایس'},
+  {t:'بهترین زمان برای شروع، همین لحظه‌ست.', a:'ناشناس'},
+  {t:'موفقیت، مجموع تلاش‌های کوچیک روزانه‌ست.', a:'رابرت کولیر'},
+  {t:'اگه می‌خوای سریع بری، تنها برو. اگه می‌خوای دور بری، با هم برو.', a:'ضرب‌المثل آفریقایی'},
+  {t:'تنها راه یادگیری سریع، اشتباه کردن سریعه.', a:'ناشناس'},
+  {t:'زنجیر عادت‌ها در روز اول خیلی سبک‌تر از روز آخرشه.', a:'وارن بافت'},
+  {t:'آدمی که هرگز اشتباه نکرده، هرگز چیز جدیدی رو امتحان نکرده.', a:'اینشتین'},
+  {t:'مغزت مثل عضله‌ست، هر چقدر بیشتر تمرین بدی قوی‌تر می‌شه.', a:'ناشناس'},
+  {t:'سرمایه‌گذاری روی خودت، بهترین سرمایه‌گذاریه.', a:'بنجامین فرانکلین'},
+  {t:'کسانی که فکر می‌کنن می‌تونن و کسانی که فکر می‌کنن نمی‌تونن، هر دو راست می‌گن.', a:'هنری فورد'},
+  {t:'اگه یاد نگیری، تکرار می‌کنی.', a:'ناشناس'},
+  {t:'دانش، قدرت است.', a:'فرانسیس بیکن'},
+  {t:'وقتی تدریس می‌کنی، دو بار یاد می‌گیری.', a:'ژوزف ژوبرت'},
+  {t:'کسی که هر روز کمی جلو بره، سالی ۳۶۵ قدم جلوتره.', a:'ناشناس'},
+  {t:'کار سخت، شانس رو شکست می‌ده.', a:'ناشناس'},
+  {t:'تنها مانع بین تو و هدفت، خودته.', a:'ناشناس'},
+  {t:'یادگیری، سرمایه‌گذاریه که هیچ‌وقت ارزشش رو از دست نمی‌ده.', a:'ناشناس'},
+  {t:'چیزی که اندازه‌گیری نشه، بهبود پیدا نمی‌کنه.', a:'پیتر دراکر'},
+  {t:'دانستن کافی نیست، باید به کار ببندی.', a:'گوته'},
+  {t:'هر روز که بیدار می‌شی، یه فرصت جدید داری.', a:'ناشناس'},
+  {t:'سختی امروز، آسونی فرداست.', a:'ناشناس'},
+  {t:'شکست، پله‌ی موفقیت است، نه پایان راه.', a:'ناشناس'},
+  {t:'بهترین سرمایه‌گذاری، روی خودته.', a:'وارن بافت'},
+  {t:'آدم موفق کسیه که از اشتباهاتش درس می‌گیره.', a:'ناشناس'},
+  {t:'تغییر، سخته ولی موندن توی جای بد، سخت‌تره.', a:'ناشناس'},
+  {t:'اگه کاری رو دوست نداری، حداقل درست انجامش بده.', a:'ناشناس'},
+  {t:'موفقیت یه شبه نمیاد، از تلاش‌های پشت‌سرهم میاد.', a:'ناشناس'},
+  {t:'زمانی که به یادگیری اختصاص می‌دی، هرگز هدر نمی‌ره.', a:'ناشناس'},
+  {t:'خودت رو با دیروزت مقایسه کن، نه با دیگران.', a:'ناشناس'},
+  {t:'کارهای بزرگ، از قدم‌های کوچیک شروع می‌شن.', a:'ناشناس'},
+  {t:'اگه امروز سخت کار نکنی، فردا سخت‌تر می‌شه.', a:'ناشناس'},
+  {t:'عادت‌های کوچیک، نتایج بزرگ می‌سازن.', a:'جیمز کلیر'},
+  {t:'بهترین راه یادگیری، انجام دادنه.', a:'ناشناس'},
+  {t:'درسی که با سختی یاد بگیری، فراموش نمی‌شه.', a:'ناشناس'},
+  {t:'آینده متعلق به کسانی‌ست که امروز یاد می‌گیرن.', a:'ناشناس'},
+  {t:'اگه رؤیاش رو داری، پس انجامش بده.', a:'ناشناس'}
 ];
 
 const ACH = [
@@ -576,14 +800,16 @@ const ACH = [
   {id:'editor', icon:'⚙️', name:'شخصی‌ساز',    desc:'اولین مهارت خودت رو ساختی',     test:()=>s.customCount>0},
   {id:'note',   icon:'📝', name:'یادداشت‌بردار',desc:'اولین یادداشتت رو نوشتی',      test:()=>Object.keys(s.notes).some(k=>(s.notes[k]||'').trim())},
   {id:'subs',   icon:'✓',  name:'زیرموضوع‌ساز', desc:'۱۰ زیرموضوع تیک خورد',         test:()=>{let n=0;Object.keys(s.subs).forEach(k=>n+=s.subs[k].filter(x=>x.done).length);return n>=10;}},
-  {id:'time1',  icon:'⏱️', name:'یک ساعت',     desc:'یه ساعت مطالعه کردی',            test:()=>s.studyTime>=3600},
-  {id:'time10', icon:'🧠', name:'ده ساعت',     desc:'۱۰ ساعت مطالعه کردی',            test:()=>s.studyTime>=36000}
+  {id:'time1',  icon:'⏱️', name:'یک ساعت',     desc:'یه ساعت مطالعه کردی',            test:()=>totalTime()>=3600},
+  {id:'time10', icon:'🧠', name:'ده ساعت',     desc:'۱۰ ساعت مطالعه کردی',            test:()=>totalTime()>=36000},
+  {id:'timer1', icon:'⏲️', name:'اولین تایمر', desc:'اولین بار تایمر رو زدی',         test:()=>s.timerStarted>0},
+  {id:'focus1', icon:'🎯', name:'تمرکز عمیق',  desc:'اولین بار حالت Focus رو زدی',   test:()=>s.focusUsed>0}
 ];
 
 /* ═══════════════════════════════════════════
    STATE
    ═══════════════════════════════════════════ */
-const KEY = 'informatik-v8';
+const KEY = 'informatik-v9';
 
 function uid(){ return 'sk_'+Date.now().toString(36)+Math.random().toString(36).slice(2,6); }
 
@@ -592,36 +818,38 @@ try { s = JSON.parse(localStorage.getItem(KEY) || 'null'); } catch(e){ s = null;
 
 if (!s || typeof s !== 'object') s = {};
 
-// Migration from old versions
+// Migrate from v8 if empty
 if (!s.skills || !Array.isArray(s.skills) || s.skills.length === 0){
-  // Check old v7
   try {
-    const old = JSON.parse(localStorage.getItem('informatik-v7') || 'null');
-    if (old && typeof old === 'object'){
+    const old = JSON.parse(localStorage.getItem('informatik-v8') || localStorage.getItem('informatik-v7') || 'null');
+    if (old && typeof old === 'object' && old.skills){
       s = {
-        skills: DEFAULT_SKILLS.slice(),
+        skills: old.skills,
         progress: old.progress || {},
         notes: old.notes || {},
         subs: old.subs || {},
-        order: old.order || DEFAULT_SKILLS.map(x=>x.id),
+        order: old.order || old.skills.map(x=>x.id),
         dates: old.dates || [],
         theme: old.theme || 'violet',
         unlocked: old.unlocked || [],
-        studyTime: 0,
-        customCount: 0
+        studyTime: old.studyTime || 0,
+        skillTime: {},
+        customCount: old.customCount || 0,
+        reminder: { enabled: false, time: '20:00', lastNotified: null },
+        sync: { token: '', gistId: '', lastSync: null },
+        timerStarted: 0,
+        focusUsed: 0
       };
     } else {
       s = {
         skills: DEFAULT_SKILLS.slice(),
-        progress: {},
-        notes: {},
-        subs: {},
+        progress: {}, notes: {}, subs: {},
         order: DEFAULT_SKILLS.map(x=>x.id),
-        dates: [],
-        theme: 'violet',
-        unlocked: [],
-        studyTime: 0,
-        customCount: 0
+        dates: [], theme: 'violet', unlocked: [],
+        studyTime: 0, skillTime: {}, customCount: 0,
+        reminder: { enabled: false, time: '20:00', lastNotified: null },
+        sync: { token: '', gistId: '', lastSync: null },
+        timerStarted: 0, focusUsed: 0
       };
     }
   } catch(e){
@@ -629,7 +857,11 @@ if (!s.skills || !Array.isArray(s.skills) || s.skills.length === 0){
       skills: DEFAULT_SKILLS.slice(),
       progress: {}, notes: {}, subs: {},
       order: DEFAULT_SKILLS.map(x=>x.id),
-      dates: [], theme: 'violet', unlocked: [], studyTime: 0, customCount: 0
+      dates: [], theme: 'violet', unlocked: [],
+      studyTime: 0, skillTime: {}, customCount: 0,
+      reminder: { enabled: false, time: '20:00', lastNotified: null },
+      sync: { token: '', gistId: '', lastSync: null },
+      timerStarted: 0, focusUsed: 0
     };
   }
 }
@@ -638,25 +870,33 @@ if (!s.skills || !Array.isArray(s.skills) || s.skills.length === 0){
 s.progress = s.progress || {};
 s.notes = s.notes || {};
 s.subs = s.subs || {};
+s.skillTime = s.skillTime || {};
 s.order = Array.isArray(s.order) ? s.order : s.skills.map(x=>x.id);
 s.dates = Array.isArray(s.dates) ? s.dates : [];
 s.theme = s.theme || 'violet';
 s.unlocked = Array.isArray(s.unlocked) ? s.unlocked : [];
-s.studyTime = s.studyTime || 0;
 s.customCount = s.customCount || 0;
+s.reminder = s.reminder || { enabled: false, time: '20:00', lastNotified: null };
+s.sync = s.sync || { token: '', gistId: '', lastSync: null };
+s.timerStarted = s.timerStarted || 0;
+s.focusUsed = s.focusUsed || 0;
 
-// Ensure each skill has progress & subs entries
 s.skills.forEach(sk => {
   if (!s.progress[sk.id]) s.progress[sk.id] = 'todo';
   if (!Array.isArray(s.subs[sk.id])) s.subs[sk.id] = [];
+  if (!s.skillTime[sk.id]) s.skillTime[sk.id] = 0;
   if (!s.order.includes(sk.id)) s.order.push(sk.id);
 });
-
-// Clean order (remove ids not in skills)
 s.order = s.order.filter(id => s.skills.some(sk => sk.id === id));
 
 function save(){
   try { localStorage.setItem(KEY, JSON.stringify(s)); } catch(e){}
+}
+
+function totalTime(){
+  let t = 0;
+  Object.keys(s.skillTime).forEach(k => t += s.skillTime[k] || 0);
+  return t;
 }
 
 /* ═══════════════════════════════════════════
@@ -666,7 +906,6 @@ function esc(x){
   return String(x).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
 }
 function pad(n){ return String(n).padStart(2,'0'); }
-
 function today(d){
   d = d || new Date();
   return d.getFullYear() + '-' + pad(d.getMonth()+1) + '-' + pad(d.getDate());
@@ -675,8 +914,25 @@ function yesterday(){
   const d = new Date(); d.setDate(d.getDate() - 1);
   return today(d);
 }
-
 function vibrate(ms){ try { navigator.vibrate && navigator.vibrate(ms); } catch(e){} }
+
+function formatTime(sec){
+  sec = Math.max(0, Math.round(sec));
+  if (sec < 60) return sec + 's';
+  if (sec < 3600) return Math.round(sec/60) + 'm';
+  const h = Math.floor(sec/3600);
+  const m = Math.round((sec%3600)/60);
+  return h + 'h' + (m > 0 ? ' ' + m + 'm' : '');
+}
+function formatTimeLong(sec){
+  sec = Math.max(0, Math.round(sec));
+  const h = Math.floor(sec/3600);
+  const m = Math.floor((sec%3600)/60);
+  const ss = sec%60;
+  if (h > 0) return h + ' ساعت ' + m + ' دقیقه';
+  if (m > 0) return m + ' دقیقه ' + ss + ' ثانیه';
+  return ss + ' ثانیه';
+}
 
 /* ═══════════════════════════════════════════
    STREAK
@@ -685,7 +941,6 @@ function markDay(){
   const t = today();
   if (!s.dates.includes(t)){
     s.dates.push(t);
-    // keep last 400
     if (s.dates.length > 400) s.dates = s.dates.slice(-400);
     save();
   }
@@ -694,15 +949,11 @@ function markDay(){
 function streak(){
   if (!s.dates.length) return 0;
   const set = new Set(s.dates);
-  const t = today();
   let d = new Date();
-  
-  // if today is not marked, start from yesterday
-  if (!set.has(t)){
+  if (!set.has(today(d))){
     d.setDate(d.getDate() - 1);
     if (!set.has(today(d))) return 0;
   }
-  
   let count = 0;
   while (set.has(today(d))){
     count++;
@@ -742,11 +993,12 @@ function applyTheme(){
   document.body.style.background = t.bg;
   document.body.style.backgroundImage = t.grad;
   document.body.style.backgroundAttachment = 'fixed';
-  document.querySelector('meta[name="theme-color"]').setAttribute('content', t.bg);
+  const meta = document.querySelector('meta[name="theme-color"]');
+  if (meta) meta.setAttribute('content', t.bg);
 }
 
 /* ═══════════════════════════════════════════
-   TOAST & CONFETTI
+   TOAST & CONFETTI & RIPPLE
    ═══════════════════════════════════════════ */
 let toastTimer;
 function toast(msg){
@@ -754,7 +1006,7 @@ function toast(msg){
   el.textContent = msg;
   el.classList.add('show');
   clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => el.classList.remove('show'), 2200);
+  toastTimer = setTimeout(() => el.classList.remove('show'), 2400);
 }
 
 function burst(el){
@@ -783,12 +1035,30 @@ function burst(el){
   }
 }
 
+// Ripple effect on buttons
+document.addEventListener('click', e => {
+  const btn = e.target.closest('button');
+  if (!btn) return;
+  const r = btn.getBoundingClientRect();
+  const size = Math.max(r.width, r.height);
+  const ripple = document.createElement('span');
+  ripple.className = 'ripple';
+  ripple.style.width = ripple.style.height = size + 'px';
+  ripple.style.left = (e.clientX - r.left - size/2) + 'px';
+  ripple.style.top = (e.clientY - r.top - size/2) + 'px';
+  const cs = getComputedStyle(btn);
+  if (cs.position === 'static') btn.style.position = 'relative';
+  if (cs.overflow === 'visible') btn.style.overflow = 'hidden';
+  btn.appendChild(ripple);
+  setTimeout(() => ripple.remove(), 700);
+});
+
 /* ═══════════════════════════════════════════
-   RENDER — MAIN
+   RENDER
    ═══════════════════════════════════════════ */
 let activeFilter = 'all';
 const container = document.getElementById('container');
-const expanded = new Set(); // tracks expanded card ids
+const expanded = new Set();
 
 function skillById(id){ return s.skills.find(x => x.id === id); }
 function catById(id){ return CATS.find(x => x.id === id); }
@@ -823,12 +1093,10 @@ function renderFilters(){
 
 function render(){
   container.innerHTML = '';
-
   CATS.forEach(cat => {
     const inCat = s.order
       .map(id => skillById(id))
       .filter(sk => sk && sk.cat === cat.id && (activeFilter === 'all' || activeFilter === cat.id));
-
     if (inCat.length === 0) return;
 
     const sec = document.createElement('section');
@@ -845,11 +1113,10 @@ function render(){
 
     inCat.forEach(sk => sec.appendChild(buildCard(sk)));
 
-    // Add new skill button at end of category
     const addBtn = document.createElement('button');
     addBtn.className = 'tool primary';
     addBtn.style.cssText = 'width:100%;justify-content:center;margin-top:4px;font-size:11.5px';
-    addBtn.innerHTML = '＋ افزودن مهارت به این دسته';
+    addBtn.innerHTML = '＋ افزودن به این دسته';
     addBtn.addEventListener('click', () => openAddModal(cat.id));
     sec.appendChild(addBtn);
 
@@ -871,13 +1138,16 @@ function buildCard(sk){
   const subs = s.subs[id] || [];
   const subDone = subs.filter(x => x.done).length;
   const hasNote = (s.notes[id] || '').trim().length > 0;
+  const skillSeconds = s.skillTime[id] || 0;
+  const isTimed = timer && timer.running && timer.skillId === id;
 
   const card = document.createElement('article');
-  card.className = 'card' + (isExpanded ? ' expanded' : '') + (val >= 100 ? ' done' : '');
+  card.className = 'card' + (isExpanded ? ' expanded' : '') + (val >= 100 ? ' done' : '') + (isTimed ? ' timed' : '');
   card.dataset.id = id;
   card.style.setProperty('--status', stData.color);
 
-  const stateExtra = subs.length > 0 ? ` · ${subDone}/${subs.length} زیرموضوع` : '';
+  const stateExtra = subs.length > 0 ? ` · ${subDone}/${subs.length}` : '';
+  const timeBadge = skillSeconds >= 60 ? `<span class="time-badge">⏱ ${formatTime(skillSeconds)}</span>` : '';
 
   const statusBtns = STAT_ORDER.map(k => {
     const S = STAT[k];
@@ -890,7 +1160,7 @@ function buildCard(sk){
     <div class="card-summary">
       <div class="icon">${esc(sk.icon)}</div>
       <div class="info">
-        <h3>${esc(sk.name)}</h3>
+        <h3>${esc(sk.name)}${timeBadge}</h3>
         <div class="state">${stData.label}${stateExtra}</div>
       </div>
       <div class="mini">
@@ -907,12 +1177,13 @@ function buildCard(sk){
         <div class="statuses">${statusBtns}</div>
         <div class="tools-row">
           <button class="tool-btn${hasNote?' has-note':''}" data-tool="notes">
-            📝 یادداشت${hasNote?'<span class="dot-badge"></span>':''}
+            📝${hasNote?'<span class="dot-badge"></span>':''}
           </button>
           <button class="tool-btn" data-tool="subs">
-            ✓ زیرموضوع${subs.length?' ('+subs.length+')':''}
+            ✓${subs.length?' '+subs.length:''}
           </button>
-          <button class="tool-btn" data-tool="edit">✎ ویرایش</button>
+          <button class="tool-btn focus-btn" data-tool="focus">🎯 تمرکز</button>
+          <button class="tool-btn" data-tool="edit">✎</button>
           <button class="tool-btn" data-tool="del" style="flex:0 0 auto">🗑</button>
         </div>
         <div class="panel-inner" data-panel="notes">
@@ -964,9 +1235,7 @@ function updateOverall(){
   const p = s.skills.length ? Math.round(sum / s.skills.length) : 0;
 
   document.getElementById('pct').textContent = p + '%';
-  const ring = document.getElementById('overallRing');
-  ring.style.strokeDashoffset = 283 * (1 - p/100);
-
+  document.getElementById('overallRing').style.strokeDashoffset = 283 * (1 - p/100);
   document.getElementById('done').textContent = d;
   document.getElementById('learning').textContent = l;
   document.getElementById('todo').textContent = t;
@@ -985,21 +1254,6 @@ container.addEventListener('click', e => {
   if (!card) return;
   const id = card.dataset.id;
 
-  // Expand/collapse
-  if (e.target.closest('.card-summary') && !e.target.closest('.status')){
-    if (expanded.has(id)){
-      expanded.delete(id);
-      card.classList.remove('expanded');
-    } else {
-      // collapse others? Let's allow multiple
-      expanded.add(id);
-      card.classList.add('expanded');
-    }
-    vibrate(8);
-    return;
-  }
-
-  // Status button
   const statusBtn = e.target.closest('.status');
   if (statusBtn){
     e.stopPropagation();
@@ -1007,10 +1261,8 @@ container.addEventListener('click', e => {
     if (s.progress[id] !== st){
       const old = s.progress[id];
       s.progress[id] = st;
-      // if it has subtasks, this won't override them
       save();
       markDay();
-      // re-render just this card
       rerenderCard(id);
       updateOverall();
       checkAchievements();
@@ -1024,7 +1276,6 @@ container.addEventListener('click', e => {
     return;
   }
 
-  // Tool buttons
   const toolBtn = e.target.closest('.tool-btn');
   if (toolBtn){
     e.stopPropagation();
@@ -1032,49 +1283,53 @@ container.addEventListener('click', e => {
     if (tool === 'del'){
       const sk = skillById(id);
       if (!sk) return;
-      if (!confirm(`«${sk.name}» حذف بشه؟`)){
-        return;
-      }
+      if (!confirm(`«${sk.name}» حذف بشه؟`)) return;
       s.skills = s.skills.filter(x => x.id !== id);
       s.order = s.order.filter(x => x !== id);
       delete s.progress[id];
       delete s.notes[id];
       delete s.subs[id];
+      delete s.skillTime[id];
       expanded.delete(id);
+      if (timer && timer.skillId === id){
+        timer.running = false; timer.skillId = null;
+        stopTimerTick();
+      }
       save();
       render();
       updateOverall();
+      renderTimer();
       toast('🗑 حذف شد');
       vibrate(15);
       return;
     }
-    if (tool === 'edit'){
-      openAddModal(sk => sk.cat, id);
-      return;
-    }
-    // toggle panel
+    if (tool === 'edit'){ openAddModal(null, id); return; }
+    if (tool === 'focus'){ openFocus(id); return; }
     const panel = card.querySelector(`.panel-inner[data-panel="${tool}"]`);
     if (panel){
-      // close others
-      card.querySelectorAll('.panel-inner').forEach(p => {
-        if (p !== panel) p.classList.remove('open');
-      });
+      card.querySelectorAll('.panel-inner').forEach(p => { if (p !== panel) p.classList.remove('open'); });
       panel.classList.toggle('open');
       if (tool === 'notes' && panel.classList.contains('open')){
         setTimeout(() => panel.querySelector('textarea').focus(), 100);
       }
     }
+    return;
+  }
+
+  // Expand
+  if (e.target.closest('.card-summary')){
+    if (expanded.has(id)){ expanded.delete(id); card.classList.remove('expanded'); }
+    else { expanded.add(id); card.classList.add('expanded'); }
+    vibrate(8);
   }
 });
 
-// Note input
 container.addEventListener('input', e => {
   const card = e.target.closest('.card');
   if (!card) return;
   if (e.target.classList.contains('note-area')){
     s.notes[card.dataset.id] = e.target.value;
     save();
-    // update note chip
     const chip = card.querySelector('[data-tool="notes"]');
     const val = e.target.value.trim();
     chip.classList.toggle('has-note', val.length > 0);
@@ -1085,7 +1340,6 @@ container.addEventListener('input', e => {
   }
 });
 
-// Subtask events
 container.addEventListener('click', e => {
   const card = e.target.closest('.card');
   if (!card) return;
@@ -1100,13 +1354,11 @@ container.addEventListener('click', e => {
     s.subs[id].push({ text: txt, done: false });
     save();
     input.value = '';
-    // re-render this card preserving expanded state
     const wasExpanded = expanded.has(id);
     const wrapper = card.parentNode;
     const newCard = buildCard(skillById(id));
     if (wasExpanded) newCard.classList.add('expanded');
     wrapper.replaceChild(newCard, card);
-    // reopen panels
     newCard.querySelectorAll('.panel-inner').forEach(p => p.classList.add('open'));
     vibrate(10);
     updateOverall();
@@ -1139,9 +1391,6 @@ container.addEventListener('change', e => {
   if (!s.subs[id] || !s.subs[id][i]) return;
   s.subs[id][i].done = e.target.checked;
   save();
-  // update the row class
-  const row = e.target.closest('.sub-item');
-  row.classList.toggle('done', e.target.checked);
   rerenderCard(id);
   updateOverall();
   checkAchievements();
@@ -1158,17 +1407,16 @@ function rerenderCard(id){
   const newCard = buildCard(sk);
   if (wasExpanded) newCard.classList.add('expanded');
   wrapper.replaceChild(newCard, card);
-  // update section count
   updateSectionCounts();
 }
 
 function updateSectionCounts(){
   CATS.forEach(cat => {
-    const sec = document.querySelector(`.section .cnt[data-cnt="${cat.id}"]`);
-    if (!sec) return;
+    const cnt = document.querySelector(`.section .cnt[data-cnt="${cat.id}"]`);
+    if (!cnt) return;
     const inCat = s.order.map(id => skillById(id)).filter(sk => sk && sk.cat === cat.id);
     const done = inCat.filter(sk => getSkillStatus(sk.id) === 'done').length;
-    sec.textContent = done + '/' + inCat.length;
+    cnt.textContent = done + '/' + inCat.length;
   });
 }
 
@@ -1185,21 +1433,18 @@ document.getElementById('filters').addEventListener('click', e => {
 });
 
 /* ═══════════════════════════════════════════
-   ADD / EDIT SKILL MODAL
+   ADD / EDIT MODAL
    ═══════════════════════════════════════════ */
 let editingId = null;
 let selectedIcon = '🎯';
 
-function openAddModal(presetCatOrFn, id){
+function openAddModal(presetCat, id){
   editingId = id || null;
-
-  // build category select
   const sel = document.getElementById('skillCat');
   sel.innerHTML = '';
   CATS.forEach(c => {
     const o = document.createElement('option');
-    o.value = c.id;
-    o.textContent = c.name;
+    o.value = c.id; o.textContent = c.name;
     sel.appendChild(o);
   });
 
@@ -1213,14 +1458,12 @@ function openAddModal(presetCatOrFn, id){
   } else {
     document.getElementById('addModalTitle').textContent = 'مهارت جدید';
     document.getElementById('skillName').value = '';
-    if (typeof presetCatOrFn === 'string') sel.value = presetCatOrFn;
+    if (typeof presetCat === 'string') sel.value = presetCat;
     else sel.value = CATS[0].id;
     selectedIcon = '🎯';
   }
-
   buildIconGrid();
   updateSkillPreview();
-
   document.getElementById('addModal').classList.add('open');
   setTimeout(() => document.getElementById('skillName').focus(), 200);
 }
@@ -1261,14 +1504,9 @@ document.getElementById('skillSave').addEventListener('click', () => {
     setTimeout(() => inp.style.borderColor = '', 1200);
     return;
   }
-
   if (editingId){
     const sk = skillById(editingId);
-    if (sk){
-      sk.name = name;
-      sk.cat = catId;
-      sk.icon = selectedIcon;
-    }
+    if (sk){ sk.name = name; sk.cat = catId; sk.icon = selectedIcon; }
     toast('✓ ویرایش شد');
   } else {
     const id = uid();
@@ -1276,10 +1514,10 @@ document.getElementById('skillSave').addEventListener('click', () => {
     s.order.push(id);
     s.progress[id] = 'todo';
     s.subs[id] = [];
+    s.skillTime[id] = 0;
     s.customCount = (s.customCount || 0) + 1;
     toast('✓ اضافه شد');
   }
-
   save();
   document.getElementById('addModal').classList.remove('open');
   render();
@@ -1334,25 +1572,26 @@ document.querySelectorAll('[data-close]').forEach(btn => {
   });
 });
 document.querySelectorAll('.mb').forEach(mb => {
-  mb.addEventListener('click', e => {
-    if (e.target === mb) mb.classList.remove('open');
-  });
+  mb.addEventListener('click', e => { if (e.target === mb) mb.classList.remove('open'); });
 });
 document.addEventListener('keydown', e => {
   if (e.key === 'Escape'){
     document.querySelectorAll('.mb.open').forEach(m => m.classList.remove('open'));
+    if (focusId) closeFocus();
   }
 });
 
 /* ═══════════════════════════════════════════
-   TIMER (WITH CENTISECONDS)
+   TIMER (per-skill)
    ═══════════════════════════════════════════ */
-const TIMER_KEY = 'informatik-timer';
+const TIMER_KEY = 'informatik-timer-v9';
 let timer = {
   duration: 1500,
   remaining: 1500,
   running: false,
-  endTime: null
+  endTime: null,
+  skillId: null,
+  sessionStart: null
 };
 
 function loadTimer(){
@@ -1361,12 +1600,13 @@ function loadTimer(){
     if (t && typeof t === 'object'){
       timer.duration = t.duration || 1500;
       timer.remaining = typeof t.remaining === 'number' ? t.remaining : timer.duration;
+      timer.skillId = t.skillId || null;
       if (t.running && t.endTime){
-        const now = Date.now();
-        const left = (t.endTime - now) / 1000;
+        const left = (t.endTime - Date.now()) / 1000;
         if (left > 0){
           timer.running = true;
           timer.endTime = t.endTime;
+          timer.sessionStart = Date.now();
           timer.remaining = left;
         } else {
           timer.running = false;
@@ -1376,23 +1616,36 @@ function loadTimer(){
     }
   } catch(e){}
 }
+
 function saveTimer(){
   try {
     localStorage.setItem(TIMER_KEY, JSON.stringify({
       duration: timer.duration,
       remaining: timer.running ? Math.max(0, (timer.endTime - Date.now()) / 1000) : timer.remaining,
       running: timer.running,
-      endTime: timer.endTime
+      endTime: timer.endTime,
+      skillId: timer.skillId
     }));
   } catch(e){}
 }
 
+// Add session time to current skill
+function commitSessionTime(){
+  if (!timer.skillId || !timer.sessionStart) return;
+  const elapsed = (Date.now() - timer.sessionStart) / 1000;
+  if (elapsed > 1){
+    s.skillTime[timer.skillId] = (s.skillTime[timer.skillId] || 0) + elapsed;
+    save();
+  }
+  timer.sessionStart = null;
+}
+
 const PRESETS = [
-  { label:'۵ دقیقه',  sec:300 },
-  { label:'۱۵ دقیقه', sec:900 },
-  { label:'۲۵ دقیقه', sec:1500 },
-  { label:'۴۵ دقیقه', sec:2700 },
-  { label:'۱ ساعت',   sec:3600 }
+  { label:'۵ د',  sec:300 },
+  { label:'۱۵ د', sec:900 },
+  { label:'۲۵ د', sec:1500 },
+  { label:'۴۵ د', sec:2700 },
+  { label:'۱ س',  sec:3600 }
 ];
 
 function renderPresets(){
@@ -1418,20 +1671,34 @@ function renderTimer(){
   const remaining = timer.running
     ? Math.max(0, (timer.endTime - Date.now()) / 1000)
     : timer.remaining;
-
   const min = Math.floor(remaining / 60);
   const sec = Math.floor(remaining % 60);
   const cs = Math.floor((remaining % 1) * 100);
-
   el.innerHTML = `${pad(min)}:${pad(sec)}<span class="cs">.${pad(cs)}</span>`;
   el.classList.toggle('running', timer.running);
-
-  // progress bar
   const pct = timer.duration > 0 ? (remaining / timer.duration) * 100 : 100;
   document.getElementById('timerBar').style.width = pct + '%';
 
-  // button
-  document.getElementById('timerToggle').textContent = timer.running ? 'توقف' : (timer.remaining < timer.duration && timer.remaining > 0 ? 'ادامه' : 'شروع');
+  const skillBtn = document.getElementById('timerSkillBtn');
+  const skillName = document.getElementById('timerSkillName');
+  if (timer.skillId && skillById(timer.skillId)){
+    const sk = skillById(timer.skillId);
+    skillBtn.classList.remove('empty');
+    skillName.textContent = sk.icon + ' ' + sk.name;
+  } else {
+    skillBtn.classList.add('empty');
+    skillName.textContent = 'انتخاب مهارت...';
+  }
+
+  document.getElementById('timerToggle').textContent =
+    timer.running ? 'توقف' :
+    (timer.remaining < timer.duration && timer.remaining > 0 ? 'ادامه' : 'شروع');
+
+  // focus timer sync
+  if (focusId === timer.skillId){
+    const ft = document.getElementById('focusTimer');
+    if (ft) ft.innerHTML = `${pad(min)}:${pad(sec)}<span class="cs">.${pad(cs)}</span>`;
+  }
 }
 
 let timerInterval = null;
@@ -1439,54 +1706,63 @@ let timerInterval = null;
 function startTimerTick(){
   if (timerInterval) clearInterval(timerInterval);
   timerInterval = setInterval(() => {
-    if (!timer.running){ return; }
+    if (!timer.running) return;
     const remaining = (timer.endTime - Date.now()) / 1000;
     if (remaining <= 0){
-      // finished
       timer.running = false;
       timer.remaining = timer.duration;
       clearInterval(timerInterval);
       timerInterval = null;
+      commitSessionTime();
       saveTimer();
       renderTimer();
-      // log study time
-      s.studyTime = (s.studyTime || 0) + timer.duration;
-      save();
+      render();
+      updateOverall();
       checkAchievements();
-      // celebrate
       burst(document.getElementById('timerDisplay'));
       toast('🎉 تایمر تموم شد!');
       vibrate([40, 60, 40]);
       return;
     }
     renderTimer();
-  }, 30);
+  }, 33);
 }
 
 document.getElementById('timerToggle').addEventListener('click', () => {
   if (timer.running){
-    // pause
     timer.remaining = Math.max(0, (timer.endTime - Date.now()) / 1000);
     timer.running = false;
+    commitSessionTime();
     clearInterval(timerInterval);
     timerInterval = null;
     saveTimer();
     renderTimer();
     vibrate(10);
   } else {
-    // start or resume
+    if (!timer.skillId){
+      toast('اول یه مهارت انتخاب کن');
+      openSkillPicker();
+      return;
+    }
     if (timer.remaining <= 0) timer.remaining = timer.duration;
     timer.endTime = Date.now() + timer.remaining * 1000;
     timer.running = true;
+    timer.sessionStart = Date.now();
+    s.timerStarted = (s.timerStarted || 0) + 1;
+    save();
     saveTimer();
     startTimerTick();
     renderTimer();
     markDay();
+    checkAchievements();
     vibrate(12);
+    // re-render cards to show timed badge
+    render();
   }
 });
 
 document.getElementById('timerResetBtn').addEventListener('click', () => {
+  if (timer.running) commitSessionTime();
   timer.running = false;
   timer.remaining = timer.duration;
   timer.endTime = null;
@@ -1494,7 +1770,170 @@ document.getElementById('timerResetBtn').addEventListener('click', () => {
   timerInterval = null;
   saveTimer();
   renderTimer();
+  render();
   vibrate(10);
+});
+
+// Skill picker for timer
+document.getElementById('timerSkillBtn').addEventListener('click', openSkillPicker);
+
+function openSkillPicker(){
+  if (s.skills.length === 0){ toast('اول یه مهارت اضافه کن'); return; }
+  const options = s.skills.map(sk => `${sk.icon} ${sk.name}`).join('\n');
+  const names = s.skills.map(sk => sk.name);
+  // Use a select-like prompt (simple approach)
+  const pick = prompt('کدوم مهارت؟ (شماره رو وارد کن)\n\n' + s.skills.map((sk, i) => (i+1) + '. ' + sk.icon + ' ' + sk.name).join('\n'));
+  if (!pick) return;
+  const i = parseInt(pick, 10) - 1;
+  if (isNaN(i) || i < 0 || i >= s.skills.length){ toast('شماره نامعتبر'); return; }
+  // if timer was running with another skill, commit time first
+  if (timer.running && timer.skillId !== s.skills[i].id){
+    commitSessionTime();
+  }
+  timer.skillId = s.skills[i].id;
+  saveTimer();
+  renderTimer();
+  render();
+  vibrate(10);
+  toast('✓ ' + s.skills[i].name);
+}
+
+/* ═══════════════════════════════════════════
+   FOCUS MODE
+   ═══════════════════════════════════════════ */
+let focusId = null;
+
+function openFocus(id){
+  const sk = skillById(id);
+  if (!sk) return;
+  focusId = id;
+  s.focusUsed = (s.focusUsed || 0) + 1;
+  save();
+  document.body.classList.add('focus-mode');
+  document.getElementById('focusOverlay').classList.add('open');
+  document.getElementById('focusIcon').textContent = sk.icon;
+  document.getElementById('focusName').textContent = sk.name;
+  updateFocus();
+  renderTimer();
+  checkAchievements();
+  vibrate(12);
+}
+
+function closeFocus(){
+  focusId = null;
+  document.body.classList.remove('focus-mode');
+  document.getElementById('focusOverlay').classList.remove('open');
+  render();
+  vibrate(10);
+}
+
+function updateFocus(){
+  if (!focusId) return;
+  const sk = skillById(focusId);
+  if (!sk){ closeFocus(); return; }
+  const st = getSkillStatus(focusId);
+  const stData = STAT[st];
+  const val = getSkillValue(focusId);
+  document.getElementById('focusStatus').textContent = stData.label;
+  document.getElementById('focusStatus').style.setProperty('--status', stData.color);
+  const ring = document.getElementById('focusRingFill');
+  ring.style.stroke = stData.color;
+  const circ = 2 * Math.PI * 90;
+  ring.style.strokeDashoffset = circ * (1 - val/100);
+  document.getElementById('focusPct').textContent = val + '%';
+  document.getElementById('focusPct').style.color = stData.color;
+  document.getElementById('focusTotalTime').textContent = formatTime(s.skillTime[focusId] || 0);
+  document.getElementById('focusTimerBtn').textContent =
+    (timer.running && timer.skillId === focusId) ? '⏸ توقف تایمر' : '▶ شروع تایمر';
+}
+
+document.getElementById('focusClose').addEventListener('click', closeFocus);
+
+document.getElementById('focusTimerBtn').addEventListener('click', () => {
+  if (!focusId) return;
+  if (timer.running && timer.skillId === focusId){
+    // stop
+    timer.remaining = Math.max(0, (timer.endTime - Date.now()) / 1000);
+    timer.running = false;
+    commitSessionTime();
+    clearInterval(timerInterval);
+    timerInterval = null;
+    saveTimer();
+    renderTimer();
+    updateFocus();
+  } else {
+    // if timer running for another skill, commit
+    if (timer.running) commitSessionTime();
+    timer.skillId = focusId;
+    if (timer.remaining <= 0) timer.remaining = timer.duration;
+    timer.endTime = Date.now() + timer.remaining * 1000;
+    timer.running = true;
+    timer.sessionStart = Date.now();
+    s.timerStarted = (s.timerStarted || 0) + 1;
+    save();
+    saveTimer();
+    startTimerTick();
+    renderTimer();
+    updateFocus();
+    markDay();
+    checkAchievements();
+    vibrate(12);
+  }
+});
+
+document.getElementById('focusStatusBtn').addEventListener('click', () => {
+  if (!focusId) return;
+  const order = STAT_ORDER;
+  const cur = getSkillStatus(focusId);
+  const idx = order.indexOf(cur);
+  const next = order[(idx + 1) % order.length];
+  // only allow manual if no subtasks
+  if (s.subs[focusId] && s.subs[focusId].length > 0){
+    toast('این مهارت زیرموضوع داره');
+    return;
+  }
+  s.progress[focusId] = next;
+  save();
+  markDay();
+  updateFocus();
+  updateOverall();
+  checkAchievements();
+  if (next === 'done'){
+    burst(document.getElementById('focusRingFill'));
+    vibrate([20, 40, 30]);
+  }
+});
+
+document.getElementById('focusNotesBtn').addEventListener('click', () => {
+  if (!focusId) return;
+  const sk = skillById(focusId);
+  closeFocus();
+  setTimeout(() => {
+    const card = document.querySelector(`.card[data-id="${focusId}"]`);
+    if (card){
+      expanded.add(focusId);
+      card.classList.add('expanded');
+      const panel = card.querySelector('.panel-inner[data-panel="notes"]');
+      if (panel){
+        panel.classList.add('open');
+        setTimeout(() => panel.querySelector('textarea').focus(), 150);
+      }
+    }
+  }, 200);
+});
+
+document.getElementById('focusSubsBtn').addEventListener('click', () => {
+  if (!focusId) return;
+  closeFocus();
+  setTimeout(() => {
+    const card = document.querySelector(`.card[data-id="${focusId}"]`);
+    if (card){
+      expanded.add(focusId);
+      card.classList.add('expanded');
+      const panel = card.querySelector('.panel-inner[data-panel="subs"]');
+      if (panel) panel.classList.add('open');
+    }
+  }, 200);
 });
 
 /* ═══════════════════════════════════════════
@@ -1513,7 +1952,7 @@ function renderAchievements(){
 }
 
 function checkAchievements(){
-  let newOnes = [];
+  const newOnes = [];
   ACH.forEach(a => {
     if (!s.unlocked.includes(a.id) && a.test()){
       s.unlocked.push(a.id);
@@ -1524,11 +1963,284 @@ function checkAchievements(){
     save();
     renderAchievements();
     newOnes.forEach((a, i) => {
-      setTimeout(() => toast('🏆 ' + a.name), i * 400);
+      setTimeout(() => {
+        toast('🏆 ' + a.name);
+        const el = document.querySelector(`.ach-grid .ach:not(.unlocked)`);
+      }, i * 500);
     });
     vibrate([30, 50, 30]);
   }
 }
+
+/* ═══════════════════════════════════════════
+   STATS MODAL
+   ═══════════════════════════════════════════ */
+function renderStats(){
+  const el = document.getElementById('statsContent');
+  const tt = totalTime();
+
+  // Time per skill
+  const skillTimes = s.skills.map(sk => ({
+    name: sk.name,
+    icon: sk.icon,
+    time: s.skillTime[sk.id] || 0
+  })).filter(x => x.time > 0).sort((a,b) => b.time - a.time);
+
+  const maxTime = skillTimes.length ? skillTimes[0].time : 1;
+
+  // Last 28 days
+  const days = [];
+  for (let i = 27; i >= 0; i--){
+    const d = new Date();
+    d.setDate(d.getDate() - i);
+    days.push({
+      date: d,
+      str: today(d),
+      active: s.dates.includes(today(d)),
+      isToday: i === 0
+    });
+  }
+
+  // Chart HTML
+  const chartHTML = skillTimes.length === 0
+    ? '<div style="text-align:center;padding:22px;color:var(--dim);font-size:12px">هنوز وقتی ثبت نشده. تایمر رو شروع کن.</div>'
+    : skillTimes.slice(0, 8).map(x => `
+        <div class="chart-row">
+          <span class="label">${x.icon} ${esc(x.name)}</span>
+          <div class="bar-bg"><div class="bar-fill" style="width:${(x.time/maxTime*100).toFixed(1)}%"></div></div>
+          <span class="val">${formatTime(x.time)}</span>
+        </div>
+      `).join('');
+
+  // Days grid
+  const daysHTML = days.map(d => `
+    <div class="day-cell${d.active?' active':''}${d.isToday?' today':''}" title="${d.str}">
+      ${d.active ? '●' : ''}
+    </div>
+  `).join('');
+
+  el.innerHTML = `
+    <div class="stats-grid">
+      <div class="stat-tile">
+        <b>${formatTime(tt)}</b>
+        <span>کل زمان مطالعه</span>
+      </div>
+      <div class="stat-tile">
+        <b>${s.unlocked.length}/${ACH.length}</b>
+        <span>دستاورد</span>
+      </div>
+      <div class="stat-tile">
+        <b>${bestStreak()}</b>
+        <span>بهترین Streak</span>
+      </div>
+      <div class="stat-tile">
+        <b>${s.dates.length}</b>
+        <span>روزهای فعال</span>
+      </div>
+    </div>
+    <div style="margin-bottom:18px">
+      <div class="chart-title">⏱ زمان هر مهارت</div>
+      ${chartHTML}
+    </div>
+    <div>
+      <div class="chart-title">📅 ۲۸ روز اخیر</div>
+      <div class="days-grid">${daysHTML}</div>
+    </div>
+  `;
+}
+
+document.getElementById('statsBtn').addEventListener('click', () => {
+  renderStats();
+  document.getElementById('statsModal').classList.add('open');
+});
+
+/* ═══════════════════════════════════════════
+   REMINDER
+   ═══════════════════════════════════════════ */
+function updateReminderUI(){
+  document.getElementById('reminderTime').value = s.reminder.time;
+  const on = s.reminder.enabled;
+  const onBtn = document.getElementById('reminderOn');
+  const offBtn = document.getElementById('reminderOff');
+  onBtn.style.background = on ? 'color-mix(in srgb,var(--accent) 20%,transparent)' : 'rgba(0,0,0,.2)';
+  onBtn.style.borderColor = on ? 'var(--accent)' : 'var(--line)';
+  offBtn.style.background = !on ? 'color-mix(in srgb,var(--dim) 20%,transparent)' : 'rgba(0,0,0,.2)';
+}
+
+document.getElementById('reminderBtn').addEventListener('click', () => {
+  updateReminderUI();
+  document.getElementById('reminderModal').classList.add('open');
+});
+
+document.getElementById('reminderOn').addEventListener('click', async () => {
+  if ('Notification' in window){
+    const perm = await Notification.requestPermission();
+    if (perm !== 'granted'){
+      toast('اجازه‌ی نوتیفیکیشن داده نشد');
+      return;
+    }
+  } else {
+    toast('مرورگر از نوتیفیکیشن پشتیبانی نمی‌کنه');
+    return;
+  }
+  s.reminder.enabled = true;
+  save();
+  updateReminderUI();
+  toast('✓ یادآوری فعال شد');
+});
+
+document.getElementById('reminderOff').addEventListener('click', () => {
+  s.reminder.enabled = false;
+  save();
+  updateReminderUI();
+  toast('یادآوری خاموش شد');
+});
+
+document.getElementById('reminderSave').addEventListener('click', () => {
+  s.reminder.time = document.getElementById('reminderTime').value || '20:00';
+  save();
+  document.getElementById('reminderModal').classList.remove('open');
+  toast('✓ ذخیره شد');
+});
+
+function checkReminder(){
+  if (!s.reminder.enabled) return;
+  if (!('Notification' in window) || Notification.permission !== 'granted') return;
+  const t = today();
+  if (s.reminder.lastNotified === t) return;
+  const now = new Date();
+  const [h, m] = (s.reminder.time || '20:00').split(':').map(Number);
+  const target = new Date();
+  target.setHours(h, m, 0, 0);
+  if (now < target) return;
+  try {
+    new Notification('مسیر یادگیری 📚', {
+      body: 'یادت نره امروز یه قدم جلو بری 🔥',
+      tag: 'informatik-reminder'
+    });
+    s.reminder.lastNotified = t;
+    save();
+  } catch(e){}
+}
+
+/* ═══════════════════════════════════════════
+   SYNC (GitHub Gist)
+   ═══════════════════════════════════════════ */
+document.getElementById('syncBtn').addEventListener('click', () => {
+  document.getElementById('syncToken').value = s.sync.token || '';
+  document.getElementById('syncGist').value = s.sync.gistId || '';
+  document.getElementById('syncModal').classList.add('open');
+});
+
+document.getElementById('syncSave').addEventListener('click', () => {
+  s.sync.token = document.getElementById('syncToken').value.trim();
+  s.sync.gistId = document.getElementById('syncGist').value.trim();
+  save();
+  document.getElementById('syncModal').classList.remove('open');
+  toast('✓ ذخیره شد');
+});
+
+document.getElementById('syncPush').addEventListener('click', async () => {
+  const token = document.getElementById('syncToken').value.trim();
+  let gistId = document.getElementById('syncGist').value.trim();
+  if (!token){ toast('توکن رو وارد کن'); return; }
+
+  const payload = {
+    description: 'Learning Path — synced data',
+    public: false,
+    files: {
+      'learning-path.json': {
+        content: JSON.stringify(s)
+      }
+    }
+  };
+
+  try {
+    let url = 'https://api.github.com/gists';
+    let method = 'POST';
+    if (gistId){
+      url = `https://api.github.com/gists/${gistId}`;
+      method = 'PATCH';
+    }
+    const res = await fetch(url, {
+      method,
+      headers: {
+        'Authorization': 'token ' + token,
+        'Content-Type': 'application/json',
+        'Accept': 'application/vnd.github+json'
+      },
+      body: JSON.stringify(payload)
+    });
+    if (!res.ok){
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.message || ('HTTP ' + res.status));
+    }
+    const data = await res.json();
+    s.sync.token = token;
+    s.sync.gistId = data.id;
+    s.sync.lastSync = Date.now();
+    save();
+    document.getElementById('syncGist').value = data.id;
+    toast('☁️ ارسال شد');
+    vibrate(20);
+  } catch(e){
+    toast('خطا: ' + (e.message || 'ناموفق'));
+  }
+});
+
+document.getElementById('syncPull').addEventListener('click', async () => {
+  const token = document.getElementById('syncToken').value.trim();
+  const gistId = document.getElementById('syncGist').value.trim();
+  if (!token || !gistId){ toast('توکن و Gist ID لازمه'); return; }
+
+  try {
+    const res = await fetch(`https://api.github.com/gists/${gistId}`, {
+      headers: {
+        'Authorization': 'token ' + token,
+        'Accept': 'application/vnd.github+json'
+      }
+    });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const data = await res.json();
+    const file = data.files && data.files['learning-path.json'];
+    if (!file) throw new Error('فایل پیدا نشد');
+    const content = file.content || '';
+    const parsed = JSON.parse(content);
+    if (typeof parsed !== 'object' || !parsed.skills) throw new Error('داده نامعتبر');
+
+    if (!confirm('داده‌های فعلی جایگزین بشن؟')) return;
+
+    s = parsed;
+    // ensure defaults
+    s.progress = s.progress || {};
+    s.notes = s.notes || {};
+    s.subs = s.subs || {};
+    s.skillTime = s.skillTime || {};
+    s.order = Array.isArray(s.order) ? s.order : (s.skills||[]).map(x=>x.id);
+    s.dates = Array.isArray(s.dates) ? s.dates : [];
+    s.theme = s.theme || 'violet';
+    s.unlocked = Array.isArray(s.unlocked) ? s.unlocked : [];
+    s.reminder = s.reminder || { enabled: false, time: '20:00', lastNotified: null };
+    s.sync = s.sync || { token: '', gistId: '', lastSync: null };
+    s.sync.token = token;
+    s.sync.gistId = gistId;
+    s.sync.lastSync = Date.now();
+    s.skills.forEach(sk => {
+      if (!s.progress[sk.id]) s.progress[sk.id] = 'todo';
+      if (!Array.isArray(s.subs[sk.id])) s.subs[sk.id] = [];
+      if (!s.skillTime[sk.id]) s.skillTime[sk.id] = 0;
+      if (!s.order.includes(sk.id)) s.order.push(sk.id);
+    });
+    save();
+    applyTheme();
+    renderAll();
+    document.getElementById('syncModal').classList.remove('open');
+    toast('☁️ دریافت شد');
+    vibrate(20);
+  } catch(e){
+    toast('خطا: ' + (e.message || 'ناموفق'));
+  }
+});
 
 /* ═══════════════════════════════════════════
    BACKUP / RESTORE / RESET
@@ -1537,7 +2249,7 @@ document.getElementById('backupBtn').addEventListener('click', async () => {
   const data = JSON.stringify(s);
   try {
     await navigator.clipboard.writeText(data);
-    toast('✓ پشتیبان کپی شد');
+    toast('✓ پشتیبان کپی شد (' + Math.round(data.length/1024) + 'KB)');
   } catch(e){
     prompt('متن پشتیبان:', data);
   }
@@ -1550,21 +2262,24 @@ document.getElementById('restoreBtn').addEventListener('click', () => {
   try {
     const parsed = JSON.parse(x);
     if (typeof parsed !== 'object' || parsed === null) throw 0;
+    if (!parsed.skills) throw 0;
+    if (!confirm('داده‌های فعلی جایگزین بشن؟')) return;
     s = parsed;
-    // ensure defaults
     s.progress = s.progress || {};
     s.notes = s.notes || {};
     s.subs = s.subs || {};
+    s.skillTime = s.skillTime || {};
     s.order = Array.isArray(s.order) ? s.order : (s.skills||[]).map(x=>x.id);
     s.dates = Array.isArray(s.dates) ? s.dates : [];
     s.theme = s.theme || 'violet';
     s.unlocked = Array.isArray(s.unlocked) ? s.unlocked : [];
-    s.studyTime = s.studyTime || 0;
-    s.customCount = s.customCount || 0;
+    s.reminder = s.reminder || { enabled: false, time: '20:00', lastNotified: null };
+    s.sync = s.sync || { token: '', gistId: '', lastSync: null };
     if (!Array.isArray(s.skills) || s.skills.length === 0) s.skills = DEFAULT_SKILLS.slice();
     s.skills.forEach(sk => {
       if (!s.progress[sk.id]) s.progress[sk.id] = 'todo';
       if (!Array.isArray(s.subs[sk.id])) s.subs[sk.id] = [];
+      if (!s.skillTime[sk.id]) s.skillTime[sk.id] = 0;
       if (!s.order.includes(sk.id)) s.order.push(sk.id);
     });
     save();
@@ -1579,22 +2294,26 @@ document.getElementById('restoreBtn').addEventListener('click', () => {
 
 document.getElementById('resetBtn').addEventListener('click', () => {
   if (!confirm('همه‌ی پیشرفت صفر می‌شه (مهارت‌های شخصی حذف می‌شن). مطمئنی؟')) return;
+  const keepDates = s.dates;
+  const keepTheme = s.theme;
+  const keepSync = s.sync;
+  const keepReminder = s.reminder;
   s = {
     skills: DEFAULT_SKILLS.slice(),
-    progress: {}, notes: {}, subs: {},
+    progress: {}, notes: {}, subs: {}, skillTime: {},
     order: DEFAULT_SKILLS.map(x=>x.id),
-    dates: s.dates,  // keep streak
-    theme: s.theme,
-    unlocked: [],
-    studyTime: 0,
-    customCount: 0
+    dates: keepDates, theme: keepTheme, unlocked: [],
+    customCount: 0, timerStarted: 0, focusUsed: 0,
+    reminder: keepReminder, sync: keepSync
   };
   s.skills.forEach(sk => {
     s.progress[sk.id] = 'todo';
     s.subs[sk.id] = [];
+    s.skillTime[sk.id] = 0;
   });
   save();
   expanded.clear();
+  applyTheme();
   renderAll();
   toast('↻ ریست شد');
   vibrate(20);
@@ -1609,18 +2328,22 @@ function init(){
   applyTheme();
   renderAll();
   renderPresets();
-
-  if (timer.running){
-    startTimerTick();
-  }
+  updateReminderUI();
+  if (timer.running) startTimerTick();
   renderTimer();
 
   // Daily quote
   const d = new Date();
   const dayIdx = Math.floor((d - new Date(d.getFullYear(), 0, 0)) / 86400000);
-  document.getElementById('quote').textContent = QUOTES[dayIdx % QUOTES.length];
+  const q = QUOTES[dayIdx % QUOTES.length];
+  document.getElementById('quote').textContent = q.t;
+  document.getElementById('quoteAuthor').textContent = '— ' + q.a;
 
-  // Register service worker
+  // Check reminder every 60s
+  checkReminder();
+  setInterval(checkReminder, 60000);
+
+  // Service worker
   if ('serviceWorker' in navigator){
     window.addEventListener('load', () => {
       navigator.serviceWorker.register('sw.js').catch(()=>{});
@@ -1630,10 +2353,10 @@ function init(){
   // Save timer on hide
   document.addEventListener('visibilitychange', () => {
     if (document.hidden){
+      if (timer.running) commitSessionTime();
       saveTimer();
     } else {
-      // on return, recompute state
-      if (timer.running && timer.endTime){
+      if (timer.running){
         const left = (timer.endTime - Date.now()) / 1000;
         if (left <= 0){
           timer.running = false;
@@ -1641,13 +2364,23 @@ function init(){
           clearInterval(timerInterval);
           timerInterval = null;
           saveTimer();
-          renderTimer();
+        } else {
+          timer.sessionStart = Date.now();
         }
       }
+      renderTimer();
+      updateFocus();
     }
   });
-  window.addEventListener('beforeunload', saveTimer);
-  window.addEventListener('pagehide', saveTimer);
+
+  window.addEventListener('beforeunload', () => {
+    if (timer.running) commitSessionTime();
+    saveTimer();
+  });
+  window.addEventListener('pagehide', () => {
+    if (timer.running) commitSessionTime();
+    saveTimer();
+  });
 }
 
 init();
