@@ -1588,8 +1588,9 @@ document.getElementById('syncPull').addEventListener('click', async () => {
     s.theme = s.theme || 'violet';
     s.unlocked = Array.isArray(s.unlocked) ? s.unlocked : [];
     s.reminder = s.reminder || { enabled: false, time: '20:00', lastNotified: null };
-    s.sync = s.sync || { token: '', gistId: '', lastSync: null };
-    s.sync.token = token;
+    s.sync = s.sync || { gistId: '', lastSync: null };
+    delete s.sync.token;
+    syncToken = token;
     s.sync.gistId = gistId;
     s.sync.lastSync = Date.now();
     s.skills.forEach(sk => {
