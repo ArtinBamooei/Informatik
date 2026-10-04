@@ -15,6 +15,41 @@ header{text-align:center;margin-bottom:18px}.badge{display:inline-block;padding:
 .card{padding:14px;margin-bottom:8px;position:relative;transition:.2s}.card.dragging{opacity:.4}.card.dragover{border-color:var(--accent)}.card.done{border-color:#34d39955}.top{display:flex;align-items:center;gap:11px}.icon{width:44px;height:44px;border-radius:13px;display:grid;place-items:center;background:#ffffff08;font-size:21px}.info{flex:1;min-width:0}.info h3{margin:0;font-size:15px}.state{font-size:10px;color:var(--status);margin-top:3px}.mini{width:50px;height:50px;position:relative}.mini svg{width:100%;height:100%;transform:rotate(-90deg)}.mini circle{fill:none;stroke-width:4}.mini .t{stroke:#ffffff0c}.mini .f{stroke:var(--status);stroke-dasharray:145;stroke-dashoffset:145;stroke-linecap:round;transition:.4s}.mini span{position:absolute;inset:0;display:grid;place-items:center;font-size:10px}.statuses{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;margin-top:10px}.status{font-size:10px;padding:8px 2px}.tools2{display:flex;gap:5px;margin-top:6px}.action{font-size:10px;padding:7px 9px}.drag{margin-right:auto;color:#666;cursor:grab;padding:7px}.subtasks,.note{display:none;margin-top:9px;padding-top:9px;border-top:1px solid #ffffff0c}.subtasks.open,.note.open{display:block}.subadd{display:flex;gap:5px}.subadd input{flex:1;background:#ffffff06;border:1px solid #ffffff12;border-radius:9px;color:#fff;padding:8px;font-size:11px}.subrow{display:flex;gap:8px;align-items:center;padding:5px 0;font-size:11px}.subrow button{margin-right:auto;background:none;border:0;color:#777}.note textarea{width:100%;min-height:80px;background:#0003;border:1px solid #ffffff12;border-radius:10px;color:#fff;padding:9px;resize:vertical;font-size:11px}
 .timer,.achievements{margin-top:18px;padding:16px}.timer h2,.achievements h2{font-size:14px;margin:0}.timerline{display:flex;align-items:center;gap:10px;margin-top:9px}.time{font-size:31px;font-weight:800;flex:1}.timer button{padding:8px 11px}.achgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:7px;margin-top:10px}.ach{padding:11px;border:1px solid #ffffff10;border-radius:14px;opacity:.4}.ach.unlocked{opacity:1;border-color:#34d39955}.ach b,.ach small{display:block}.ach b{font-size:11px;margin-top:4px}.ach small{font-size:9px;color:#8f95a3}.modal{display:none;position:fixed;inset:0;background:#000b;place-items:center;z-index:20;padding:15px}.modal.open{display:grid}.modalbox{width:min(520px,100%);background:#101218;border:1px solid #ffffff18;border-radius:20px;padding:16px}.themegrid{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:10px}.theme{padding:12px;border:1px solid #ffffff18;border-radius:12px;background:#ffffff06;text-align:right}.toast{position:fixed;bottom:20px;left:50%;transform:translate(-50%,80px);opacity:0;background:#161922;border:1px solid #ffffff18;padding:10px 16px;border-radius:99px;z-index:50;font-size:11px;transition:.25s}.toast.show{transform:translate(-50%,0);opacity:1}.conf{position:fixed;width:7px;height:7px;z-index:49}
 @media(max-width:560px){.panel{grid-template-columns:1fr;text-align:center}.ring{margin:auto}.stats{text-align:right}.statuses{grid-template-columns:1fr 1fr}.themegrid{grid-template-columns:1fr}}
+
+/* ===== Productivity features ===== */
+.feature-panel{max-width:620px;margin:0 auto 20px;display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.feature-box{padding:16px;border:1px solid var(--line);border-radius:20px;background:linear-gradient(180deg,rgba(255,255,255,.045),rgba(255,255,255,.01));backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px)}
+.feature-title{font-size:10px;font-weight:800;letter-spacing:1.2px;color:var(--dim);margin-bottom:9px;text-transform:uppercase}
+.quote{font-size:13px;line-height:1.9;color:#e4e4e7}
+.streak{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.streak-num{font:700 28px 'Space Grotesk',monospace;color:#f59e0b}
+.streak-meta{font-size:10px;color:var(--dim);line-height:1.8}
+.note-wrap,.sub-wrap{display:none;position:relative;z-index:2;margin-top:12px}
+.card.expanded .note-wrap,.card.expanded .sub-wrap{display:block}
+.note{width:100%;min-height:64px;resize:vertical;border:1px solid var(--line);border-radius:12px;background:rgba(0,0,0,.18);color:var(--text);padding:10px;font:11px/1.8 'Vazirmatn',sans-serif;outline:none}
+.note:focus{border-color:rgba(167,139,250,.45)}
+.sub-wrap{display:flex;flex-direction:column;gap:6px}
+.sub-item{display:flex;align-items:center;gap:8px;font-size:11px;color:var(--dim)}
+.sub-item input{accent-color:#a78bfa}
+.card-actions{display:flex;gap:6px;margin-top:9px;position:relative;z-index:3}
+.card-action{font:700 10px 'Vazirmatn',sans-serif;color:var(--dim);background:rgba(255,255,255,.025);border:1px solid var(--line);border-radius:9px;padding:7px 9px;cursor:pointer}
+.card-action:hover{color:#fff;border-color:rgba(255,255,255,.18)}
+.drag-handle{cursor:grab;color:var(--dimmer);font-size:17px;user-select:none}
+.card.dragging{opacity:.45}
+.toolbar-extra{max-width:620px;margin:0 auto 18px;display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+.modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.62);backdrop-filter:blur(10px);z-index:1000;display:none;align-items:center;justify-content:center;padding:18px}
+.modal-backdrop.show{display:flex}
+.modal{width:min(520px,100%);max-height:85vh;overflow:auto;background:#111116;border:1px solid rgba(255,255,255,.1);border-radius:24px;padding:20px;box-shadow:0 30px 100px rgba(0,0,0,.65)}
+.modal h3{font-size:17px;margin-bottom:14px}
+.modal-row{display:flex;gap:8px;flex-wrap:wrap}
+.theme-btn{flex:1;min-width:110px;padding:12px;border-radius:12px;border:1px solid var(--line);background:rgba(255,255,255,.03);color:#fff;cursor:pointer}
+.ach{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--line)}
+.ach:last-child{border-bottom:0}.ach-icon{font-size:22px}.ach small{display:block;color:var(--dim);margin-top:3px}
+.timer-display{text-align:center;font:700 48px 'Space Grotesk',monospace;letter-spacing:-2px;margin:8px 0 18px}
+.timer-bar{height:5px;background:rgba(255,255,255,.06);border-radius:99px;overflow:hidden;margin-bottom:16px}
+.timer-bar i{display:block;height:100%;width:100%;background:#22d3ee;transform-origin:right;transition:width .4s linear}
+@media(max-width:560px){.feature-panel{grid-template-columns:1fr}.feature-box{padding:13px}.timer-display{font-size:42px}}
+
 </style>
 </head>
 <body>
@@ -23,12 +58,39 @@ header{text-align:center;margin-bottom:18px}.badge{display:inline-block;padding:
 <section class="panel"><div class="ring"><svg viewBox="0 0 100 100"><circle class="track" cx="50" cy="50" r="45"/><circle class="fill" id="overallRing" cx="50" cy="50" r="45"/></svg><div class="ringtext"><div class="pct" id="pct">0%</div><small>پیشرفت کل</small></div></div><div class="stats"><div class="stat"><b id="done">0</b><span>تکمیل شده</span></div><div class="stat"><b id="learning">0</b><span>در حال یادگیری</span></div><div class="stat"><b id="todo">0</b><span>شروع نشده</span></div><div class="stat"><b class="streak" id="streak">0</b><span>روز پیاپی</span></div></div></section>
 <section class="quote"><small>نقل‌قول روزانه</small><p id="quote"></p></section>
 <div class="toolbar"><button class="tool" id="timerJump">تایمر</button><button class="tool" id="achJump">دستاوردها</button><button class="tool" id="themeBtn">تم رنگی</button><button class="tool" id="backup">پشتیبان</button><button class="tool" id="restore">بازیابی</button><button class="tool" id="reset">ریست</button></div>
+
+<div class="feature-panel">
+  <div class="feature-box">
+    <div class="feature-title">Streak</div>
+    <div class="streak"><div><div class="streak-num" id="streakNum">0</div><div class="streak-meta">روز پیاپی مطالعه</div></div><div id="streakBest" class="streak-meta">بهترین: 0</div></div>
+  </div>
+  <div class="feature-box">
+    <div class="feature-title">Daily quote</div>
+    <div class="quote" id="dailyQuote"></div>
+  </div>
+</div>
+<div class="toolbar-extra">
+  <button class="tool" id="timerBtn">◷ study timer</button>
+  <button class="tool" id="achBtn">★ achievements</button>
+  <button class="tool" id="themeBtn">◐ themes</button>
+</div>
 <div class="filters" id="filters"></div>
 <div id="container"></div>
 <section class="timer" id="timer"><h2>تایمر مطالعه</h2><div class="timerline"><div class="time" id="time">25:00</div><button class="tool" id="start">شروع</button><button class="tool" id="pause">توقف</button><button class="tool" id="timerReset">ریست</button></div></section>
 <section class="achievements" id="achievements"><h2>نشان‌ها و دستاوردها</h2><div class="achgrid" id="achgrid"></div></section>
 </div>
 <div class="modal" id="modal"><div class="modalbox"><div style="display:flex;align-items:center"><b style="flex:1">تم رنگی</b><button class="tool" id="closeTheme">بستن</button></div><div class="themegrid" id="themegrid"></div></div></div>
+
+<div class="modal-backdrop" id="timerModal"><div class="modal">
+  <h3>Study Timer</h3><div class="timer-display" id="timerDisplay">25:00</div><div class="timer-bar"><i id="timerBar"></i></div>
+  <div class="modal-row"><button class="tool" id="timerStart">start</button><button class="tool" id="timerReset">reset</button><button class="tool" id="timerClose">close</button></div>
+</div></div>
+<div class="modal-backdrop" id="achModal"><div class="modal">
+  <h3>Achievements</h3><div id="achList"></div><div class="modal-row"><button class="tool" id="achClose">close</button></div>
+</div></div>
+<div class="modal-backdrop" id="themeModal"><div class="modal">
+  <h3>Color themes</h3><div class="modal-row" id="themeList"></div><div class="modal-row" style="margin-top:12px"><button class="tool" id="themeClose">close</button></div>
+</div></div>
 <div class="toast" id="toast"></div>
 <script>
 'use strict';
