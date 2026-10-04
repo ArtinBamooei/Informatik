@@ -1681,7 +1681,9 @@ document.getElementById('syncPull').addEventListener('click', async () => {
     s.theme = s.theme || 'violet';
     s.unlocked = Array.isArray(s.unlocked) ? s.unlocked : [];
     s.reminder = s.reminder || { enabled: false, time: '20:00', lastNotified: null };
-    s.sync = s.sync || { gistId: '', lastSync: null };
+    s.sync = s.sync || { gistId: '', lastSync: null, remoteUpdatedAt: null, lastLocalChange: 0 };
+    s.sync.remoteUpdatedAt = typeof s.sync.remoteUpdatedAt==='string' ? s.sync.remoteUpdatedAt : null;
+    s.sync.lastLocalChange = Number.isFinite(Number(s.sync.lastLocalChange)) ? Number(s.sync.lastLocalChange) : 0;
     delete s.sync.token;
     syncToken = token;
     s.sync.gistId = gistId;
@@ -1768,7 +1770,7 @@ document.getElementById('resetBtn').addEventListener('click', () => {
     order: DEFAULT_SKILLS.map(x=>x.id),
     dates: keepDates, theme: keepTheme, unlocked: [],
     customCount: 0, timerStarted: 0, focusUsed: 0,
-    reminder: keepReminder, sync: { gistId: keepSync?.gistId || '', lastSync: keepSync?.lastSync || null }
+    reminder: keepReminder, sync: { gistId: keepSync?.gistId || '', lastSync: keepSync?.lastSync || null, remoteUpdatedAt: keepSync?.remoteUpdatedAt || null, lastLocalChange: 0 }
   };
   s.skills.forEach(sk => {
     s.progress[sk.id] = 'todo';
