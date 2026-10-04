@@ -86,20 +86,20 @@ const QUOTES = [
 ];
 
 const ACH = [
-  {id:'first',  icon:'🏁', name:'اولین قدم',   desc:'اولین پیشرفتت رو ثبت کردی',    test:()=>Object.keys(s.progress).some(k=>s.progress[k]!=='todo')},
-  {id:'three',  icon:'📚', name:'سه قدم',      desc:'۳ مهارت در جریان داری',         test:()=>Object.keys(s.progress).filter(k=>s.progress[k]!=='todo').length>=3},
+  {id:'first',  icon:'01', name:'اولین قدم',   desc:'اولین پیشرفتت رو ثبت کردی',    test:()=>Object.keys(s.progress).some(k=>s.progress[k]!=='todo')},
+  {id:'three',  icon:'03', name:'سه قدم',      desc:'۳ مهارت در جریان داری',         test:()=>Object.keys(s.progress).filter(k=>s.progress[k]!=='todo').length>=3},
   {id:'done1',  icon:'✓',  name:'اولین تسلط',  desc:'اولین مهارت کامل شد',           test:()=>Object.keys(s.progress).some(k=>s.progress[k]==='done')},
-  {id:'done5',  icon:'🏆', name:'پنج تسلط',    desc:'۵ مهارت کامل شد',               test:()=>Object.keys(s.progress).filter(k=>s.progress[k]==='done').length>=5},
-  {id:'streak3',icon:'🔥', name:'۳ روز پیاپی', desc:'سه روز پشت‌سرهم',                test:()=>streak()>=3},
+  {id:'done5',  icon:'05', name:'پنج تسلط',    desc:'۵ مهارت کامل شد',               test:()=>Object.keys(s.progress).filter(k=>s.progress[k]==='done').length>=5},
+  {id:'streak3',icon:'03d', name:'۳ روز پیاپی', desc:'سه روز پشت‌سرهم',                test:()=>streak()>=3},
   {id:'streak7',icon:'⚡', name:'هفت روز',     desc:'یه هفته پیوسته',                 test:()=>streak()>=7},
-  {id:'streak30',icon:'💎',name:'سی روز',      desc:'یه ماه کامل پیوسته!',            test:()=>streak()>=30},
+  {id:'streak30',icon:'30d',name:'سی روز',      desc:'یه ماه کامل پیوسته!',            test:()=>streak()>=30},
   {id:'editor', icon:'⚙️', name:'شخصی‌ساز',    desc:'اولین مهارت خودت رو ساختی',     test:()=>s.customCount>0},
-  {id:'note',   icon:'📝', name:'یادداشت‌بردار',desc:'اولین یادداشتت رو نوشتی',      test:()=>Object.keys(s.notes).some(k=>(s.notes[k]||'').trim())},
+  {id:'note',   icon:'NOTE', name:'یادداشت‌بردار',desc:'اولین یادداشتت رو نوشتی',      test:()=>Object.keys(s.notes).some(k=>(s.notes[k]||'').trim())},
   {id:'subs',   icon:'✓',  name:'زیرموضوع‌ساز', desc:'۱۰ زیرموضوع تیک خورد',         test:()=>{let n=0;Object.keys(s.subs).forEach(k=>n+=s.subs[k].filter(x=>x.done).length);return n>=10;}},
   {id:'time1',  icon:'⏱️', name:'یک ساعت',     desc:'یه ساعت مطالعه کردی',            test:()=>totalTime()>=3600},
-  {id:'time10', icon:'🧠', name:'ده ساعت',     desc:'۱۰ ساعت مطالعه کردی',            test:()=>totalTime()>=36000},
+  {id:'time10', icon:'10h', name:'ده ساعت',     desc:'۱۰ ساعت مطالعه کردی',            test:()=>totalTime()>=36000},
   {id:'timer1', icon:'⏲️', name:'اولین تایمر', desc:'اولین بار تایمر رو زدی',         test:()=>s.timerStarted>0},
-  {id:'focus1', icon:'🎯', name:'تمرکز عمیق',  desc:'اولین بار حالت Focus رو زدی',   test:()=>s.focusUsed>0}
+  {id:'focus1', icon:'FOCUS', name:'تمرکز عمیق',  desc:'اولین بار حالت Focus رو زدی',   test:()=>s.focusUsed>0}
 ];
 
 /* ═══════════════════════════════════════════
@@ -763,7 +763,7 @@ container.addEventListener('click', e => {
       render();
       updateOverall();
       renderTimer();
-      toast('🗑 حذف شد');
+      toast('حذف شد');
       vibrate(15);
       return;
     }
@@ -920,7 +920,7 @@ document.getElementById('filters').addEventListener('click', e => {
    ADD / EDIT MODAL
    ═══════════════════════════════════════════ */
 let editingId = null;
-let selectedIcon = '🎯';
+let selectedIcon = 'LAB';
 
 function openAddModal(presetCat, id){
   editingId = id || null;
@@ -945,7 +945,7 @@ function openAddModal(presetCat, id){
     document.getElementById('skillName').value = '';
     if (typeof presetCat === 'string') sel.value = presetCat;
     else sel.value = CATS[0].id;
-    selectedIcon = '🎯';
+    selectedIcon = 'LAB';
     document.getElementById('skillTargetLevel').value = 'intermediate';
   }
   buildIconGrid();
@@ -1567,8 +1567,8 @@ function checkReminder(){
   target.setHours(h, m, 0, 0);
   if (now < target) return;
   try {
-    new Notification('مسیر یادگیری 📚', {
-      body: 'یادت نره امروز یه قدم جلو بری 🔥',
+    new Notification('دفتر مسیر یادگیری', {
+      body: 'امروز یک قدم در مسیرت بردار',
       tag: 'informatik-reminder'
     });
     s.reminder.lastNotified = t;
