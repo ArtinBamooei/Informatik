@@ -290,6 +290,8 @@ function importJSON(){
 }
 function applySearch(){
   const container=document.getElementById('container');if(!container)return;
+  if(searchQuery===''&&sortMode==='default'){return;}
+  if(typeof observer!=='undefined')observer.disconnect();
   const cards=[...container.querySelectorAll('.card')];
   const s=readState();if(!s)return;
   const map=new Map((s.skills||[]).map(x=>[x.id,x]));
@@ -314,6 +316,7 @@ function applySearch(){
       }).forEach(x=>list.appendChild(x));
     });
   }
+  if(typeof observer!=='undefined')observer.observe(container,{childList:true,subtree:true});
 }
 function focusNext(){
   const s=readState();if(!s||!s.skills?.length)return;
