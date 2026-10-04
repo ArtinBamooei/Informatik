@@ -980,19 +980,30 @@ document.getElementById('themeBtn').addEventListener('click', () => {
   document.getElementById('themeModal').classList.add('open');
 });
 
+function closeMoreMenu(){
+  const menu=document.getElementById('moreMenu');
+  const btn=document.getElementById('moreBtn');
+  if(menu) menu.classList.remove('open');
+  if(btn) btn.setAttribute('aria-expanded','false');
+}
+
 document.getElementById('moreBtn').addEventListener('click', e => {
   e.stopPropagation();
   const menu=document.getElementById('moreMenu');
-  const open=menu.classList.toggle('open');
+  const open=!menu.classList.contains('open');
+  if(open) menu.classList.add('open');
+  else closeMoreMenu();
   e.currentTarget.setAttribute('aria-expanded',String(open));
 });
+
+document.getElementById('moreMenu').addEventListener('click', e => {
+  const item=e.target.closest('.more-item');
+  if(!item) return;
+  closeMoreMenu();
+});
+
 document.addEventListener('click', e => {
-  if(!e.target.closest('.more-wrap')){
-    const menu=document.getElementById('moreMenu');
-    if(menu) menu.classList.remove('open');
-    const btn=document.getElementById('moreBtn');
-    if(btn) btn.setAttribute('aria-expanded','false');
-  }
+  if(!e.target.closest('.more-wrap')) closeMoreMenu();
 });
 
 /* ═══════════════════════════════════════════
