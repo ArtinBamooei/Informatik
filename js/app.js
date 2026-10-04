@@ -140,7 +140,7 @@ const ACH = [
 /* ═══════════════════════════════════════════
    STATE
    ═══════════════════════════════════════════ */
-const KEY = 'informatik-v9';
+const KEY = 'informatik-v10';
 
 function uid(){ return 'sk_'+Date.now().toString(36)+Math.random().toString(36).slice(2,6); }
 
@@ -227,6 +227,7 @@ s.skills.forEach(sk => {
 s.order = s.order.filter(id => s.skills.some(sk => sk.id === id));
 s = s = normalizeState(s);
 
+function sanitizePlainRecord(value){if(!value||typeof value!=='object'||Array.isArray(value))return {};const out={};Object.keys(value).slice(0,2000).forEach(k=>{if(k.length<=120)out[k]=value[k];});return out;}
 function normalizeState(input){
   const base=(input&&typeof input==='object'&&!Array.isArray(input))?input:{};
   const skills=Array.isArray(base.skills)&&base.skills.length?base.skills:DEFAULT_SKILLS.slice();
@@ -247,8 +248,6 @@ function normalizeState(input){
     notes:base.notes&&typeof base.notes==='object'&&!Array.isArray(base.notes)?{...base.notes}:{},
     subs:base.subs&&typeof base.subs==='object'&&!Array.isArray(base.subs)?{...base.subs}:{},
     skillTime:base.skillTime&&typeof base.skillTime==='object'&&!Array.isArray(base.skillTime)?{...base.skillTime}:{},
-    targets:base.targets&&typeof base.targets==='object'&&!Array.isArray(base.targets)?{...base.targets}:{},
-    deadlines:base.deadlines&&typeof base.deadlines==='object'&&!Array.isArray(base.deadlines)?{...base.deadlines}:{},
     targetLevels:base.targetLevels&&typeof base.targetLevels==='object'&&!Array.isArray(base.targetLevels)?{...base.targetLevels}:{},
     order:Array.isArray(base.order)?[...base.order.filter(x=>typeof x==='string')]:[],
     dates:Array.isArray(base.dates)?[...new Set(base.dates.filter(x=>/^\d{4}-\d{2}-\d{2}$/.test(x)))]:[],
@@ -275,13 +274,13 @@ function normalizeState(input){
     if(!Array.isArray(out.subs[sk.id])) out.subs[sk.id]=[];
     out.subs[sk.id]=out.subs[sk.id].filter(x=>x&&typeof x==='object'&&typeof x.text==='string').map(x=>({...x,done:!!x.done}));
     out.skillTime[sk.id]=Number.isFinite(Number(out.skillTime[sk.id]))?Math.max(0,Number(out.skillTime[sk.id])):0;
-    out.targets[sk.id]=Number.isFinite(Number(out.targets[sk.id]))?Math.min(100,Math.max(0,Number(out.targets[sk.id]))):100;
-    out.deadlines[sk.id]=/^\d{4}-\d{2}-\d{2}$/.test(out.deadlines[sk.id]||'')?out.deadlines[sk.id]:'';
     out.targetLevels[sk.id]=['beginner','intermediate','advanced'].includes(out.targetLevels[sk.id])?out.targetLevels[sk.id]:'intermediate';
   });
   const ids=new Set(out.skills.map(x=>x.id));
   out.order=[...out.order.filter(id=>ids.has(id)),...out.skills.map(x=>x.id).filter(id=>!out.order.includes(id))];
   delete out.sync.token;
+  delete out.targets;
+  delete out.deadlines;
   return out;
 }
 
@@ -542,10 +541,7 @@ function buildCard(sk){
   const subDone = subs.filter(x => x.done).length;
   const hasNote = (s.notes[id] || '').trim().length > 0;
   const skillSeconds = s.skillTime[id] || 0;
-  const target = Number(s.targets[id] ?? 100);
-  const deadline = s.deadlines[id] || '';
   const targetLevel = s.targetLevels[id] || 'intermediate';
-  const targetReached = val >= target;
   const isTimed = timer && timer.running && timer.skillId === id;
 
   const card = document.createElement('article');
@@ -555,8 +551,6 @@ function buildCard(sk){
 
   const stateExtra = subs.length > 0 ? ` · ${subDone}/${subs.length}` : '';
   const timeBadge = skillSeconds >= 60 ? `<span class="time-badge">⏱ ${formatTime(skillSeconds)}</span>` : '';
-  const goalBadge = `<span class="goal-badge ${targetReached?'reached':''}">هدف ${target}%</span>`;
-  const deadlineBadge = deadline ? `<span class="deadline-badge">تا ${esc(deadline)}</span>` : '';
   const levelNames={beginner:'مقدماتی',intermediate:'متوسط',advanced:'حرفه‌ای'};
   const levelButtons=['beginner','intermediate','advanced'].map(level =>
     `<button class="target-level ${level} ${targetLevel===level?'active':''}" data-target-level="${level}" title="هدف: ${levelNames[level]}">${levelNames[level]}</button>`
@@ -575,7 +569,6 @@ function buildCard(sk){
       <div class="info">
         <h3>${esc(sk.name)}${timeBadge}</h3>
         <div class="state">${stData.label}${stateExtra}</div>
-        <div class="card-goal">${goalBadge}${deadlineBadge}</div>
         <div class="target-levels" role="group" aria-label="سطح هدف">
           <span class="target-level-label">هدف سطح</span>${levelButtons}
         </div>
@@ -766,8 +759,6 @@ container.addEventListener('click', e => {
       delete s.notes[id];
       delete s.subs[id];
       delete s.skillTime[id];
-      delete s.targets[id];
-      delete s.deadlines[id];
       delete s.targetLevels[id];
       expanded.delete(id);
       if (timer && timer.skillId === id){
@@ -959,8 +950,6 @@ function openAddModal(presetCat, id){
     document.getElementById('skillName').value = sk.name;
     sel.value = sk.cat;
     selectedIcon = sk.icon;
-    document.getElementById('skillTarget').value = String(s.targets[id] ?? 100);
-    document.getElementById('skillDeadline').value = s.deadlines[id] || '';
     document.getElementById('skillTargetLevel').value = s.targetLevels[id] || 'intermediate';
   } else {
     document.getElementById('addModalTitle').textContent = 'مهارت جدید';
@@ -968,11 +957,8 @@ function openAddModal(presetCat, id){
     if (typeof presetCat === 'string') sel.value = presetCat;
     else sel.value = CATS[0].id;
     selectedIcon = '🎯';
-    document.getElementById('skillTarget').value = '100';
-    document.getElementById('skillDeadline').value = '';
     document.getElementById('skillTargetLevel').value = 'intermediate';
   }
-  updateSkillTargetLabel();
   buildIconGrid();
   updateSkillPreview();
   document.getElementById('addModal').classList.add('open');
@@ -993,15 +979,6 @@ function buildIconGrid(){
   };
 }
 
-function updateSkillTargetLabel(){
-  const input=document.getElementById('skillTarget');
-  const label=document.getElementById('skillTargetValue');
-  if(!input || !label) return;
-  label.textContent=input.value+'%';
-  input.style.setProperty('--goal-fill', input.value+'%');
-}
-document.getElementById('skillTarget').addEventListener('input', updateSkillTargetLabel);
-
 function updateSkillPreview(){
   const name = document.getElementById('skillName').value.trim() || 'نام مهارت';
   const catId = document.getElementById('skillCat').value;
@@ -1017,8 +994,6 @@ document.getElementById('skillCat').addEventListener('change', updateSkillPrevie
 document.getElementById('skillSave').addEventListener('click', () => {
   const name = document.getElementById('skillName').value.trim();
   const catId = document.getElementById('skillCat').value;
-  const target = Math.min(100, Math.max(0, Number(document.getElementById('skillTarget').value) || 0));
-  const deadline = document.getElementById('skillDeadline').value || '';
   const targetLevel = document.getElementById('skillTargetLevel').value || 'intermediate';
   if (!name){
     const inp = document.getElementById('skillName');
@@ -1030,8 +1005,6 @@ document.getElementById('skillSave').addEventListener('click', () => {
   if (editingId){
     const sk = skillById(editingId);
     if (sk){ sk.name = name; sk.cat = catId; sk.icon = selectedIcon; }
-    s.targets[editingId] = target;
-    s.deadlines[editingId] = deadline;
     s.targetLevels[editingId] = targetLevel;
     toast('✓ ویرایش شد');
   } else {
@@ -1041,8 +1014,6 @@ document.getElementById('skillSave').addEventListener('click', () => {
     s.progress[id] = 'todo';
     s.subs[id] = [];
     s.skillTime[id] = 0;
-    s.targets[id] = target;
-    s.deadlines[id] = deadline;
     s.targetLevels[id] = targetLevel;
     s.customCount = (s.customCount || 0) + 1;
     toast('✓ اضافه شد');
@@ -1416,143 +1387,20 @@ function openSkillPicker(){
 /* ═══════════════════════════════════════════
    FOCUS MODE
    ═══════════════════════════════════════════ */
-let focusId = null;
-
-function openFocus(id){
-  const sk = skillById(id);
-  if (!sk) return;
-  focusId = id;
-  s.focusUsed = (s.focusUsed || 0) + 1;
-  save();
-  document.body.classList.add('focus-mode');
-  document.getElementById('focusOverlay').classList.add('open');
-  document.getElementById('focusIcon').textContent = sk.icon;
-  document.getElementById('focusName').textContent = sk.name;
-  updateFocus();
-  renderTimer();
-  checkAchievements();
-  vibrate(12);
-}
-
-function closeFocus(){
-  focusId = null;
-  document.body.classList.remove('focus-mode');
-  document.getElementById('focusOverlay').classList.remove('open');
-  render();
-  vibrate(10);
-}
-
-function updateFocus(){
-  if (!focusId) return;
-  const sk = skillById(focusId);
-  if (!sk){ closeFocus(); return; }
-  const st = getSkillStatus(focusId);
-  const stData = STAT[st];
-  const val = getSkillValue(focusId);
-  document.getElementById('focusStatus').textContent = stData.label;
-  document.getElementById('focusStatus').style.setProperty('--status', stData.color);
-  const ring = document.getElementById('focusRingFill');
-  ring.style.stroke = stData.color;
-  const circ = 2 * Math.PI * 90;
-  ring.style.strokeDashoffset = circ * (1 - val/100);
-  document.getElementById('focusPct').textContent = val + '%';
-  document.getElementById('focusPct').style.color = stData.color;
-  document.getElementById('focusTotalTime').textContent = formatTime(s.skillTime[focusId] || 0);
-  document.getElementById('focusTimerBtn').textContent =
-    (timer.running && timer.skillId === focusId) ? '⏸ توقف تایمر' : '▶ شروع تایمر';
-}
-
-document.getElementById('focusClose').addEventListener('click', closeFocus);
-
-document.getElementById('focusTimerBtn').addEventListener('click', () => {
-  if (!focusId) return;
-  if (timer.running && timer.skillId === focusId){
-    // stop
-    timer.remaining = Math.max(0, (timer.endTime - Date.now()) / 1000);
-    timer.running = false;
-    commitSessionTime();
-    clearInterval(timerInterval);
-    timerInterval = null;
-    saveTimer();
-    renderTimer();
-    updateFocus();
-  } else {
-    // if timer running for another skill, commit
-    if (timer.running) commitSessionTime();
-    timer.skillId = focusId;
-    if (timer.remaining <= 0) timer.remaining = timer.duration;
-    timer.endTime = Date.now() + timer.remaining * 1000;
-    timer.running = true;
-    beginTimerSession();
-    recordActivity();
-    s.timerStarted = (s.timerStarted || 0) + 1;
-    save();
-    saveTimer();
-    startTimerTick();
-    renderTimer();
-    updateFocus();
-    checkAchievements();
-    vibrate(12);
-  }
-});
-
-document.getElementById('focusStatusBtn').addEventListener('click', () => {
-  if (!focusId) return;
-  const order = STAT_ORDER;
-  const cur = getSkillStatus(focusId);
-  const idx = order.indexOf(cur);
-  const next = order[(idx + 1) % order.length];
-  // only allow manual if no subtasks
-  if (s.subs[focusId] && s.subs[focusId].length > 0){
-    toast('این مهارت زیرموضوع داره');
-    return;
-  }
-  s.progress[focusId] = next;
-  save();
-  recordActivity();
-  updateFocus();
-  updateOverall();
-  checkAchievements();
-  if (next === 'done'){
-    burst(document.getElementById('focusRingFill'));
-    vibrate([20, 40, 30]);
-  }
-});
-
-document.getElementById('focusNotesBtn').addEventListener('click', () => {
-  const id = focusId;
-  if (!id) return;
-  closeFocus();
-  setTimeout(() => {
-    const card = document.querySelector(`.card[data-id="${id}"]`);
-    if (card){
-      expanded.add(id);
-      card.classList.add('expanded');
-      const panel = card.querySelector('.panel-inner[data-panel="notes"]');
-      if (panel){
-        panel.classList.add('open');
-        const textarea = panel.querySelector('textarea');
-        if (textarea) textarea.focus();
-      }
-    }
-  }, 200);
-});
-
-document.getElementById('focusSubsBtn').addEventListener('click', () => {
-  const id = focusId;
-  if (!id) return;
-  closeFocus();
-  setTimeout(() => {
-    const card = document.querySelector(`.card[data-id="${id}"]`);
-    if (card){
-      expanded.add(id);
-      card.classList.add('expanded');
-      const panel = card.querySelector('.panel-inner[data-panel="subs"]');
-      if (panel) panel.classList.add('open');
-    }
-  }, 200);
-});
-
+let focusId=null;
+let focusPulseRaf=null;
+function focusLevelName(level){return ({beginner:'مقدماتی',intermediate:'متوسط',advanced:'حرفه‌ای'})[level]||'متوسط';}
+function setFocusState(running){const o=document.getElementById('focusOverlay'),s=document.getElementById('focusSessionState');if(o)o.classList.toggle('is-running',!!running);if(s)s.textContent=running?'در حال تمرکز':'آماده';}
+function startFocusPulse(){const o=document.getElementById('focusOverlay');if(!o||focusPulseRaf)return;let last=0;const tick=now=>{if(!focusId||!o.classList.contains('open')){focusPulseRaf=null;return;}if(now-last>50){last=now;o.style.setProperty('--focus-x',(Math.sin(now*.0012)*6).toFixed(2)+'px');o.style.setProperty('--focus-y',(Math.cos(now*.0009)*5).toFixed(2)+'px');}focusPulseRaf=requestAnimationFrame(tick)};focusPulseRaf=requestAnimationFrame(tick);}
+function stopFocusPulse(){if(focusPulseRaf)cancelAnimationFrame(focusPulseRaf);focusPulseRaf=null;}
+function openFocus(id){const sk=skillById(id);if(!sk)return;focusId=id;s.focusUsed=(s.focusUsed||0)+1;recordActivity();save();const o=document.getElementById('focusOverlay');o.classList.add('open');o.setAttribute('aria-hidden','false');document.body.classList.add('focus-mode');document.getElementById('focusIcon').textContent=sk.icon;document.getElementById('focusName').textContent=sk.name;updateFocus();renderTimer();checkAchievements();startFocusPulse();vibrate(12);}
+function closeFocus(){stopFocusPulse();const o=document.getElementById('focusOverlay');o.classList.remove('open','is-running');o.setAttribute('aria-hidden','true');document.body.classList.remove('focus-mode');focusId=null;render();vibrate(10);}
+function updateFocus(){if(!focusId)return;const sk=skillById(focusId);if(!sk){closeFocus();return;}const st=getSkillStatus(focusId),d=STAT[st],v=getSkillValue(focusId),ring=document.getElementById('focusRingFill');ring.style.stroke=d.color;ring.style.strokeDashoffset=2*Math.PI*90*(1-v/100);document.getElementById('focusStatus').textContent=d.label;document.getElementById('focusStatusMetric').textContent=d.label;document.getElementById('focusStatus').style.setProperty('--status',d.color);document.getElementById('focusLevel').textContent=focusLevelName(s.targetLevels[focusId]);document.getElementById('focusPct').textContent=v+'%';document.getElementById('focusPct').style.color=d.color;document.getElementById('focusTotalTime').textContent=formatTime(s.skillTime[focusId]||0);const running=timer.running&&timer.skillId===focusId;document.getElementById('focusTimerBtn').innerHTML=running?'<span>⏸</span> توقف تایمر':'<span>▶</span> شروع تایمر';setFocusState(running);}
+document.getElementById('focusClose').addEventListener('click',closeFocus);
+document.getElementById('focusTimerBtn').addEventListener('click',()=>{if(!focusId)return;if(timer.running&&timer.skillId===focusId){timer.remaining=Math.max(0,(timer.endTime-Date.now())/1000);timer.running=false;commitSessionTime();clearInterval(timerInterval);timerInterval=null;saveTimer();renderTimer();updateFocus();}else{if(timer.running)commitSessionTime();timer.skillId=focusId;if(timer.remaining<=0)timer.remaining=timer.duration;timer.endTime=Date.now()+timer.remaining*1000;timer.running=true;beginTimerSession();recordActivity();s.timerStarted=(s.timerStarted||0)+1;save();saveTimer();startTimerTick();renderTimer();updateFocus();checkAchievements();vibrate(12);}});
+document.getElementById('focusStatusBtn').addEventListener('click',()=>{if(!focusId)return;const order=STAT_ORDER,cur=getSkillStatus(focusId),next=order[(order.indexOf(cur)+1)%order.length];if(s.subs[focusId]&&s.subs[focusId].length){toast('این مهارت زیرموضوع داره');return;}s.progress[focusId]=next;save();recordActivity();updateFocus();updateOverall();checkAchievements();if(next==='done'){burst(document.getElementById('focusRingFill'));vibrate([20,40,30]);}});
+document.getElementById('focusNotesBtn').addEventListener('click',()=>{const id=focusId;if(!id)return;closeFocus();setTimeout(()=>{const card=document.querySelector(`.card[data-id="${id}"]`);if(card){expanded.add(id);card.classList.add('expanded');const p=card.querySelector('.panel-inner[data-panel="notes"]');if(p){p.classList.add('open');const t=p.querySelector('textarea');if(t)t.focus();}}},200);});
+document.getElementById('focusSubsBtn').addEventListener('click',()=>{const id=focusId;if(!id)return;closeFocus();setTimeout(()=>{const card=document.querySelector(`.card[data-id="${id}"]`);if(card){expanded.add(id);card.classList.add('expanded');const p=card.querySelector('.panel-inner[data-panel="subs"]');if(p)p.classList.add('open');}},200);});
 /* ═══════════════════════════════════════════
    ACHIEVEMENTS
    ═══════════════════════════════════════════ */
@@ -1938,7 +1786,6 @@ document.getElementById('resetBtn').addEventListener('click', () => {
   s = {
     skills: DEFAULT_SKILLS.slice(),
     progress: {}, notes: {}, subs: {}, skillTime: {},
-    targets: {}, deadlines: {}, targetLevels: {},
     order: DEFAULT_SKILLS.map(x=>x.id),
     dates: keepDates, theme: keepTheme, unlocked: [],
     customCount: 0, timerStarted: 0, focusUsed: 0,
