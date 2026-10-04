@@ -125,19 +125,6 @@
         <option value="advanced">حرفه‌ای</option>
       </select>
     </div>
-    <div class="goal-grid">
-      <div class="field">
-        <label>هدف پیشرفت</label>
-        <div class="goal-range-wrap">
-          <input class="goal-range" id="skillTarget" type="range" min="0" max="100" step="5" value="100">
-          <span class="goal-value" id="skillTargetValue">100%</span>
-        </div>
-      </div>
-      <div class="field">
-        <label>مهلت هدف</label>
-        <input class="input" id="skillDeadline" type="date">
-      </div>
-    </div>
     <div class="preview-row">
       <div class="pv-icon" id="pvIcon">🎯</div>
       <div>
@@ -228,31 +215,18 @@
 </div>
 
 <!-- ═══ FOCUS OVERLAY ═══ -->
-<div class="focus-overlay" id="focusOverlay">
-  <button class="focus-close" id="focusClose" aria-label="بستن حالت تمرکز">✕</button>
-  <div class="focus-icon" id="focusIcon">🎯</div>
-  <div class="focus-name" id="focusName">مهارت</div>
-  <div class="focus-status" id="focusStatus">شروع</div>
-  <div class="focus-ring">
-    <svg viewBox="0 0 200 200">
-      <circle class="t" cx="100" cy="100" r="90"/>
-      <circle class="f" id="focusRingFill" cx="100" cy="100" r="90"/>
-    </svg>
-    <div class="inner">
-      <div class="num" id="focusPct">0%</div>
-      <div class="lbl">پیشرفت</div>
-    </div>
-  </div>
-  <div class="focus-timer" id="focusTimer">25:00<span class="cs">.00</span></div>
-  <div class="focus-actions">
-    <button class="primary" id="focusTimerBtn">▶ شروع تایمر</button>
-    <button id="focusStatusBtn">تغییر وضعیت</button>
-    <button id="focusNotesBtn">📝 یادداشت</button>
-    <button id="focusSubsBtn">✓ زیرموضوع‌ها</button>
-  </div>
-  <div class="focus-total">زمان این مهارت: <b id="focusTotalTime">0m</b></div>
-</div>
-
+<div class="focus-overlay" id="focusOverlay" aria-hidden="true">
+<div class="focus-orbit orbit-a"></div><div class="focus-orbit orbit-b"></div><div class="focus-orbit orbit-c"></div><div class="focus-particles" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+<button class="focus-close" id="focusClose" aria-label="بستن حالت تمرکز">✕</button>
+<div class="focus-topbar"><span class="focus-live"><i></i> FOCUS MODE</span><span class="focus-session" id="focusSessionState">آماده</span></div>
+<main class="focus-core">
+<div class="focus-icon-shell"><div class="focus-icon-glow"></div><div class="focus-icon" id="focusIcon">🎯</div></div>
+<div class="focus-name" id="focusName">مهارت</div><div class="focus-status" id="focusStatus">شروع</div>
+<div class="focus-ring-wrap"><div class="focus-ring-aura"></div><div class="focus-ring"><svg viewBox="0 0 200 200" aria-hidden="true"><circle class="t" cx="100" cy="100" r="90"/><circle class="f" id="focusRingFill" cx="100" cy="100" r="90"/></svg><div class="inner"><div class="num" id="focusPct">0%</div><div class="lbl">PROGRESS</div></div></div></div>
+<div class="focus-timer-label">DEEP WORK TIMER</div><div class="focus-timer" id="focusTimer">25:00<span class="cs">.00</span></div>
+<div class="focus-metrics"><div><b id="focusTotalTime">0m</b><span>زمان کل</span></div><div><b id="focusLevel">متوسط</b><span>سطح هدف</span></div><div><b id="focusStatusMetric">شروع</b><span>وضعیت</span></div></div>
+<div class="focus-actions"><button class="primary focus-main-btn" id="focusTimerBtn"><span>▶</span> شروع تایمر</button><button id="focusStatusBtn"><span>↗</span> تغییر وضعیت</button><button id="focusNotesBtn"><span>⌁</span> یادداشت</button><button id="focusSubsBtn"><span>✓</span> زیرموضوع‌ها</button></div>
+</main></div>
 <div class="toast" id="toast"></div>
 
 <script src="js/app.js" defer></script>
