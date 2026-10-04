@@ -545,3 +545,54 @@ body::before{content:"";position:fixed;inset:-20%;pointer-events:none;z-index:-1
 .goal-badge.reached{color:#34d399;border-color:rgba(52,211,153,.35);background:rgba(52,211,153,.08)}.deadline-badge{color:#f59e0b;border-color:rgba(245,158,11,.25);background:rgba(245,158,11,.06)}
 @media(max-width:560px){.goal-grid{grid-template-columns:1fr}}
 @media(prefers-reduced-motion:reduce){body::before,.card::after,.btn-save::after{animation:none!important}.card:hover,.panel:hover,.feature-box:hover,.timer-box:hover,.ach-box:hover{transform:none}}
+
+/* ═══ TARGET LEVELS + SCROLL CINEMATIC MOTION ═══ */
+.target-levels{display:flex;align-items:center;gap:5px;margin-top:7px;direction:rtl}
+.target-level-label{font-size:9px;color:var(--dimmer);margin-left:2px;white-space:nowrap}
+.target-level{appearance:none;border:1px solid var(--line2);background:rgba(255,255,255,.025);color:var(--dimmer);border-radius:999px;padding:4px 8px;font:700 9px 'Vazirmatn',sans-serif;cursor:pointer;transition:all .28s cubic-bezier(.16,1,.3,1);position:relative;overflow:hidden}
+.target-level::before{content:"";position:absolute;inset:0;background:currentColor;opacity:0;transform:scale(.4);transition:all .3s ease;border-radius:inherit}
+.target-level:hover{transform:translateY(-2px);color:var(--text);border-color:currentColor}
+.target-level.active{color:#fff;box-shadow:0 0 16px -6px currentColor;transform:translateY(-1px)}
+.target-level.active::before{opacity:.14;transform:scale(1)}
+.target-level.beginner.active{color:#22d3ee;border-color:#22d3ee}
+.target-level.intermediate.active{color:#f59e0b;border-color:#f59e0b}
+.target-level.advanced.active{color:#ef4444;border-color:#ef4444}
+.target-level.advanced.active::after{content:"";position:absolute;inset:-2px;border-radius:inherit;border:1px solid #ef4444;animation:levelPulse 1.6s ease-in-out infinite}
+@keyframes levelPulse{0%,100%{opacity:.15;transform:scale(1)}50%{opacity:.7;transform:scale(1.08)}}
+
+/* Scroll reveal: works with native CSS scroll-driven animation where supported */
+@supports(animation-timeline:view()){
+  .card,.feature-box,.timer-box,.ach-box,.filters,.toolbar,.panel{
+    animation:scrollReveal linear both;
+    animation-timeline:view();
+    animation-range:entry 0% cover 28%;
+  }
+  @keyframes scrollReveal{
+    from{opacity:0;transform:translateY(55px) scale(.94) rotateX(7deg);filter:blur(7px)}
+    50%{opacity:.65}
+    to{opacity:1;transform:none;filter:blur(0)}
+  }
+  .card:nth-child(3n+1){animation-name:scrollRevealLeft}
+  .card:nth-child(3n+2){animation-name:scrollReveal}
+  .card:nth-child(3n){animation-name:scrollRevealRight}
+  @keyframes scrollRevealLeft{from{opacity:0;transform:translateX(-65px) rotateY(8deg) scale(.94);filter:blur(6px)}to{opacity:1;transform:none;filter:blur(0)}}
+  @keyframes scrollRevealRight{from{opacity:0;transform:translateX(65px) rotateY(-8deg) scale(.94);filter:blur(6px)}to{opacity:1;transform:none;filter:blur(0)}}
+}
+
+/* JS fallback scroll classes */
+.reveal-scroll{opacity:0;transform:translateY(35px) scale(.97);filter:blur(5px);transition:opacity .75s cubic-bezier(.16,1,.3,1),transform .8s cubic-bezier(.16,1,.3,1),filter .7s ease}
+.reveal-scroll.is-visible{opacity:1;transform:none;filter:none}
+.card.is-visible:nth-child(3n+1){transition-delay:.03s}
+.card.is-visible:nth-child(3n+2){transition-delay:.08s}
+.card.is-visible:nth-child(3n){transition-delay:.13s}
+
+/* Floating decorative light and section depth */
+body::after{content:"";position:fixed;width:32vw;height:32vw;max-width:460px;max-height:460px;min-width:180px;min-height:180px;border-radius:50%;right:-12vw;top:35vh;pointer-events:none;z-index:-1;background:radial-gradient(circle,color-mix(in srgb,var(--accent2) 9%,transparent),transparent 68%);filter:blur(22px);animation:orbFloat 12s ease-in-out infinite alternate}
+@keyframes orbFloat{0%{transform:translate3d(0,-40px,0) scale(.9)}100%{transform:translate3d(-20vw,80px,0) scale(1.25)}}
+
+/* Scroll progress */
+body{--scroll-progress:0}
+body::selection{background:var(--accent);color:#fff}
+.scroll-progress{position:fixed;top:0;right:0;width:100%;height:2px;z-index:10000;pointer-events:none;transform-origin:right center;transform:scaleX(var(--scroll-progress));background:linear-gradient(90deg,var(--accent2),var(--accent),#ef4444);box-shadow:0 0 14px var(--accent)}
+@media(max-width:560px){.target-level{padding:4px 6px;font-size:8.5px}.target-level-label{display:none}}
+@media(prefers-reduced-motion:reduce){.target-level.advanced.active::after,body::after{animation:none}.reveal-scroll{opacity:1;transform:none;filter:none}}
