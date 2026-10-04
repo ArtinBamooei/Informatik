@@ -980,20 +980,53 @@ document.getElementById('themeBtn').addEventListener('click', () => {
   document.getElementById('themeModal').classList.add('open');
 });
 
+let moreMenuHome = null;
+
+function positionMoreMenu(){
+  const menu=document.getElementById('moreMenu');
+  const btn=document.getElementById('moreBtn');
+  if(!menu || !btn || !menu.classList.contains('open')) return;
+  const r=btn.getBoundingClientRect();
+  const gap=8;
+  menu.style.top=(r.bottom+gap)+'px';
+  menu.style.right=Math.max(8,window.innerWidth-r.right)+'px';
+  menu.style.left='auto';
+  const rect=menu.getBoundingClientRect();
+  if(rect.bottom > window.innerHeight-8){
+    menu.style.top=Math.max(8,r.top-rect.height-gap)+'px';
+  }
+  if(rect.left < 8) menu.style.left='8px';
+}
+
+function openMoreMenu(){
+  const menu=document.getElementById('moreMenu');
+  const btn=document.getElementById('moreBtn');
+  if(!menu || !btn) return;
+  if(!moreMenuHome) moreMenuHome=menu.parentElement;
+  document.body.appendChild(menu);
+  menu.classList.add('open');
+  btn.setAttribute('aria-expanded','true');
+  positionMoreMenu();
+}
+
 function closeMoreMenu(){
   const menu=document.getElementById('moreMenu');
   const btn=document.getElementById('moreBtn');
-  if(menu) menu.classList.remove('open');
+  if(menu){
+    menu.classList.remove('open');
+    if(moreMenuHome && menu.parentElement !== moreMenuHome) moreMenuHome.appendChild(menu);
+    menu.style.top='';
+    menu.style.right='';
+    menu.style.left='';
+  }
   if(btn) btn.setAttribute('aria-expanded','false');
 }
 
 document.getElementById('moreBtn').addEventListener('click', e => {
   e.stopPropagation();
   const menu=document.getElementById('moreMenu');
-  const open=!menu.classList.contains('open');
-  if(open) menu.classList.add('open');
-  else closeMoreMenu();
-  e.currentTarget.setAttribute('aria-expanded',String(open));
+  if(menu.classList.contains('open')) closeMoreMenu();
+  else openMoreMenu();
 });
 
 document.getElementById('moreMenu').addEventListener('click', e => {
@@ -1003,8 +1036,15 @@ document.getElementById('moreMenu').addEventListener('click', e => {
 });
 
 document.addEventListener('click', e => {
-  if(!e.target.closest('.more-wrap')) closeMoreMenu();
+  const menu=document.getElementById('moreMenu');
+  const btn=document.getElementById('moreBtn');
+  if(!e.target.closest('.more-wrap') && e.target !== menu && !menu.contains(e.target) && e.target !== btn){
+    closeMoreMenu();
+  }
 });
+
+window.addEventListener('resize', positionMoreMenu);
+window.addEventListener('scroll', positionMoreMenu, {passive:true});
 
 /* ═══════════════════════════════════════════
    MODAL CLOSE
