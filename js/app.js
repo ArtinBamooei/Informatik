@@ -1609,7 +1609,8 @@ document.getElementById('syncSave').addEventListener('click', () => {
 document.getElementById('syncPush').addEventListener('click', async () => {
   const token = document.getElementById('syncToken').value.trim();
   let gistId = document.getElementById('syncGist').value.trim();
-  if (!token){ toast('توکن رو وارد کن'); return; }
+  if (!token || token.length > 300){ toast('توکن نامعتبر است'); return; }
+  if (gistId && !/^[A-Za-z0-9_-]{20,100}$/.test(gistId)){ toast('Gist ID نامعتبر است'); return; }
 
   const payload = {
     description: 'Learning Path — synced data',
@@ -1670,7 +1671,8 @@ document.getElementById('syncPush').addEventListener('click', async () => {
 document.getElementById('syncPull').addEventListener('click', async () => {
   const token = document.getElementById('syncToken').value.trim();
   const gistId = document.getElementById('syncGist').value.trim();
-  if (!token || !gistId){ toast('توکن و Gist ID لازمه'); return; }
+  if (!token || token.length > 300 || !gistId){ toast('توکن و Gist ID لازمه'); return; }
+  if (!/^[A-Za-z0-9_-]{20,100}$/.test(gistId)){ toast('Gist ID نامعتبر است'); return; }
 
   try {
     const res = await fetch(`https://api.github.com/gists/${gistId}`, {
