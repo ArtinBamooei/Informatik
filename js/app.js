@@ -285,9 +285,9 @@ function normalizeState(input){
   return out;
 }
 
-function save(){
+function save(markLocalChange=true){
   try {
-    if(s.sync && typeof s.sync==='object') s.sync.lastLocalChange=Date.now();
+    if(markLocalChange && s.sync && typeof s.sync==='object') s.sync.lastLocalChange=Date.now();
     localStorage.setItem(KEY, JSON.stringify(s));
   } catch(e){}
 }
@@ -669,12 +669,45 @@ function updateOverall(){
 /* ═══════════════════════════════════════════
    CARD INTERACTIONS
    ═══════════════════════════════════════════ */
+let pointerFrame = 0;
+let pointerCard = null;
+let pointerX = 0;
+let pointerY = 0;
+let pointerRect = null;
+
+container.addEventListener('pointerenter', e => {
+  const card=e.target.closest('.card');
+  if (!card) return;
+  pointerCard = card;
+  pointerRect = card.getBoundingClientRect();
+}, true);
+
+container.addEventListener('pointerleave', e => {
+  const card=e.target.closest('.card');
+  if (card && pointerCard === card){
+    pointerCard = null;
+    pointerRect = null;
+  }
+}, true);
+
 container.addEventListener('pointermove', e => {
   const card=e.target.closest('.card');
   if(!card) return;
-  const r=card.getBoundingClientRect();
-  card.style.setProperty('--mx', ((e.clientX-r.left)/r.width*100)+'%');
-  card.style.setProperty('--my', ((e.clientY-r.top)/r.height*100)+'%');
+  if(pointerCard !== card || !pointerRect){
+    pointerCard = card;
+    pointerRect = card.getBoundingClientRect();
+  }
+  pointerX=e.clientX;
+  pointerY=e.clientY;
+  if(pointerFrame) return;
+  pointerFrame=requestAnimationFrame(()=>{
+    pointerFrame=0;
+    if(!pointerCard || !pointerRect) return;
+    const x=Math.max(0,Math.min(100,((pointerX-pointerRect.left)/pointerRect.width)*100));
+    const y=Math.max(0,Math.min(100,((pointerY-pointerRect.top)/pointerRect.height)*100));
+    pointerCard.style.setProperty('--mx',x.toFixed(1)+'%');
+    pointerCard.style.setProperty('--my',y.toFixed(1)+'%');
+  });
 });
 container.addEventListener('click', e => {
   const card = e.target.closest('.card');
@@ -697,6 +730,10 @@ container.addEventListener('click', e => {
   if (statusBtn){
     e.stopPropagation();
     const st = statusBtn.dataset.st;
+    if ((s.subs[id] || []).length){
+      toast('این مهارت با زیرموضوع‌ها کنترل می‌شود');
+      return;
+    }
     if (s.progress[id] !== st){
       const old = s.progress[id];
       s.progress[id] = st;
@@ -729,6 +766,9 @@ container.addEventListener('click', e => {
       delete s.notes[id];
       delete s.subs[id];
       delete s.skillTime[id];
+      delete s.targets[id];
+      delete s.deadlines[id];
+      delete s.targetLevels[id];
       expanded.delete(id);
       if (timer && timer.skillId === id){
         if(timer.running) commitSessionTime();
@@ -780,12 +820,15 @@ container.addEventListener('click', e => {
   }
 });
 
+let noteSaveTimer = null;
 container.addEventListener('input', e => {
   const card = e.target.closest('.card');
   if (!card) return;
   if (e.target.classList.contains('note-area')){
-    s.notes[card.dataset.id] = e.target.value;
-    save();
+    const id = card.dataset.id;
+    s.notes[id] = e.target.value;
+    clearTimeout(noteSaveTimer);
+    noteSaveTimer = setTimeout(() => save(), 350);
     if(e.target.value.trim()) recordActivity();
     const chip = card.querySelector('[data-tool="notes"]');
     const val = e.target.value.trim();
@@ -817,7 +860,8 @@ container.addEventListener('click', e => {
     const newCard = buildCard(skillById(id));
     if (wasExpanded) newCard.classList.add('expanded');
     wrapper.replaceChild(newCard, card);
-    newCard.querySelectorAll('.panel-inner').forEach(p => p.classList.add('open'));
+    const subsPanel = newCard.querySelector('.panel-inner[data-panel="subs"]');
+    if (subsPanel) subsPanel.classList.add('open');
     vibrate(10);
     updateOverall();
     return;
@@ -834,7 +878,8 @@ container.addEventListener('click', e => {
     const newCard = buildCard(skillById(id));
     if (wasExpanded) newCard.classList.add('expanded');
     wrapper.replaceChild(newCard, card);
-    newCard.querySelectorAll('.panel-inner').forEach(p => p.classList.add('open'));
+    const subsPanel = newCard.querySelector('.panel-inner[data-panel="subs"]');
+    if (subsPanel) subsPanel.classList.add('open');
     vibrate(10);
     updateOverall();
     return;
@@ -1265,9 +1310,11 @@ function renderTimer(){
 }
 
 let timerInterval = null;
+let lastTimerRenderSecond = -1;
 
 function startTimerTick(){
   if (timerInterval) clearInterval(timerInterval);
+  lastTimerRenderSecond = -1;
   timerInterval = setInterval(() => {
     if (!timer.running) return;
     const remaining = (timer.endTime - Date.now()) / 1000;
@@ -1287,8 +1334,12 @@ function startTimerTick(){
       vibrate([40, 60, 40]);
       return;
     }
-    renderTimer();
-  }, 33);
+    const wholeSecond = Math.floor(remaining);
+    if (wholeSecond !== lastTimerRenderSecond){
+      lastTimerRenderSecond = wholeSecond;
+      renderTimer();
+    }
+  }, 80);
 }
 
 document.getElementById('timerToggle').addEventListener('click', () => {
@@ -1469,30 +1520,32 @@ document.getElementById('focusStatusBtn').addEventListener('click', () => {
 });
 
 document.getElementById('focusNotesBtn').addEventListener('click', () => {
-  if (!focusId) return;
-  const sk = skillById(focusId);
+  const id = focusId;
+  if (!id) return;
   closeFocus();
   setTimeout(() => {
-    const card = document.querySelector(`.card[data-id="${focusId}"]`);
+    const card = document.querySelector(`.card[data-id="${id}"]`);
     if (card){
-      expanded.add(focusId);
+      expanded.add(id);
       card.classList.add('expanded');
       const panel = card.querySelector('.panel-inner[data-panel="notes"]');
       if (panel){
         panel.classList.add('open');
-        setTimeout(() => panel.querySelector('textarea').focus(), 150);
+        const textarea = panel.querySelector('textarea');
+        if (textarea) textarea.focus();
       }
     }
   }, 200);
 });
 
 document.getElementById('focusSubsBtn').addEventListener('click', () => {
-  if (!focusId) return;
+  const id = focusId;
+  if (!id) return;
   closeFocus();
   setTimeout(() => {
-    const card = document.querySelector(`.card[data-id="${focusId}"]`);
+    const card = document.querySelector(`.card[data-id="${id}"]`);
     if (card){
-      expanded.add(focusId);
+      expanded.add(id);
       card.classList.add('expanded');
       const panel = card.querySelector('.panel-inner[data-panel="subs"]');
       if (panel) panel.classList.add('open');
@@ -1755,7 +1808,7 @@ document.getElementById('syncPush').addEventListener('click', async () => {
     s.sync.gistId = data.id;
     s.sync.lastSync = Date.now();
     s.sync.remoteUpdatedAt = data.updated_at || new Date().toISOString();
-    save();
+    save(false);
     document.getElementById('syncGist').value = data.id;
     toast('☁️ ارسال شد');
     vibrate(20);
@@ -1885,6 +1938,7 @@ document.getElementById('resetBtn').addEventListener('click', () => {
   s = {
     skills: DEFAULT_SKILLS.slice(),
     progress: {}, notes: {}, subs: {}, skillTime: {},
+    targets: {}, deadlines: {}, targetLevels: {},
     order: DEFAULT_SKILLS.map(x=>x.id),
     dates: keepDates, theme: keepTheme, unlocked: [],
     customCount: 0, timerStarted: 0, focusUsed: 0,
@@ -1936,6 +1990,7 @@ function init(){
   // Save timer on hide
   document.addEventListener('visibilitychange', () => {
     if (document.hidden){
+      if (timer.running) commitSessionTime();
       saveTimer();
     } else {
       if (timer.running){
@@ -1976,11 +2031,20 @@ init();
 
 
 // Modern scroll effects fallback + progress
-const revealObserver = 'IntersectionObserver' in window ? new IntersectionObserver(entries=>{
-  entries.forEach(entry=>{ if(entry.isIntersecting) entry.target.classList.add('is-visible'); });
+const nativeScrollTimeline = 'CSS' in window && CSS.supports && CSS.supports('animation-timeline','view()');
+const revealObserver = !nativeScrollTimeline && 'IntersectionObserver' in window ? new IntersectionObserver(entries=>{
+  entries.forEach(entry=>{
+    if(entry.isIntersecting){
+      entry.target.classList.add('is-visible');
+      revealObserver.unobserve(entry.target);
+    }
+  });
 },{threshold:.08,rootMargin:'0px 0px -8% 0px'}) : null;
+
 function setupScrollEffects(){
+  if(nativeScrollTimeline) return;
   document.querySelectorAll('.card,.feature-box,.timer-box,.ach-box,.filters,.toolbar,.panel').forEach(el=>{
+    if(el.classList.contains('reveal-scroll')) return;
     el.classList.add('reveal-scroll');
     if(revealObserver) revealObserver.observe(el);
     else el.classList.add('is-visible');
