@@ -1310,11 +1310,11 @@ function renderTimer(){
 }
 
 let timerInterval = null;
-let lastTimerRenderSecond = -1;
+let lastTimerRenderTick = -1;
 
 function startTimerTick(){
   if (timerInterval) clearInterval(timerInterval);
-  lastTimerRenderSecond = -1;
+  lastTimerRenderTick = -1;
   timerInterval = setInterval(() => {
     if (!timer.running) return;
     const remaining = (timer.endTime - Date.now()) / 1000;
@@ -1334,12 +1334,12 @@ function startTimerTick(){
       vibrate([40, 60, 40]);
       return;
     }
-    const wholeSecond = Math.floor(remaining);
-    if (wholeSecond !== lastTimerRenderSecond){
-      lastTimerRenderSecond = wholeSecond;
+    const renderTick = Math.floor(remaining * 10);
+    if (renderTick !== lastTimerRenderTick){
+      lastTimerRenderTick = renderTick;
       renderTimer();
     }
-  }, 80);
+  }, 100);
 }
 
 document.getElementById('timerToggle').addEventListener('click', () => {
@@ -1864,7 +1864,7 @@ document.getElementById('syncPull').addEventListener('click', async () => {
       if (!s.skillTime[sk.id]) s.skillTime[sk.id] = 0;
       if (!s.order.includes(sk.id)) s.order.push(sk.id);
     });
-    save();
+    save(false);
     applyTheme();
     renderAll();
     document.getElementById('syncModal').classList.remove('open');
