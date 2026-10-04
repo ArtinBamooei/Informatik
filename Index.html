@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#070a13">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>مسیر یادگیری من</title>
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;600;700;900&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{--txt:#e9edf7;--muted:#8b95ad;--stroke:rgba(255,255,255,.09)}
+html{scroll-behavior:smooth}
+body{
+font-family:'Vazirmatn',system-ui,-apple-system,sans-serif;
+background:#070a13;color:var(--txt);min-height:100vh;
+padding:max(20px,env(safe-area-inset-top)) 16px calc(40px + env(safe-area-inset-bottom));
+overflow-x:hidden;-webkit-font-smoothing:antialiased;
+}
+
+/* پس‌زمینه */
+.bg{position:fixed;inset:0;z-index:-1;overflow:hidden;
+background:
+radial-gradient(700px 500px at 82% -12%, rgba(99,102,241,.26), transparent 62%),
+radial-gradient(600px 420px at 8% 8%, rgba(34,211,238,.14), transparent 62%),
+radial-gradient(700px 620px at 50% 112%, rgba(168,85,247,.18), transparent 62%),
+#070a13;}
+.bg::after{content:'';position:absolute;inset:0;
+background-image:linear-gradient(rgba(255,255,255,.03) 1px,transparent 1px),
+linear-gradient(90deg,rgba(255,255,255,.03) 1px,transparent 1px);
+background-size:48px 48px;
+-webkit-mask-image:radial-gradient(circle at 50% 25%,#000 0%,transparent 70%);
+mask-image:radial-gradient(circle at 50% 25%,#000 0%,transparent 70%);}
+.orb{position:absolute;border-radius:50%;filter:blur(80px);opacity:.42;mix-blend-mode:screen;animation:float 20s ease-in-out infinite}
+.o1{width:340px;height:340px;background:#3b82f6;top:-120px;right:-80px}
+.o2{width:300px;height:300px;background:#a855f7;bottom:-120px;left:-70px;animation-delay:-6s}
+@keyframes float{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(-30px,26px) scale(1.1)}}
+
+/* هدر */
+header{max-width:680px;margin:0 auto 20px;text-align:center;animation:rise .7s cubic-bezier(.2,.8,.2,1) both}
+.eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:12px;font-weight:600;
+color:#a7b2cc;background:rgba(255,255,255,.05);border:1px solid var(--stroke);
+padding:7px 15px;border-radius:99px;backdrop-filter:blur(10px);margin-bottom:16px}
+.eyebrow .dot{width:7px;height:7px;border-radius:50%;background:#34d399;
+box-shadow:0 0 10px #34d399;animation:pulse 2s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.7)}}
+h1{font-size:clamp(26px,7vw,38px);font-weight:900;line-height:1.3;
+background:linear-gradient(110deg,#60a5fa,#a78bfa,#f472b6,#22d3ee,#60a5fa);
+background-size:300% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;
+animation:hue 9s linear infinite}
+@keyframes hue{to{background-position:300% 0}}
+
+/* پیشرفت کلی */
+.overall{max-width:680px;margin:0 auto;
+padding:18px 20px;border-radius:20px;border:1px solid var(--stroke);
+background:linear-gradient(160deg,rgba(255,255,255,.07),rgba(255,255,255,.015));
+backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+animation:rise .7s .08s cubic-bezier(.2,.8,.2,1) both}
+.oh{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}
+.oh .lb{font-size:14px;font-weight:600;color:#cbd5e6;display:flex;align-items:center;gap:9px}
+.oh .ico{width:30px;height:30px;border-radius:9px;display:grid;place-items:center;font-size:15px;
+background:rgba(96,165,250,.16);border:1px solid rgba(96,165,250,.34)}
+.opct{font-size:22px;font-weight:900;font-variant-numeric:tabular-nums;
+background:linear-gradient(110deg,#60a5fa,#a78bfa,#f472b6);
+-webkit-background-clip:text;background-clip:text;color:transparent}
+.otrack{height:12px;border-radius:99px;background:rgba(255,255,255,.07);
+border:1px solid rgba(255,255,255,.05);overflow:hidden}
+.ofill{height:100%;width:0;border-radius:99px;
+background:linear-gradient(90deg,#22d3ee,#60a5fa,#a78bfa,#f472b6);
+background-size:200% 100%;animation:hue 6s linear infinite;
+box-shadow:0 0 24px -2px rgba(96,165,250,.8);
+transition:width .9s cubic-bezier(.22,.85,.25,1)}
+.ostats{display:flex;gap:14px;flex-wrap:wrap;margin-top:12px;
+font-size:12px;color:var(--muted);font-weight:500}
+.ostats b{color:#e9edf7;font-weight:700}
+
+/* گرید کارت‌ها */
+.grid{max-width:680px;margin:22px auto 0;display:grid;grid-template-columns:1fr;gap:14px}
+
+.card{position:relative;padding:18px;border-radius:20px;border:1px solid var(--stroke);
+background:linear-gradient(160deg,rgba(255,255,255,.07),rgba(255,255,255,.018));
+backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);overflow:hidden;
+opacity:0;transform:translateY(22px) scale(.98);
+transition:opacity .6s cubic-bezier(.2,.8,.2,1),transform .6s cubic-bezier(.2,.8,.2,1),
+border-color .35s ease,box-shadow .35s ease}
+.card.in{opacity:1;transform:none}
+.card.done{border-color:rgba(52,211,153,.4);
+box-shadow:0 0 30px -12px rgba(52,211,153,.5)}
+.card::before{content:'';position:absolute;inset:-1px;border-radius:inherit;pointer-events:none;
+background:radial-gradient(300px 120px at 88% 0%,color-mix(in srgb,var(--c) 24%,transparent),transparent 70%);
+opacity:.7;transition:opacity .4s}
+.card.done::before{opacity:1}
+
+.ctop{display:flex;align-items:center;gap:12px;position:relative;z-index:1}
+.icon{flex:0 0 auto;width:46px;height:46px;border-radius:14px;display:grid;place-items:center;
+font-size:22px;background:color-mix(in srgb,var(--c) 16%,transparent);
+border:1px solid color-mix(in srgb,var(--c) 34%,transparent);
+box-shadow:0 0 22px -8px var(--c);transition:transform .4s cubic-bezier(.2,.8,.2,1)}
+.meta{flex:1;min-width:0}
+.meta h3{font-size:16px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pct{flex:0 0 auto;font-size:17px;font-weight:800;color:var(--c);font-variant-numeric:tabular-nums;
+text-shadow:0 0 18px color-mix(in srgb,var(--c) 55%,transparent);transition:color .3s}
+
+.track{position:relative;z-index:1;margin-top:14px;height:9px;border-radius:99px;
+background:rgba(255,255,255,.075);border:1px solid rgba(255,255,255,.05);overflow:hidden}
+.fill{height:100%;width:0;border-radius:99px;
+background:linear-gradient(90deg,color-mix(in srgb,var(--c) 65%,#fff),var(--c));
+box-shadow:0 0 16px -2px var(--c);
+transition:width .9s cubic-bezier(.22,.85,.25,1),background .3s}
+.card.done .fill{background:linear-gradient(90deg,#6ee7b7,#34d399);box-shadow:0 0 18px -2px #34d399}
+
+/* دکمه‌های وضعیت — لمسی و درشت */
+.states{position:relative;z-index:1;display:grid;grid-template-columns:repeat(4,1fr);
+gap:6px;margin-top:14px}
+.st-btn{font-family:inherit;font-size:12px;font-weight:700;color:#7c8aa5;
+background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);
+padding:10px 4px;border-radius:11px;cursor:pointer;
+transition:all .25s ease;letter-spacing:-.2px}
+.st-btn:active{transform:scale(.94)}
+.st-btn.active{color:#0a0e18;background:var(--sc);
+border-color:var(--sc);box-shadow:0 0 16px -3px var(--sc)}
+.card.done .st-btn.active[data-st="done"]{background:#34d399;border-color:#34d399}
+
+/* دکمه‌های پایین */
+.tools{max-width:680px;margin:28px auto 0;display:flex;gap:10px;justify-content:center;
+flex-wrap:wrap;animation:rise 1s .3s cubic-bezier(.2,.8,.2,1) both}
+.tool{font-family:inherit;font-size:12.5px;font-weight:600;color:#8b95ad;
+background:rgba(255,255,255,.04);border:1px solid var(--stroke);
+padding:10px 18px;border-radius:99px;cursor:pointer;
+display:inline-flex;align-items:center;gap:7px;transition:all .3s ease}
+.tool:active{transform:scale(.95)}
+.tool:hover{color:#e9edf7;border-color:rgba(255,255,255,.2)}
+.tool.danger:hover{color:#f87171;border-color:rgba(248,113,113,.4);background:rgba(248,113,113,.08)}
+
+footer{max-width:680px;margin:32px auto 0;text-align:center;color:#5f6a82;font-size:12px;
+animation:rise 1s .4s cubic-bezier(.2,.8,.2,1) both}
+footer b{color:#94a3c4;font-weight:600}
+
+@keyframes rise{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+
+/* توست */
+.toast{position:fixed;bottom:calc(24px + env(safe-area-inset-bottom));left:50%;
+transform:translateX(-50%) translateY(80px);background:#1a2033;color:#e9edf7;
+font-size:13px;font-weight:600;padding:11px 20px;border-radius:99px;
+border:1px solid rgba(255,255,255,.12);box-shadow:0 10px 30px -10px rgba(0,0,0,.7);
+opacity:0;pointer-events:none;transition:all .4s cubic-bezier(.2,.8,.2,1);z-index:99}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+@media (min-width:600px){.grid{grid-template-columns:1fr 1fr}}
+@media (prefers-reduced-motion:reduce){*{animation-duration:.001ms !important;transition-duration:.001ms !important}}
+</style>
+</head>
+<body>
+
+<div class="bg"><span class="orb o1"></span><span class="orb o2"></span></div>
+
+<header>
+<div class="eyebrow"><span class="dot"></span> پیشرفتت خودکار ذخیره می‌شه</div>
+<h1>مسیر یادگیری من</h1>
+</header>
+
+<section class="overall">
+<div class="oh">
+<div class="lb"><span class="ico">🎯</span> پیشرفت کلی</div>
+<div class="opct" id="overallPct">۰٪</div>
+</div>
+<div class="otrack"><div class="ofill" id="overallFill"></div></div>
+<div class="ostats">
+<span>✅ تکمیل: <b id="statDone">۰</b></span>
+<span>📘 در جریان: <b id="statProgress">۰</b></span>
+<span>💤 شروع نشده: <b id="statTodo">۰</b></span>
+</div>
+</section>
+
+<main class="grid" id="grid"></main>
+
+<div class="tools">
+<button class="tool" id="exportBtn">📤 پشتیبان‌گیری</button>
+<button class="tool" id="importBtn">📥 بازگردانی</button>
+<button class="tool danger" id="resetBtn">🔄 شروع مجدد</button>
+</div>
+
+<footer>مسیرت رو قدم‌به‌قدم بساز — <b id="count"></b> مهارت</footer>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const STATUS = {
+todo: { label: 'شروع', value: 0, color: '#64748b' },
+learning: { label: 'یادگیری', value: 40, color: '#38bdf8' },
+practice: { label: 'تمرین', value: 75, color: '#a78bfa' },
+done: { label: 'تکمیل', value: 100, color: '#34d399' }
+};
+const ORDER = ['todo','learning','practice','done'];
+
+const SKILLS = [
+{ id:'numpy', name:'NumPy', icon:'🔢' },
+{ id:'pandas', name:'Pandas', icon:'🐼' },
+{ id:'mpl', name:'Matplotlib', icon:'📈' },
+{ id:'seaborn', name:'Seaborn', icon:'🎨' },
+{ id:'sql', name:'SQL', icon:'🗄️' },
+{ id:'db', name:'Database', icon:'💾' },
+{ id:'etl', name:'ETL', icon:'🔄' },
+{ id:'api', name:'API', icon:'🔌' },
+{ id:'docker', name:'Docker', icon:'🐳' },
+{ id:'ml', name:'Machine Learning', icon:'🤖' },
+{ id:'powerbi', name:'Power BI', icon:'📊' },
+{ id:'git', name:'Git / GitHub', icon:'🌿' }
+ ];
+
+const KEY = 'learning-path-v1';
+let state = load();
+
+function load(){ try{return JSON.parse(localStorage.getItem(KEY))||{}}catch{return{}} }
+function save(){ try{localStorage.setItem(KEY,JSON.stringify(state))}catch{} }
+function vibrate(ms){ if(navigator.vibrate) navigator.vibrate(ms) }
+
+const grid = document.getElementById('grid');
+document.getElementById('count').textContent = SKILLS.length.toLocaleString('fa-IR');
+
+/* ساخت کارت‌ها */
+SKILLS.forEach((skill,i)=>{
+const card = document.createElement('article');
+card.className='card';
+card.dataset.id=skill.id;
+card.dataset.i=i;
+card.innerHTML = &lt;div class="ctop"&gt; &lt;div class="icon"&gt;${skill.icon}</div>
+<div class="meta"><h3>${skill.name}&lt;/h3&gt;&lt;/div&gt; &lt;div class="pct"&gt;۰٪&lt;/div&gt; &lt;/div&gt; &lt;div class="track"&gt;&lt;div class="fill"&gt;&lt;/div&gt;&lt;/div&gt; &lt;div class="states"&gt; ${ORDER.map(k=><button class="st-btn" data-st="${k}" style="--sc:{STATUS[k].label}</button>).join('')} &lt;/div>;
+grid.appendChild(card);
+
+card.querySelectorAll('.st-btn').forEach(btn=>{
+btn.addEventListener('click',()=>{
+setStatus(skill.id, btn.dataset.st);
+vibrate(18);
+});
+});
+});
+
+/* اعمال وضعیت روی کارت */
+function apply(card, st, animate){
+const s = STATUS[st] || STATUS.todo;
+card.style.setProperty('--c', s.color);
+card.classList.toggle('done', st==='done');
+
+const pct = card.querySelector('.pct');
+const fill = card.querySelector('.fill');
+const btns = card.querySelectorAll('.st-btn');
+
+if(animate){
+pct.textContent = s.value.toLocaleString('fa-IR')+'٪';
+requestAnimationFrame(()=>{ fill.style.width = s.value+'%' });
+} else {
+pct.textContent = s.value.toLocaleString('fa-IR')+'٪';
+fill.style.width = s.value+'%';
+}
+btns.forEach(b=> b.classList.toggle('active', b.dataset.st===st));
+}
+
+function setStatus(id, st){
+state[id]=st;
+save();
+const card = grid.querySelector(.card[data-id="${id}"]);
+apply(card, st, true);
+updateOverall();
+}
+
+function updateOverall(){
+let total=0, done=0, prog=0, todo=0;
+SKILLS.forEach(s=>{
+const st = state[s.id]||'todo';
+total += STATUS[st].value;
+if(st==='done') done++;
+else if(st==='learning'||st==='practice') prog++;
+else todo++;
+});
+const o = Math.round(total/SKILLS.length);
+document.getElementById('overallPct').textContent = o.toLocaleString('fa-IR')+'٪';
+document.getElementById('overallFill').style.width = o+'%';
+document.getElementById('statDone').textContent = done.toLocaleString('fa-IR');
+document.getElementById('statProgress').textContent = prog.toLocaleString('fa-IR');
+document.getElementById('statTodo').textContent = todo.toLocaleString('fa-IR');
+}
+
+/* نمایش تدریجی */
+const io = new IntersectionObserver((entries)=>{
+entries.forEach(e=>{
+if(!e.isIntersecting) return;
+const card = e.target;
+io.unobserve(card);
+const d = Math.min(Number(card.dataset.i)*60, 600);
+card.style.transitionDelay = d+'ms';
+card.classList.add('in');
+setTimeout(()=>{
+apply(card, state[card.dataset.id]||'todo', true);
+}, d+150);
+setTimeout(()=>{ card.style.transitionDelay='0ms' }, d+900);
+});
+},{threshold:.1});
+document.querySelectorAll('.card').forEach(c=>io.observe(c));
+
+/* توست */
+const toast = document.getElementById('toast');
+let toastTimer;
+function showToast(msg){
+toast.textContent = msg;
+toast.classList.add('show');
+clearTimeout(toastTimer);
+toastTimer = setTimeout(()=>toast.classList.remove('show'), 2200);
+}
+
+/* پشتیبان‌گیری */
+document.getElementById('exportBtn').addEventListener('click', async ()=>{
+const data = JSON.stringify(state);
+try{
+await navigator.clipboard.writeText(data);
+showToast('✅ پشتیبان در حافظه کپی شد');
+}catch{
+prompt('این متن رو کپی کن و یه جای امن نگه دار:', data);
+}
+vibrate(20);
+});
+
+/* بازگردانی */
+document.getElementById('importBtn').addEventListener('click', ()=>{
+const data = prompt('متن پشتیبان رو اینجا پیست کن:');
+if(!data) return;
+try{
+const parsed = JSON.parse(data);
+if(typeof parsed !== 'object') throw 0;
+state = parsed; save();
+document.querySelectorAll('.card').forEach(c=> apply(c, state[c.dataset.id]||'todo', true));
+updateOverall();
+showToast('✅ بازگردانی شد');
+vibrate(20);
+}catch{
+showToast('❌ متن نامعتبر');
+}
+});
+
+/* ریست */
+document.getElementById('resetBtn').addEventListener('click', ()=>{
+if(!confirm('مطمئنی؟ همه‌ی پیشرفتت صفر می‌شه.')) return;
+state = {}; save();
+document.querySelectorAll('.card').forEach(c=> apply(c,'todo',true));
+updateOverall();
+showToast('🔄 شروع مجدد');
+vibrate(25);
+});
+
+updateOverall();
+
+/* ثبت Service Worker برای PWA */
+if('serviceWorker' in navigator){
+window.addEventListener('load', ()=>{
+navigator.serviceWorker.register('sw.js').catch(()=>{});
+});
+}
+</script>
+
+</body>
+</html>

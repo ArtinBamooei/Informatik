@@ -1,0 +1,17 @@
+{
+"name": "مسیر یادگیری من",
+"short_name": "یادگیری",
+"description": "داشبورد شخصی برای دنبال کردن مسیر یادگیری",
+"start_url": "./",
+"scope": "./",
+"display": "standalone",
+"orientation": "portrait",
+"background_color": "#070a13",
+"theme_color": "#070a13",
+"dir": "rtl",
+"lang": "fa",
+"icons": [
+{ "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" },
+{ "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "maskable" }
+ ]
+}
