@@ -93,12 +93,12 @@ function buildUI(){
   mb.id='proModal';
   mb.innerHTML=
     '<div class="modal pro-modal" role="dialog" aria-modal="true" aria-labelledby="proTitle">'+
-      '<div class="modal-head pro-head"><div><h3 id="proTitle">مرکز مدیریت Informatik</h3><div class="pro-sub">Analytics · Roadmap · Portfolio · Research · GitHub</div></div><button class="modal-close" data-pro-close aria-label="بستن">✕</button></div>'+
+      '<div class="modal-head pro-head"><div><h3 id="proTitle">مرکز مدیریت Informatik</h3><div class="pro-sub">Analytics · Roadmap · پروژه‌ها · زمینه‌های پژوهشی · GitHub</div></div><button class="modal-close" data-pro-close aria-label="بستن">✕</button></div>'+
       '<div class="pro-tabs" role="tablist">'+
         '<button class="pro-tab active" data-tab="overview">نمای کلی</button>'+
         '<button class="pro-tab" data-tab="activity">فعالیت</button>'+
         '<button class="pro-tab" data-tab="roadmap">مسیر یادگیری</button>'+
-        '<button class="pro-tab" data-tab="portfolio">Portfolio</button>'+
+        '<button class="pro-tab" data-tab="portfolio">پروژه‌ها</button>'+
         '<button class="pro-tab" data-tab="system">سیستم</button>'+
       '</div>'+
       '<div class="pro-content" id="proContent"></div>'+
@@ -113,11 +113,11 @@ function buildUI(){
     if(act)handleAction(act.dataset.proAction,act);
   });
   mb.addEventListener('input',e=>{
-    if(e.target.id==='proSearch'){searchQuery=e.target.value.trim().toLowerCase();applySearch()}
+    if(e.target.id==='proجستجو'){searchQuery=e.target.value.trim().toLowerCase();applyجستجو()}
     if(e.target.matches('[data-weekly]'))updateWeekly(e.target.dataset.weekly,e.target.value);
   });
   mb.addEventListener('change',e=>{
-    if(e.target.matches('[data-sort]')){sortMode=e.target.value;applySearch()}
+    if(e.target.matches('[data-sort]')){sortMode=e.target.value;applyجستجو()}
   });
 }
 function open(){
@@ -148,12 +148,12 @@ function overviewHTML(s,c){
     card('پیشرفت کل',c.overall+'%','بر اساس وضعیت و زیرموضوع‌ها','accent')+
     card('مهارت تکمیل‌شده',c.done+'/'+c.total,'از کل مهارت‌ها','green')+
     card('زمان مطالعه',fmt(c.totalTime),'ثبت‌شده برای مهارت‌ها','blue')+
-    card('Focus Session',c.sessions,'تعداد استفاده از Focus','purple')+
+    card('جلسه تمرکز',c.sessions,'تعداد استفاده از تمرکز','purple')+
   '</div>'+
   '<div class="pro-section"><div class="pro-section-head"><h4>هدف هفتگی</h4><span>هدف عملی، مستقل از Level مهارت</span></div>'+
     '<div class="weekly-grid">'+
       weeklyInput('hours','ساعت مطالعه',w.hours,Math.round(c.totalTime/3600*10)/10)+
-      weeklyInput('sessions','جلسه Focus',w.sessions,c.sessions)+
+      weeklyInput('sessions','جلسه تمرکز',w.sessions,c.sessions)+
       weeklyInput('subs','زیرموضوع تکمیل‌شده',w.subs,c.subDone)+
     '</div>'+
   '</div>'+
@@ -164,7 +164,7 @@ function overviewHTML(s,c){
       statusBar('در جریان',c.learning,c.total,'learning')+
       statusBar('شروع نشده',c.total-c.done-c.learning,c.total,'todo')+
     '</div></div></div>'+
-  '<div class="pro-actions"><button class="btn btn-secondary" data-pro-action="focus">Focus روی مهارت بعدی</button><button class="btn btn-secondary" data-pro-action="csv">خروجی CSV</button><button class="btn btn-secondary" data-pro-action="json">خروجی JSON</button></div>';
+  '<div class="pro-actions"><button class="btn btn-secondary" data-pro-action="focus">تمرکز روی مهارت بعدی</button><button class="btn btn-secondary" data-pro-action="csv">خروجی CSV</button><button class="btn btn-secondary" data-pro-action="json">خروجی JSON</button></div>';
 }
 function weeklyInput(key,label,target,current){
   const pct=target>0?Math.min(100,current/target*100):0;
@@ -177,7 +177,7 @@ function statusBar(label,n,total,kind){
 function activityHTML(s,c){
   const dates=Array.isArray(s.dates)?s.dates.slice().sort().reverse():[];
   const list=dates.slice(0,30).map(d=>'<div class="activity-row"><span class="activity-dot"></span><b>'+esc(d)+'</b><span>روز فعال</span></div>').join('')||'<div class="pro-empty">هنوز فعالیتی ثبت نشده.</div>';
-  return '<div class="pro-section"><div class="pro-section-head"><h4>Activity Heatmap</h4><span>فعالیت ثبت‌شده در ۱۲ هفته اخیر</span></div><div id="proHeatmap" class="heatmap"></div></div>'+
+  return '<div class="pro-section"><div class="pro-section-head"><h4>فعالیت ۱۲ هفته اخیر</h4><span>فعالیت ثبت‌شده در ۱۲ هفته اخیر</span></div><div id="proHeatmap" class="heatmap"></div></div>'+
     '<div class="pro-section"><div class="pro-section-head"><h4>تاریخچه فعالیت</h4><span>'+dates.length+' روز ثبت‌شده</span></div><div class="activity-list">'+list+'</div></div>'+
     '<div class="pro-grid three">'+card('Streak فعلی',streak(s.dates),'روز پیاپی','amber')+card('روزهای فعال',daysActive(s.dates),'کل تاریخچه','blue')+card('زیرموضوع‌ها',c.subDone+'/'+c.subTotal,'تکمیل‌شده','green')+'</div>';
 }
@@ -205,8 +205,8 @@ function roadmapHTML(s,c){
     const avg=found.length?Math.round(found.reduce((a,x)=>a+({todo:0,learning:40,practice:75,done:100}[s.progress[x.id]]||0),0)/found.length):0;
     return '<div class="road-node"><span>'+String(i+1).padStart(2,'0')+'</span><div><b>'+esc(g[0])+'</b><small>'+esc(names.join(' → '))+'</small><i><em style="width:'+avg+'%"></em></i></div><strong>'+avg+'%</strong></div>';
   }).join('');
-  return '<div class="pro-section"><div class="pro-section-head"><h4>Learning Roadmap</h4><span>مسیر پیشنهادی بر اساس ساختار فعلی</span></div><div class="roadmap">'+steps+'</div></div>'+
-    '<div class="pro-section"><div class="pro-section-head"><h4>Dependency Graph</h4><span>وابستگی منطقی مهارت‌ها</span></div><div class="dep-graph" id="proGraph"></div></div>'+
+  return '<div class="pro-section"><div class="pro-section-head"><h4>مسیر یادگیری</h4><span>مسیر پیشنهادی بر اساس ساختار فعلی</span></div><div class="roadmap">'+steps+'</div></div>'+
+    '<div class="pro-section"><div class="pro-section-head"><h4>ارتباط مهارت‌ها</h4><span>وابستگی منطقی مهارت‌ها</span></div><div class="dep-graph" id="proGraph"></div></div>'+
     '<div class="pro-section"><div class="pro-section-head"><h4>سطح هدف</h4><span>فقط سه سطح</span></div><div class="level-legend"><b class="l-b">مقدماتی</b><b class="l-i">متوسط</b><b class="l-a">حرفه‌ای</b></div></div>';
 }
 function drawGraph(s){
@@ -223,27 +223,27 @@ function drawGraph(s){
   el.innerHTML=svg;
 }
 function portfolioHTML(s,c){
-  return '<div class="pro-section"><div class="pro-section-head"><h4>Portfolio</h4><span>داده زنده از GitHub</span></div>'+
-    '<div class="github-toolbar"><button class="btn btn-secondary" data-pro-action="github">به‌روزرسانی GitHub</button><span id="ghState">در انتظار دریافت...</span></div>'+
+  return '<div class="pro-section"><div class="pro-section-head"><h4>پروژه‌ها</h4><span>داده زنده از GitHub</span></div>'+
+    '<div class="github-toolbar"><button class="btn btn-secondary" data-pro-action="github">به‌روزرسانی GitHub</button><span id="ghState">هنوز دریافت نشده</span></div>'+
     '<div id="ghRepos" class="repo-grid"><div class="pro-empty">برای دریافت Repositoryها دکمه بالا را بزن.</div></div></div>'+
-    '<div class="pro-two"><div class="pro-section"><div class="pro-section-head"><h4>Research</h4><span>ساختار آماده برای توسعه</span></div>'+
-      '<div class="research-list"><b>Data Engineering</b><b>Data Science</b><b>Machine Learning</b><b>Bioinformatics</b><small>Publications و Research Projects در نسخه بعدی قابل اتصال هستند.</small></div></div>'+
-    '<div class="pro-section"><div class="pro-section-head"><h4>Search & Sort</h4><span>روی کارت‌های اصلی اعمال می‌شود</span></div>'+
-      '<input id="proSearch" class="input" placeholder="جستجوی مهارت...">'+
+    '<div class="pro-two"><div class="pro-section"><div class="pro-section-head"><h4>زمینه‌های پژوهشی</h4><span>ساختار آماده برای توسعه</span></div>'+
+      '<div class="research-list"><b>Data Engineering</b><b>Data Science</b><b>Machine Learning</b><b>Bioinformatics</b><small>Publications و زمینه‌های پژوهشی Projects در نسخه بعدی قابل اتصال هستند.</small></div></div>'+
+    '<div class="pro-section"><div class="pro-section-head"><h4>جستجو و مرتب‌سازی</h4><span>روی کارت‌های اصلی اعمال می‌شود</span></div>'+
+      '<input id="proجستجو" class="input" placeholder="جستجوی مهارت...">'+
       '<select class="input select" data-sort><option value="default">ترتیب اصلی</option><option value="name">نام</option><option value="time">زمان مطالعه</option><option value="progress">پیشرفت</option></select>'+
       '<button class="btn btn-secondary" data-pro-action="clearsearch">پاک‌کردن فیلتر</button></div></div>';
 }
 function systemHTML(s,c){
   return '<div class="pro-grid three">'+
-    card('PWA','فعال','Standalone + Service Worker','green')+
-    card('Storage','Local','localStorage v10','blue')+
-    card('Security','Client-side','Token در state ذخیره نمی‌شود','purple')+
+    card('برنامه','فعال','قابل نصب + Service Worker','green')+
+    card('ذخیره‌سازی','محلی','localStorage v10','blue')+
+    card('امنیت','سمت کاربر','توکن داخل state ذخیره نمی‌شود','purple')+
   '</div>'+
-  '<div class="pro-two"><div class="pro-section"><div class="pro-section-head"><h4>Keyboard Shortcuts</h4><span>سریع‌تر کار کن</span></div><div class="shortcuts">'+
-    shortcut('/', 'Search')+shortcut('F','Focus')+shortcut('Space','Timer')+shortcut('Esc','بستن')+shortcut('N','یادداشت')+
+  '<div class="pro-two"><div class="pro-section"><div class="pro-section-head"><h4>میانبرها</h4><span>سریع‌تر کار کن</span></div><div class="shortcuts">'+
+    shortcut('/', 'جستجو')+shortcut('F','تمرکز')+shortcut('Space','تایمر')+shortcut('Esc','بستن')+shortcut('N','یادداشت')+
   '</div></div><div class="pro-section"><div class="pro-section-head"><h4>PWA</h4></div><div id="pwaBox" class="pwa-box">در حال بررسی...</div><button class="btn btn-secondary" data-pro-action="install">نصب برنامه</button></div></div>'+
-  '<div class="pro-section"><div class="pro-section-head"><h4>Data Tools</h4></div><div class="pro-actions">'+
-    '<button class="btn btn-secondary" data-pro-action="json">Export JSON</button><button class="btn btn-secondary" data-pro-action="csv">Export CSV</button><button class="btn btn-secondary" data-pro-action="import">Import JSON</button><button class="btn btn-secondary" data-pro-action="refresh">بازخوانی داده</button></div></div>';
+  '<div class="pro-section"><div class="pro-section-head"><h4>ابزار داده</h4></div><div class="pro-actions">'+
+    '<button class="btn btn-secondary" data-pro-action="json">خروجی JSON</button><button class="btn btn-secondary" data-pro-action="csv">خروجی CSV</button><button class="btn btn-secondary" data-pro-action="import">ورود JSON</button><button class="btn btn-secondary" data-pro-action="refresh">بازخوانی داده</button></div></div>';
 }
 function shortcut(k,v){return '<div><kbd>'+esc(k)+'</kbd><span>'+esc(v)+'</span></div>'}
 function bindWeekly(){
@@ -334,7 +334,7 @@ function importJSON(){
   };
   input.click();
 }
-function applySearch(){
+function applyجستجو(){
   const container=document.getElementById('container');if(!container)return;
   if(searchQuery===''&&sortMode==='default'){return;}
   if(typeof observer!=='undefined')observer.disconnect();
@@ -372,7 +372,7 @@ function focusNext(){
 }
 async function loadGitHub(){
   const state=document.getElementById('ghState'),box=document.getElementById('ghRepos');if(!state||!box)return;
-  state.textContent='در حال دریافت...';
+  state.textContent='در حال خواندن GitHub...';
   try{
     if(!ghCache){
       const res=await fetch('https://api.github.com/users/'+encodeURIComponent(GH_USER)+'/repos?per_page=100&sort=updated',{headers:{Accept:'application/vnd.github+json'}});
@@ -382,8 +382,8 @@ async function loadGitHub(){
       ghCache=data.filter(x=>x&&typeof x==='object'&&typeof x.name==='string'&&typeof x.html_url==='string'&&/^https:\/\/github\.com\//.test(x.html_url));
     }
     const repos=ghCache.filter(x=>!x.fork).slice(0,8);
-    state.textContent=repos.length+' repository';
-    box.innerHTML=repos.map(r=>'<a class="repo-card" href="'+esc(r.html_url)+'" target="_blank" rel="noopener noreferrer"><b>'+esc(r.name)+'</b><span>'+esc(r.language||'—')+'</span><small>'+esc(r.description||'بدون توضیح')+'</small><em>★ '+Number(r.stargazers_count||0)+'</em></a>').join('')||'<div class="pro-empty">Repository عمومی پیدا نشد.</div>';
+    state.textContent=repos.length+' مخزن';
+    box.innerHTML=repos.map(r=>'<a class="repo-card" href="'+esc(r.html_url)+'" target="_blank" rel="noopener noreferrer"><b>'+esc(r.name)+'</b><span>'+esc(r.language||'—')+'</span><small>'+esc(r.description||'بدون توضیح')+'</small><em>★ '+Number(r.stargazers_count||0)+'</em></a>').join('')||'<div class="pro-empty">مخزن عمومی پیدا نشد.</div>';
   }catch(e){state.textContent='GitHub در دسترس نیست';box.innerHTML='<div class="pro-empty">دریافت اطلاعات GitHub ناموفق بود. برنامه بدون این بخش هم کامل کار می‌کند.</div>'}
 }
 function setupInstall(){
@@ -405,7 +405,7 @@ function handleAction(a){
   if(a==='enc-import')importEncrypted();
   if(a==='import')importJSON();
   if(a==='refresh'){searchQuery='';sortMode='default';renderTab('overview')}
-  if(a==='clearsearch'){searchQuery='';const i=document.getElementById('proSearch');if(i)i.value='';applySearch()}
+  if(a==='clearsearch'){searchQuery='';const i=document.getElementById('proجستجو');if(i)i.value='';applyجستجو()}
   if(a==='github')loadGitHub();
   if(a==='install')install();
   if(a==='focus')focusNext();
@@ -414,12 +414,12 @@ document.addEventListener('keydown',e=>{
   if(e.ctrlKey||e.metaKey||e.altKey)return;
   const tag=document.activeElement?.tagName;
   if(tag==='INPUT'||tag==='TEXTAREA'||tag==='SELECT')return;
-  if(e.key==='/'){e.preventDefault();open();setTimeout(()=>{document.getElementById('proSearch')?.focus()},50)}
+  if(e.key==='/'){e.preventDefault();open();setTimeout(()=>{document.getElementById('proجستجو')?.focus()},50)}
   else if(e.key.toLowerCase()==='f'){e.preventDefault();focusNext()}
   else if(e.code==='Space'){e.preventDefault();document.getElementById('timerToggle')?.click()}
   else if(e.key.toLowerCase()==='n'){e.preventDefault();document.getElementById('addBtn')?.click()}
 });
-const observer=new MutationObserver(()=>{clearTimeout(observer._t);observer._t=setTimeout(applySearch,100)});
+const observer=new MutationObserver(()=>{clearTimeout(observer._t);observer._t=setTimeout(applyجستجو,100)});
 function start(){
   injectButton();buildUI();setupInstall();
   const c=document.getElementById('container');if(c)observer.observe(c,{childList:true,subtree:true});
