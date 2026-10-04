@@ -53,3 +53,8 @@
 .weekly-item,.shortcuts div,.research-list b{background:var(--surface-2);border-radius:11px}
 .dep-graph{border-radius:16px}
 @media(max-width:620px){.pro-content{padding:4px 12px 14px!important}.pro-head{padding:14px 14px 10px!important}.pro-tabs{padding-left:12px!important;padding-right:12px!important}}
+
+/* Personal dashboard language */
+.pro-tab{font-family:'Vazirmatn',sans-serif}
+.pro-section-head span{letter-spacing:0}
+.repo-card em{font-family:'Vazirmatn',sans-serif}
