@@ -951,7 +951,7 @@ function renderThemePicker(){
     const active = s.theme === key;
     const bgStyle = `background:${t.bg};background-image:${t.grad};color:${t.text}`;
     return `
-      <div class="theme-option${active?' active':''}" data-theme="${key}" style="${bgStyle}">
+      <button type="button" class="theme-option${active?' active':''}" data-theme="${key}" aria-pressed="${active}" style="${bgStyle}">
         <span class="th-check">✓</span>
         <div class="th-name">${esc(t.name)}</div>
         <div class="th-swatch">
@@ -959,7 +959,7 @@ function renderThemePicker(){
           <div class="th-dot" style="background:${t.accent2}"></div>
           <div class="th-dot" style="background:${t.card};border-color:${t.line}"></div>
         </div>
-      </div>
+      </button>
     `;
   }).join('');
 }
