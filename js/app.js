@@ -226,8 +226,17 @@ function normalizeState(input){
   const base=(input&&typeof input==='object'&&!Array.isArray(input))?input:{};
   const skills=Array.isArray(base.skills)&&base.skills.length?base.skills:DEFAULT_SKILLS.slice();
   const validStatuses=new Set(['todo','learning','practice','done']);
+  const seenIds=new Set();
+  const validCats=new Set(CATS.map(c=>c.id));
   const out={
-    skills:skills.filter(x=>x&&typeof x==='object'&&typeof x.id==='string'&&typeof x.name==='string').map(x=>({...x})),
+    skills:skills.filter(x=>{
+      if(!x||typeof x!=='object'||typeof x.id!=='string'||!x.id||typeof x.name!=='string'||!x.name.trim()||seenIds.has(x.id)) return false;
+      seenIds.add(x.id); return true;
+    }).map(x=>({
+      id:x.id.trim(),name:x.name.trim().slice(0,80),
+      cat:validCats.has(x.cat)?x.cat:CATS[0].id,
+      icon:typeof x.icon==='string'&&x.icon.length<=8?x.icon:'🎯'
+    })),
     progress:base.progress&&typeof base.progress==='object'&&!Array.isArray(base.progress)?{...base.progress}:{},
     notes:base.notes&&typeof base.notes==='object'&&!Array.isArray(base.notes)?{...base.notes}:{},
     subs:base.subs&&typeof base.subs==='object'&&!Array.isArray(base.subs)?{...base.subs}:{},
@@ -310,11 +319,11 @@ function formatTimeLong(sec){
 /* ═══════════════════════════════════════════
    STREAK
    ═══════════════════════════════════════════ */
-function markDay(){
-  const t = today();
-  if (!s.dates.includes(t)){
+function recordActivity(){
+  const t=today();
+  if(!s.dates.includes(t)){
     s.dates.push(t);
-    if (s.dates.length > 400) s.dates = s.dates.slice(-400);
+    if(s.dates.length>400) s.dates=s.dates.slice(-400);
     save();
   }
 }
@@ -337,12 +346,14 @@ function streak(){
 
 function bestStreak(){
   if (!s.dates.length) return 0;
-  const sorted = [...new Set(s.dates)].sort();
+  const sorted = [...new Set(s.dates)].sort((a,b)=>a.localeCompare(b));
   let best = 1, cur = 1;
   for (let i = 1; i < sorted.length; i++){
-    const prev = new Date(sorted[i-1]);
-    const curr = new Date(sorted[i]);
-    const diff = Math.round((curr - prev) / 86400000);
+    const [py,pm,pd]=sorted[i-1].split('-').map(Number);
+    const [cy,cm,cd]=sorted[i].split('-').map(Number);
+    const prev=Date.UTC(py,pm-1,pd);
+    const curr=Date.UTC(cy,cm-1,cd);
+    const diff=Math.round((curr-prev)/86400000);
     if (diff === 1){ cur++; best = Math.max(best, cur); }
     else { cur = 1; }
   }
@@ -1722,7 +1733,6 @@ document.getElementById('resetBtn').addEventListener('click', () => {
    INIT
    ═══════════════════════════════════════════ */
 function init(){
-  markDay();
   loadTimer();
   applyTheme();
   renderAll();
