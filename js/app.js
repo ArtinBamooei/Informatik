@@ -1741,7 +1741,9 @@ document.getElementById('restoreBtn').addEventListener('click', () => {
     s.theme = s.theme || 'violet';
     s.unlocked = Array.isArray(s.unlocked) ? s.unlocked : [];
     s.reminder = s.reminder || { enabled: false, time: '20:00', lastNotified: null };
-    s.sync = s.sync || { token: '', gistId: '', lastSync: null };
+    s.sync = s.sync || { gistId: '', lastSync: null, remoteUpdatedAt: null, lastLocalChange: 0 };
+    s.sync.remoteUpdatedAt = typeof s.sync.remoteUpdatedAt==='string' ? s.sync.remoteUpdatedAt : null;
+    s.sync.lastLocalChange = Number.isFinite(Number(s.sync.lastLocalChange)) ? Number(s.sync.lastLocalChange) : 0;
     if (!Array.isArray(s.skills) || s.skills.length === 0) s.skills = DEFAULT_SKILLS.slice();
     s.skills.forEach(sk => {
       if (!s.progress[sk.id]) s.progress[sk.id] = 'todo';
