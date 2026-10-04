@@ -1166,13 +1166,11 @@ document.getElementById('timerToggle').addEventListener('click', () => {
     timer.endTime = Date.now() + timer.remaining * 1000;
     timer.running = true;
     beginTimerSession();
-    recordActivity();
     s.timerStarted = (s.timerStarted || 0) + 1;
     save();
     saveTimer();
     startTimerTick();
     renderTimer();
-    recordActivity();
     checkAchievements();
     vibrate(12);
     // re-render cards to show timed badge
@@ -1291,14 +1289,15 @@ document.getElementById('focusTimerBtn').addEventListener('click', () => {
     if (timer.remaining <= 0) timer.remaining = timer.duration;
     timer.endTime = Date.now() + timer.remaining * 1000;
     timer.running = true;
-    timer.sessionStart = Date.now();
+    beginTimerSession();
+    recordActivity();
     s.timerStarted = (s.timerStarted || 0) + 1;
     save();
     saveTimer();
     startTimerTick();
     renderTimer();
     updateFocus();
-    markDay();
+    recordActivity();
     checkAchievements();
     vibrate(12);
   }
@@ -1317,7 +1316,7 @@ document.getElementById('focusStatusBtn').addEventListener('click', () => {
   }
   s.progress[focusId] = next;
   save();
-  markDay();
+  recordActivity();
   updateFocus();
   updateOverall();
   checkAchievements();
