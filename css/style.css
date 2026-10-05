@@ -959,11 +959,8 @@ h1{font-size:clamp(32px,7vw,44px);letter-spacing:-.035em}
 
 /* ═══ SKILL VISUAL IDENTITY ═══ */
 .card-summary .skill-icon{position:relative;overflow:hidden;isolation:isolate;background:var(--surface-2);border-color:color-mix(in srgb,var(--progress-color) 22%,var(--line));color:var(--text);transition:border-color .35s ease,background .35s ease,transform .35s cubic-bezier(.2,1.2,.3,1),box-shadow .35s ease}
-.card-summary .skill-icon::before{content:'';position:absolute;width:22px;height:22px;border:1px solid color-mix(in srgb,var(--progress-color) 30%,transparent);border-radius:6px;transform:rotate(45deg);right:-9px;top:-9px;opacity:.55}
-.card-summary .skill-icon::after{content:'';position:absolute;width:34px;height:1px;left:-9px;bottom:8px;background:linear-gradient(90deg,transparent,color-mix(in srgb,var(--progress-color) 45%,transparent),transparent);opacity:.7}
 .card-summary .skill-icon img{position:relative;z-index:2;width:27px;height:27px;object-fit:contain;display:block;filter:grayscale(1) saturate(0) contrast(1.12);opacity:.9;transition:filter .35s ease,opacity .35s ease,transform .35s ease}
 .card-summary .skill-icon span{position:relative;z-index:2;font:800 11px/1 'Space Grotesk',ui-monospace,monospace;letter-spacing:-.06em}
-.card-summary .skill-icon i{position:absolute;z-index:1;width:5px;height:5px;border-radius:50%;right:7px;bottom:7px;background:var(--progress-color);box-shadow:0 0 8px color-mix(in srgb,var(--progress-color) 55%,transparent);opacity:.8}
 .card:hover .skill-icon{transform:translateY(-1px);border-color:color-mix(in srgb,var(--progress-color) 48%,var(--line));box-shadow:0 10px 22px -18px var(--progress-color)}
 .card:hover .skill-icon img{filter:grayscale(.15) saturate(.9) contrast(1.05);opacity:1;transform:scale(1.04)}
 .card:hover .skill-icon span{color:var(--progress-color)}
@@ -974,6 +971,5 @@ h1{font-size:clamp(32px,7vw,44px);letter-spacing:-.035em}
 }
 @media(prefers-reduced-motion:reduce){
   .card-summary .skill-icon,
-  .card-summary .skill-icon::before,
   .card-summary .skill-icon span{transition:none}
 }
