@@ -29,9 +29,9 @@ const DEFAULT_SKILLS = [
 
 const STAT = {
   todo:     {label:'شروع',    value:0,   color:'#717784', n:1},
-  learning: {label:'یادگیری', value:40,  color:'#22d3ee', n:2},
-  practice: {label:'تمرین',   value:75,  color:'#a78bfa', n:3},
-  done:     {label:'تکمیل',   value:100, color:'#34d399', n:4}
+  learning: {label:'یادگیری', value:40,  color:'#3b82f6', n:2},
+  practice: {label:'تمرین',   value:75,  color:'#f59e0b', n:3},
+  done:     {label:'تکمیل',   value:100, color:'#22c55e', n:4}
 };
 const STAT_ORDER = ['todo','learning','practice','done'];
 
@@ -559,7 +559,9 @@ function buildCard(sk){
         <h3>${esc(sk.name)}${timeBadge}</h3>
         <div class="state">${stData.label}${stateExtra}</div>
         <div class="target-levels" role="group" aria-label="سطح هدف">
-          <span class="target-level-label">هدف سطح</span>${levelButtons}
+          <span class="target-level-label">هدف</span>
+          <span class="target-current ${targetLevel}">${levelNames[targetLevel]}</span>
+          <div class="target-level-options">${levelButtons}</div>
         </div>
       </div>
       <div class="mini">
