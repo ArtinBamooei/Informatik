@@ -1015,7 +1015,9 @@ h1{font-size:clamp(32px,7vw,44px);letter-spacing:-.035em}
 .panel,.card,.section,.timer-box,.ach-box,.feature-box,.tool{background:var(--surface-1)}
 .stat,.section-head .cnt,.card-summary .icon,.status,.tool-btn,.sub-item,.timer-skill,.timer-presets button,.ach,.focus-metrics>div,.focus-actions button{background:var(--surface-soft)}
 .note-area,.sub-add input,.input{background:var(--surface-input)}
-.timer-bar,.timer-bar i,.mini .t,.ring .track,.focus-ring .t{background:var(--track)}
+.timer-bar,.mini .t,.ring .track,.focus-ring .t{background:var(--track)}
+.timer-bar i{background:linear-gradient(90deg,var(--accent2),var(--accent));}
+.mini .t,.ring .track,.focus-ring .t{stroke:var(--track)}
 .mb{background:var(--overlay)}
 .pro-stat,.pro-section,.repo-card,.road-node,.weekly-item,.shortcuts div,.research-list b{background:var(--surface-2)}
 .pro-tabs{background:linear-gradient(180deg,var(--surface-2),transparent)}
