@@ -791,3 +791,167 @@ h1{font-size:clamp(32px,7vw,44px);letter-spacing:-.035em}
   .card-summary .icon{width:40px;height:40px}
   .target-current{font-size:8px;padding:2px 6px}
 }
+
+
+/* ═══ 10-STEP SKILL PROGRESS ═══ */
+.skill-progress{
+  flex:0 1 245px;
+  min-width:190px;
+  display:grid;
+  gap:5px;
+  direction:rtl;
+  cursor:default;
+}
+.skill-progress-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px;
+  font-size:8.5px;
+  color:var(--dimmer);
+  line-height:1;
+}
+.skill-progress-head strong{
+  font:800 12px 'Space Grotesk',monospace;
+  color:var(--progress-color);
+  min-width:34px;
+  text-align:left;
+  transition:color .35s ease,text-shadow .35s ease;
+}
+.skill-progress-track{
+  position:relative;
+  height:18px;
+  display:grid;
+  align-items:center;
+}
+.skill-progress-steps{
+  display:grid;
+  grid-template-columns:repeat(10,minmax(0,1fr));
+  gap:3px;
+  width:100%;
+  height:7px;
+}
+.skill-progress-step{
+  min-width:0;
+  height:100%;
+  border-radius:99px;
+  background:color-mix(in srgb,var(--line) 72%,transparent);
+  opacity:.5;
+  transform:scaleY(.82);
+  transition:
+    background-color .35s cubic-bezier(.2,.9,.2,1),
+    opacity .35s ease,
+    transform .35s cubic-bezier(.2,.9,.2,1),
+    box-shadow .35s ease;
+}
+.skill-progress-step.filled{
+  background:var(--step-color);
+  opacity:1;
+  transform:scaleY(1);
+}
+.skill-progress-step.filled:last-child{
+  box-shadow:0 0 10px color-mix(in srgb,var(--step-color) 38%,transparent);
+}
+.skill-progress-range{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  margin:0;
+  padding:0;
+  appearance:none;
+  -webkit-appearance:none;
+  background:transparent;
+  border:0;
+  outline:0;
+  cursor:ew-resize;
+  direction:ltr;
+}
+.skill-progress-range::-webkit-slider-runnable-track{
+  height:18px;
+  background:transparent;
+  border:0;
+}
+.skill-progress-range::-webkit-slider-thumb{
+  appearance:none;
+  -webkit-appearance:none;
+  width:13px;
+  height:13px;
+  margin-top:2.5px;
+  border-radius:50%;
+  border:2px solid var(--bg);
+  background:var(--progress-color);
+  box-shadow:0 0 0 1px color-mix(in srgb,var(--progress-color) 55%,transparent),0 0 12px -2px var(--progress-color);
+  transition:background-color .35s ease,box-shadow .35s ease,transform .15s ease;
+}
+.skill-progress-range:active::-webkit-slider-thumb{
+  transform:scale(1.14);
+}
+.skill-progress-range::-moz-range-track{
+  height:18px;
+  background:transparent;
+  border:0;
+}
+.skill-progress-range::-moz-range-thumb{
+  width:9px;
+  height:9px;
+  border-radius:50%;
+  border:2px solid var(--bg);
+  background:var(--progress-color);
+  box-shadow:0 0 0 1px color-mix(in srgb,var(--progress-color) 55%,transparent),0 0 12px -2px var(--progress-color);
+  transition:background-color .35s ease,box-shadow .35s ease,transform .15s ease;
+}
+.skill-progress-range:active::-moz-range-thumb{
+  transform:scale(1.14);
+}
+.skill-progress-range:focus-visible{
+  outline:2px solid color-mix(in srgb,var(--progress-color) 70%,transparent);
+  outline-offset:3px;
+  border-radius:99px;
+}
+.skill-progress-meta{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:5px;
+  color:var(--dimmer);
+  font:700 7px 'Vazirmatn',sans-serif;
+}
+.skill-progress-meta span:nth-child(2){
+  color:color-mix(in srgb,var(--progress-color) 70%,var(--dimmer));
+  transition:color .35s ease;
+}
+.card.done .skill-progress-head strong{
+  text-shadow:0 0 12px color-mix(in srgb,var(--progress-color) 35%,transparent);
+}
+@media(max-width:760px){
+  .skill-progress{
+    flex:1 1 210px;
+    min-width:170px;
+  }
+}
+@media(max-width:560px){
+  .card-summary{
+    flex-wrap:wrap;
+    padding:11px 12px;
+    gap:9px;
+  }
+  .skill-progress{
+    order:5;
+    flex:1 1 100%;
+    width:100%;
+    min-width:0;
+    padding:2px 1px 0;
+  }
+  .skill-progress-head strong{font-size:11px}
+  .skill-progress-meta{font-size:6.5px}
+}
+@media(prefers-reduced-motion:reduce){
+  .skill-progress-step,
+  .skill-progress-head strong,
+  .skill-progress-meta span:nth-child(2),
+  .skill-progress-range::-webkit-slider-thumb,
+  .skill-progress-range::-moz-range-thumb{
+    transition:none;
+  }
+}
