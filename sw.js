@@ -25,13 +25,29 @@ self.addEventListener('fetch',event=>{
   const isStatic=STATIC_PATHS.has(url.pathname)||SKILL_ASSETS.has(url.pathname);
   if(!isNavigation&&!isStatic)return;
 
+  if(isStatic&&!isNavigation){
+    event.respondWith(
+      caches.match(event.request).then(cached=>{
+        if(cached)return cached;
+        return fetch(event.request).then(response=>{
+          if(response.ok){
+            const copy=response.clone();
+            caches.open(CACHE).then(cache=>cache.put(event.request,copy)).catch(()=>{});
+          }
+          return response;
+        });
+      }).catch(()=>caches.match('./index.html'))
+    );
+    return;
+  }
+
   event.respondWith(
     fetch(event.request).then(response=>{
-      if(isStatic&&response.ok){
+      if(isNavigation&&response.ok){
         const copy=response.clone();
-        caches.open(CACHE).then(cache=>cache.put(event.request,copy)).catch(()=>{});
+        caches.open(CACHE).then(cache=>cache.put(new Request('./index.html'),copy)).catch(()=>{});
       }
       return response;
-    }).catch(()=>caches.match(event.request).then(cached=>cached||caches.match('./index.html')))
+    }).catch(()=>caches.match('./index.html'))
   );
 });
