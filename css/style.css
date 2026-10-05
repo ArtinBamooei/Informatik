@@ -682,3 +682,112 @@ h1{font-size:clamp(32px,7vw,44px);letter-spacing:-.035em}
 .icon-grid .icon-option{font-family:'Space Grotesk',ui-monospace,monospace;font-weight:800;font-size:12px}
 .tools-row .tool-btn{font-family:'Vazirmatn',sans-serif;font-size:10px;min-width:54px}
 .feature-title,.timer-title,.ach-title{font-family:'Vazirmatn',sans-serif;letter-spacing:.4px}
+
+/* Skill cards v3 — compact hierarchy + semantic color system */
+:root{
+  --status-todo:#737b8c;
+  --status-learning:#3b82f6;
+  --status-practice:#f59e0b;
+  --status-done:#22c55e;
+  --status-active:#f59e0b;
+}
+.card{
+  border-color:color-mix(in srgb,var(--status) 22%,var(--line));
+  background:var(--surface-2);
+}
+.card::before{
+  background:linear-gradient(90deg,transparent,var(--status),transparent);
+  opacity:.28;
+}
+.card:hover::before{opacity:.5}
+.card:hover::after{display:none}
+.card:hover{
+  border-color:color-mix(in srgb,var(--status) 42%,var(--line));
+  box-shadow:0 14px 32px -26px var(--status);
+}
+.card-summary{
+  min-height:64px;
+  padding:11px 13px;
+  gap:10px;
+}
+.card-summary .icon{
+  width:42px;height:42px;
+  border-radius:12px;
+  background:color-mix(in srgb,var(--status) 7%,transparent);
+  border-color:color-mix(in srgb,var(--status) 18%,var(--line));
+}
+.card-summary .state{color:var(--status)}
+.card-summary .state::before{
+  background:var(--status);
+  box-shadow:0 0 5px color-mix(in srgb,var(--status) 45%,transparent);
+}
+.card.done{
+  border-color:color-mix(in srgb,var(--status) 40%,var(--line));
+  box-shadow:none;
+}
+.card.timed{
+  border-color:color-mix(in srgb,var(--status-active) 55%,var(--line));
+  box-shadow:0 0 22px -14px var(--status-active);
+}
+.target-levels{
+  display:flex;
+  align-items:center;
+  gap:6px;
+  margin-top:5px;
+  direction:rtl;
+}
+.target-level-label{
+  font-size:8.5px;
+  color:var(--dimmer);
+  margin-left:0;
+}
+.target-current{
+  display:inline-flex;
+  align-items:center;
+  min-height:19px;
+  padding:2px 7px;
+  border-radius:999px;
+  font:700 8.5px 'Vazirmatn',sans-serif;
+  border:1px solid currentColor;
+  background:color-mix(in srgb,currentColor 8%,transparent);
+}
+.target-current.beginner{color:#3b82f6}
+.target-current.intermediate{color:#f59e0b}
+.target-current.advanced{color:#ef4444}
+.target-level-options{
+  display:none;
+  align-items:center;
+  gap:5px;
+}
+.card.expanded .target-level-options{display:flex}
+.card.expanded .target-current{display:none}
+.target-level{
+  padding:4px 8px;
+  background:transparent;
+  box-shadow:none;
+}
+.target-level.active{color:#fff}
+.target-level.beginner.active{color:#3b82f6;border-color:#3b82f6}
+.target-level.intermediate.active{color:#f59e0b;border-color:#f59e0b}
+.target-level.advanced.active{color:#ef4444;border-color:#ef4444}
+.status{
+  border-color:color-mix(in srgb,var(--st) 22%,var(--line));
+  background:color-mix(in srgb,var(--st) 5%,transparent);
+}
+.status.active{
+  color:#fff;
+  background:var(--st);
+  border-color:var(--st);
+  box-shadow:0 5px 16px -12px var(--st);
+}
+.status[data-st="todo"]{--st:var(--status-todo)!important}
+.status[data-st="learning"]{--st:var(--status-learning)!important}
+.status[data-st="practice"]{--st:var(--status-practice)!important}
+.status[data-st="done"]{--st:var(--status-done)!important}
+.card .mini .f{stroke:var(--status)}
+.card .mini .t{stroke:color-mix(in srgb,var(--status) 13%,transparent)}
+@media(max-width:560px){
+  .card-summary{min-height:62px;padding:10px 11px}
+  .card-summary .icon{width:40px;height:40px}
+  .target-current{font-size:8px;padding:2px 6px}
+}
