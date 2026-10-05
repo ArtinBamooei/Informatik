@@ -407,7 +407,7 @@ function applyTheme(){
   root.setProperty('--dim', t.dim);
   root.setProperty('--line', t.line);
   const light = themeKey === 'light';
-  root.setProperty('--surface-1', light ? 'rgba(255,255,255,.88)' : 'rgba(255,255,255,.045)');
+  root.setProperty('--surface-1', t.card);
   root.setProperty('--surface-2', light ? 'rgba(255,255,255,.68)' : 'rgba(255,255,255,.028)');
   root.setProperty('--surface-3', light ? 'rgba(255,255,255,.52)' : 'rgba(255,255,255,.018)');
   root.setProperty('--surface-input', light ? 'rgba(17,24,39,.035)' : 'rgba(0,0,0,.25)');
