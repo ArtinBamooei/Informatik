@@ -35,6 +35,23 @@ const STAT = {
 };
 const STAT_ORDER = ['todo','learning','practice','done'];
 
+const PROGRESS_COLORS = ['#717784','#60a5fa','#22d3ee','#2dd4bf','#22c55e','#84cc16','#f59e0b','#fb923c','#f97316','#ef4444','#dc2626'];
+const LEGACY_PROGRESS = {todo:0,learning:4,practice:7,done:10};
+function clampStep(value){
+  const n=Number(value);
+  return Number.isFinite(n)?Math.max(0,Math.min(10,Math.round(n))):null;
+}
+function progressStepFromLegacy(status){
+  return Object.prototype.hasOwnProperty.call(LEGACY_PROGRESS,status)?LEGACY_PROGRESS[status]:0;
+}
+function statusFromStep(step){
+  if(step>=10)return 'done';
+  if(step>=7)return 'practice';
+  if(step>=1)return 'learning';
+  return 'todo';
+}
+function progressColor(step){return PROGRESS_COLORS[Math.max(0,Math.min(10,Math.round(step)))];}
+
 const THEMES = {
   violet: {
     name:'بنفش کهکشانی', bg:'#08090d',
@@ -123,6 +140,7 @@ if (!s.skills || !Array.isArray(s.skills) || s.skills.length === 0){
       s = {
         skills: old.skills,
         progress: old.progress || {},
+        skillProgress: old.skillProgress || {},
         notes: old.notes || {},
         subs: old.subs || {},
         order: old.order || old.skills.map(x=>x.id),
@@ -140,7 +158,7 @@ if (!s.skills || !Array.isArray(s.skills) || s.skills.length === 0){
     } else {
       s = {
         skills: DEFAULT_SKILLS.slice(),
-        progress: {}, notes: {}, subs: {},
+        progress: {}, skillProgress: {}, notes: {}, subs: {},
         order: DEFAULT_SKILLS.map(x=>x.id),
         dates: [], theme: 'violet', unlocked: [],
         studyTime: 0, skillTime: {}, customCount: 0,
@@ -152,7 +170,7 @@ if (!s.skills || !Array.isArray(s.skills) || s.skills.length === 0){
   } catch(e){
     s = {
       skills: DEFAULT_SKILLS.slice(),
-      progress: {}, notes: {}, subs: {},
+      progress: {}, skillProgress: {}, notes: {}, subs: {},
       order: DEFAULT_SKILLS.map(x=>x.id),
       dates: [], theme: 'violet', unlocked: [],
       studyTime: 0, skillTime: {}, customCount: 0,
@@ -165,6 +183,7 @@ if (!s.skills || !Array.isArray(s.skills) || s.skills.length === 0){
 
 // Defaults
 s.progress = s.progress || {};
+s.skillProgress = s.skillProgress || {};
 s.notes = s.notes || {};
 s.subs = s.subs || {};
 s.skillTime = s.skillTime || {};
@@ -184,6 +203,7 @@ s.focusUsed = s.focusUsed || 0;
 
 s.skills.forEach(sk => {
   if (!s.progress[sk.id]) s.progress[sk.id] = 'todo';
+  if (clampStep(s.skillProgress[sk.id]) === null) s.skillProgress[sk.id] = progressStepFromLegacy(s.progress[sk.id]);
   if (!Array.isArray(s.subs[sk.id])) s.subs[sk.id] = [];
   if (!s.skillTime[sk.id]) s.skillTime[sk.id] = 0;
   if (!s.targetLevels[sk.id]) s.targetLevels[sk.id] = 'intermediate';
@@ -204,6 +224,7 @@ function sanitizeStateMaps(out){
   out.notes=filterKeys(out.notes);
   out.subs=filterKeys(out.subs);
   out.skillTime=filterKeys(out.skillTime);
+  out.skillProgress=filterKeys(out.skillProgress);
   out.targetLevels=filterKeys(out.targetLevels);
 }
 function normalizeState(input){
@@ -225,6 +246,7 @@ function normalizeState(input){
       icon:typeof x.icon==='string'&&x.icon.length<=8?(iconMigration[x.icon]||x.icon):'LAB'
     })),
     progress:sanitizePlainRecord(base.progress),
+    skillProgress:sanitizePlainRecord(base.skillProgress),
     notes:sanitizePlainRecord(base.notes),
     subs:sanitizePlainRecord(base.subs),
     skillTime:sanitizePlainRecord(base.skillTime),
@@ -251,6 +273,9 @@ function normalizeState(input){
   };
   out.skills.forEach(sk=>{
     if(!validStatuses.has(out.progress[sk.id])) out.progress[sk.id]='todo';
+    const parsedStep=clampStep(out.skillProgress[sk.id]);
+    out.skillProgress[sk.id]=parsedStep===null?progressStepFromLegacy(out.progress[sk.id]):parsedStep;
+    out.progress[sk.id]=statusFromStep(out.skillProgress[sk.id]);
     if(!Array.isArray(out.subs[sk.id])) out.subs[sk.id]=[];
     out.subs[sk.id]=out.subs[sk.id].slice(0,200).filter(x=>x&&typeof x==='object'&&typeof x.text==='string').map(x=>({text:x.text.trim().slice(0,300),done:!!x.done})).filter(x=>x.text);
     out.skillTime[sk.id]=Number.isFinite(Number(out.skillTime[sk.id]))?Math.min(315360000,Math.max(0,Number(out.skillTime[sk.id]))):0;
@@ -454,28 +479,18 @@ const expanded = new Set();
 function skillById(id){ return s.skills.find(x => x.id === id); }
 function catById(id){ return CATS.find(x => x.id === id); }
 
-function getSkillValue(id){
-  const subs = s.subs[id] || [];
-  if (subs.length > 0){
-    const done = subs.filter(x => x.done).length;
-    return Math.round((done / subs.length) * 100);
-  }
-  const st = s.progress[id] || 'todo';
-  return STAT[st] ? STAT[st].value : 0;
+function getSkillStep(id){
+  const direct=clampStep(s.skillProgress?.[id]);
+  return direct===null?progressStepFromLegacy(s.progress?.[id]):direct;
 }
-
-function getSkillStatus(id){
-  const subs = s.subs[id] || [];
-  if (subs.length > 0){
-    const pct = (subs.filter(x => x.done).length / subs.length) * 100;
-    if (pct >= 100) return 'done';
-    if (pct >= 75) return 'practice';
-    if (pct >= 40) return 'learning';
-    return 'todo';
-  }
-  return s.progress[id] || 'todo';
+function getSkillValue(id){return getSkillStep(id)*10;}
+function getSkillStatus(id){return statusFromStep(getSkillStep(id));}
+function setSkillStep(id,step){
+  const value=clampStep(step) ?? 0;
+  s.skillProgress[id]=value;
+  s.progress[id]=statusFromStep(value);
+  return value;
 }
-
 function renderFilters(){
   const f = document.getElementById('filters');
   f.innerHTML = '<button class="filter' + (activeFilter==='all'?' active':'') + '" data-f="all">همه</button>' +
@@ -525,6 +540,7 @@ function buildCard(sk){
   const st = getSkillStatus(id);
   const stData = STAT[st];
   const val = getSkillValue(id);
+  const step = getSkillStep(id);
   const isExpanded = expanded.has(id);
   const subs = s.subs[id] || [];
   const subDone = subs.filter(x => x.done).length;
@@ -537,6 +553,7 @@ function buildCard(sk){
   card.className = 'card' + (isExpanded ? ' expanded' : '') + (val >= 100 ? ' done' : '') + (isTimed ? ' timed' : '');
   card.dataset.id = id;
   card.style.setProperty('--status', stData.color);
+  card.style.setProperty('--progress-color', progressColor(step));
 
   const stateExtra = subs.length > 0 ? ` · ${subDone}/${subs.length}` : '';
   const timeBadge = skillSeconds >= 60 ? `<span class="time-badge">${formatTime(skillSeconds)}</span>` : '';
@@ -544,13 +561,6 @@ function buildCard(sk){
   const levelButtons=['beginner','intermediate','advanced'].map(level =>
     `<button class="target-level ${level} ${targetLevel===level?'active':''}" data-target-level="${level}" title="هدف: ${levelNames[level]}">${levelNames[level]}</button>`
   ).join('');
-
-  const statusBtns = STAT_ORDER.map(k => {
-    const S = STAT[k];
-    return `<button class="status${k===st?' active':''}" data-st="${k}" style="--st:${S.color}">
-      <span class="n">${S.n}</span>${S.label}
-    </button>`;
-  }).join('');
 
   card.innerHTML = `
     <div class="card-summary">
@@ -564,18 +574,23 @@ function buildCard(sk){
           <div class="target-level-options">${levelButtons}</div>
         </div>
       </div>
-      <div class="mini">
-        <svg viewBox="0 0 52 52">
-          <circle class="t" cx="26" cy="26" r="23"/>
-          <circle class="f" cx="26" cy="26" r="23"/>
-        </svg>
-        <span class="n">${val}</span>
+      <div class="skill-progress" data-progress-wrap>
+        <div class="skill-progress-head">
+          <span>پیشرفت</span>
+          <strong data-progress-pct>${val}%</strong>
+        </div>
+        <div class="skill-progress-track">
+          <div class="skill-progress-steps" aria-hidden="true">
+            ${Array.from({length:10},(_,i)=>`<i class="skill-progress-step${i<step?' filled':''}" style="--step-color:${progressColor(i+1)}"></i>`).join('')}
+          </div>
+          <input class="skill-progress-range" type="range" min="0" max="10" step="1" value="${step}" aria-label="پیشرفت ${esc(sk.name)}" aria-valuemin="0" aria-valuemax="10" aria-valuenow="${step}" aria-valuetext="${val}%">
+        </div>
+        <div class="skill-progress-meta"><span>۰</span><span>۱۰ مرحله · هر مرحله ۱۰٪</span><span>۱۰۰٪</span></div>
       </div>
       <span class="expand-arrow">▼</span>
     </div>
     <div class="card-body">
       <div class="card-body-inner">
-        <div class="statuses">${statusBtns}</div>
         <div class="tools-row">
           <button class="tool-btn${hasNote?' has-note':''}" data-tool="notes">
             یادداشت${hasNote?'<span class="dot-badge"></span>':''}
@@ -698,6 +713,8 @@ container.addEventListener('click', e => {
   if (!card) return;
   const id = card.dataset.id;
 
+  if(e.target.closest('.skill-progress')) return;
+
   const levelBtn=e.target.closest('.target-level');
   if(levelBtn){
     e.stopPropagation();
@@ -706,32 +723,6 @@ container.addEventListener('click', e => {
       s.targetLevels[id]=level;
       save(); recordActivity(); render(); updateOverall();
       toast('هدف سطح: '+({beginner:'مقدماتی',intermediate:'متوسط',advanced:'حرفه‌ای'}[level]));
-    }
-    return;
-  }
-
-  const statusBtn = e.target.closest('.status');
-  if (statusBtn){
-    e.stopPropagation();
-    const st = statusBtn.dataset.st;
-    if ((s.subs[id] || []).length){
-      toast('این مهارت با زیرموضوع‌ها کنترل می‌شود');
-      return;
-    }
-    if (s.progress[id] !== st){
-      const old = s.progress[id];
-      s.progress[id] = st;
-      save();
-      recordActivity();
-      rerenderCard(id);
-      updateOverall();
-      checkAchievements();
-      if (st === 'done' && old !== 'done'){
-        burst(card);
-        vibrate([20, 40, 30]);
-      } else {
-        vibrate(12);
-      }
     }
     return;
   }
@@ -747,6 +738,7 @@ container.addEventListener('click', e => {
       s.skills = s.skills.filter(x => x.id !== id);
       s.order = s.order.filter(x => x !== id);
       delete s.progress[id];
+      delete s.skillProgress[id];
       delete s.notes[id];
       delete s.subs[id];
       delete s.skillTime[id];
@@ -801,6 +793,50 @@ container.addEventListener('click', e => {
     vibrate(8);
   }
 });
+
+container.addEventListener('input', e => {
+  const range=e.target.closest('.skill-progress-range');
+  if(range){
+    const card=range.closest('.card');
+    if(!card)return;
+    paintSkillProgress(card,clampStep(range.value) ?? 0);
+    return;
+  }
+});
+
+container.addEventListener('change', e => {
+  const range=e.target.closest('.skill-progress-range');
+  if(range){
+    const card=range.closest('.card');
+    if(!card)return;
+    const id=card.dataset.id;
+    const oldStep=getSkillStep(id);
+    const step=setSkillStep(id,range.value);
+    save();
+    if(step!==oldStep)recordActivity();
+    if(step===10&&oldStep!==10){burst(card);vibrate([20,40,30]);}else vibrate(8);
+    rerenderCard(id);
+    updateOverall();
+    checkAchievements();
+    return;
+  }
+});
+
+function paintSkillProgress(card,step){
+  const value=step*10;
+  card.style.setProperty('--progress-color',progressColor(step));
+  card.style.setProperty('--status',STAT[statusFromStep(step)].color);
+  card.classList.toggle('done',step>=10);
+  const range=card.querySelector('.skill-progress-range');
+  if(range){
+    range.value=String(step);
+    range.setAttribute('aria-valuenow',String(step));
+    range.setAttribute('aria-valuetext',value+'%');
+  }
+  const pct=card.querySelector('[data-progress-pct]');
+  if(pct)pct.textContent=value+'%';
+  card.querySelectorAll('.skill-progress-step').forEach((el,i)=>el.classList.toggle('filled',i<step));
+}
 
 let noteSaveTimer = null;
 container.addEventListener('input', e => {
@@ -1783,7 +1819,7 @@ document.getElementById('resetBtn').addEventListener('click', () => {
   const keepReminder = s.reminder;
   s = {
     skills: DEFAULT_SKILLS.slice(),
-    progress: {}, notes: {}, subs: {}, skillTime: {},
+    progress: {}, skillProgress: {}, notes: {}, subs: {}, skillTime: {},
     order: DEFAULT_SKILLS.map(x=>x.id),
     dates: keepDates, theme: keepTheme, unlocked: [],
     customCount: 0, timerStarted: 0, focusUsed: 0,
@@ -1791,6 +1827,7 @@ document.getElementById('resetBtn').addEventListener('click', () => {
   };
   s.skills.forEach(sk => {
     s.progress[sk.id] = 'todo';
+    s.skillProgress[sk.id] = 0;
     s.subs[sk.id] = [];
     s.skillTime[sk.id] = 0;
   });
