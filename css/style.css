@@ -1010,3 +1010,17 @@ h1{font-size:clamp(32px,7vw,44px);letter-spacing:-.035em}
 @media(prefers-reduced-motion:reduce){
   .focus-overlay{transition:none}
 }
+
+/* ═══ THEME CONSISTENCY — SEMANTIC SURFACES ═══ */
+.panel,.card,.section,.timer-box,.ach-box,.feature-box,.tool{background:var(--surface-1)}
+.stat,.section-head .cnt,.card-summary .icon,.status,.tool-btn,.sub-item,.timer-skill,.timer-presets button,.ach,.focus-metrics>div,.focus-actions button{background:var(--surface-soft)}
+.note-area,.sub-add input,.input{background:var(--surface-input)}
+.timer-bar,.timer-bar i,.mini .t,.ring .track,.focus-ring .t{background:var(--track)}
+.mb{background:var(--overlay)}
+.pro-stat,.pro-section,.repo-card,.road-node,.weekly-item,.shortcuts div,.research-list b{background:var(--surface-2)}
+.pro-tabs{background:linear-gradient(180deg,var(--surface-2),transparent)}
+.pro-modal{background:var(--surface-1)}
+.section-head .cnt{color:var(--dim)}
+.stat:hover,.tool:hover{background:var(--surface-2)}
+.filter{background:var(--surface-1)}
+@media(prefers-reduced-motion:reduce){.panel,.card,.section,.timer-box,.ach-box,.feature-box,.tool{transition:none}}
