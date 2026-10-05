@@ -56,14 +56,15 @@ function streak(dates){
 function calc(s){
   const skills=s.skills||[];
   const progress=s.progress||{};
+  const skillProgress=s.skillProgress||{};
   const subs=s.subs||{};
   const times=s.skillTime||{};
   const total=skills.length||1;
-  const done=skills.filter(x=>progress[x.id]==='done').length;
-  const learning=skills.filter(x=>progress[x.id]==='learning'||progress[x.id]==='practice').length;
+  const stepOf=x=>Number.isFinite(Number(skillProgress[x.id]))?Math.max(0,Math.min(10,Math.round(Number(skillProgress[x.id])))):({todo:0,learning:4,practice:7,done:10}[progress[x.id]]||0);
+  const done=skills.filter(x=>stepOf(x)>=10).length;
+  const learning=skills.filter(x=>stepOf(x)>0&&stepOf(x)<10).length;
   const overall=Math.round(skills.reduce((a,x)=>{
-    const st=progress[x.id]||'todo';
-    const base={todo:0,learning:40,practice:75,done:100}[st]??0;
+    const base=stepOf(x)*10;
     const list=Array.isArray(subs[x.id])?subs[x.id]:[];
     const subPct=list.length?Math.round(list.filter(z=>z&&z.done).length/list.length*100):base;
     return a+Math.max(base,subPct);
