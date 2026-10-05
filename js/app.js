@@ -564,7 +564,7 @@ function buildCard(sk){
 
   card.innerHTML = `
     <div class="card-summary">
-      <div class="icon">${esc(sk.icon)}</div>
+      <div class="icon skill-icon" data-skill-icon="${esc(sk.id)}" aria-hidden="true"><span>${esc(sk.icon)}</span><i></i></div>
       <div class="info">
         <h3>${esc(sk.name)}${timeBadge}</h3>
         <div class="state">${stData.label}${stateExtra}</div>
