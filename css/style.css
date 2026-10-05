@@ -959,7 +959,7 @@ h1{font-size:clamp(32px,7vw,44px);letter-spacing:-.035em}
 
 /* ═══ SKILL VISUAL IDENTITY ═══ */
 .card-summary .skill-icon{position:relative;overflow:hidden;isolation:isolate;background:var(--surface-2);border-color:color-mix(in srgb,var(--progress-color) 22%,var(--line));color:var(--text);transition:border-color .35s ease,background .35s ease,transform .35s cubic-bezier(.2,1.2,.3,1),box-shadow .35s ease}
-.card-summary .skill-icon img{position:relative;z-index:2;width:27px;height:27px;object-fit:contain;display:block;filter:grayscale(1) saturate(0) contrast(1.12);opacity:.9;transition:filter .35s ease,opacity .35s ease,transform .35s ease}
+.card-summary .skill-icon img{position:relative;z-index:2;width:27px;height:27px;object-fit:contain;object-position:center center;display:block;margin:auto;filter:grayscale(1) saturate(0) contrast(1.12);opacity:.9;transition:filter .35s ease,opacity .35s ease,transform .35s ease}
 .card-summary .skill-icon span{position:relative;z-index:2;font:800 11px/1 'Space Grotesk',ui-monospace,monospace;letter-spacing:-.06em}
 .card:hover .skill-icon{transform:translateY(-1px);border-color:color-mix(in srgb,var(--progress-color) 48%,var(--line));box-shadow:0 10px 22px -18px var(--progress-color)}
 .card:hover .skill-icon img{filter:grayscale(.15) saturate(.9) contrast(1.05);opacity:1;transform:scale(1.04)}
