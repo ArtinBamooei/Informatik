@@ -309,7 +309,7 @@ function importEncrypted(){
       const key=await deriveKey(password,unb64(packet.salt));
       const plain=await crypto.subtle.decrypt({name:'AES-GCM',iv:unb64(packet.iv)},key,unb64(packet.data));
       const parsed=JSON.parse(new TextDecoder().decode(plain));
-      if(!parsed||typeof parsed!=='object'||!Array.isArray(parsed.skills)||parsed.skills.length>200)throw new Error('داده نامعتبر است');
+      validateImportedState(parsed);
       if(!confirm('داده‌های فعلی جایگزین شوند؟'))return;
       localStorage.setItem(STATE_KEY,JSON.stringify(parsed));
       location.reload();
@@ -317,6 +317,39 @@ function importEncrypted(){
   };
   input.click();
 }
+function validateImportedState(parsed){
+  if(!parsed||typeof parsed!=='object'||!Array.isArray(parsed.skills)||parsed.skills.length>200) throw new Error('ساختار یا تعداد مهارت‌ها نامعتبر است');
+  const ids=new Set();
+  for(const sk of parsed.skills){
+    if(!sk||typeof sk!=='object'||typeof sk.id!=='string'||typeof sk.name!=='string') throw new Error('مهارت نامعتبر است');
+    if(!/^[A-Za-z0-9_-]{1,80}$/.test(sk.id)||ids.has(sk.id)||sk.name.length>80) throw new Error('شناسه یا نام مهارت نامعتبر است');
+    ids.add(sk.id);
+  }
+  const mapKeys=['progress','skillProgress','notes','subs','skillTime','targetLevels'];
+  for(const key of mapKeys){
+    if(parsed[key]!==undefined&&(typeof parsed[key]!=='object'||Array.isArray(parsed[key]))) throw new Error('ساختار داده نامعتبر است');
+    if(parsed[key]&&Object.keys(parsed[key]).length>400) throw new Error('داده بیش از حد بزرگ است');
+  }
+  if(parsed.notes){
+    let total=0;
+    for(const [id,note] of Object.entries(parsed.notes)){
+      if(!ids.has(id)||typeof note!=='string'||note.length>20000) throw new Error('یادداشت نامعتبر است');
+      total+=note.length;
+      if(total>500000) throw new Error('حجم یادداشت‌ها بیش از حد مجاز است');
+    }
+  }
+  if(parsed.subs){
+    for(const [id,list] of Object.entries(parsed.subs)){
+      if(!ids.has(id)||!Array.isArray(list)||list.length>100) throw new Error('زیرموضوع نامعتبر است');
+      for(const item of list){
+        if(!item||typeof item!=='object'||typeof item.text!=='string'||item.text.length>200) throw new Error('زیرموضوع نامعتبر است');
+      }
+    }
+  }
+  if(parsed.sync&&typeof parsed.sync==='object') delete parsed.sync.token;
+  return parsed;
+}
+
 function importJSON(){
   const input=document.createElement('input');input.type='file';input.accept='application/json,.json';
   input.onchange=async()=>{
@@ -324,7 +357,7 @@ function importJSON(){
     try{
       if(file.size>2*1024*1024)throw new Error('فایل بزرگ است');
       const parsed=JSON.parse(await file.text());
-      if(!parsed||typeof parsed!=='object'||!Array.isArray(parsed.skills))throw new Error('ساختار نامعتبر');
+      validateImportedState(parsed);
       if(!confirm('داده‌های فعلی جایگزین شوند؟'))return;
       localStorage.setItem(STATE_KEY,JSON.stringify(parsed));
       location.reload();
