@@ -988,3 +988,25 @@ h1{font-size:clamp(32px,7vw,44px);letter-spacing:-.035em}
 @media(max-width:560px){
   .card-summary .skill-icon span{font-size:10px}
 }
+
+/* ═══ FOCUS TIMER STATE BACKGROUND ═══ */
+.focus-overlay{
+  background-color:#08090d;
+  background-image:
+    radial-gradient(circle at 50% 42%,rgba(59,130,246,.10),transparent 34%),
+    radial-gradient(circle at 18% 22%,rgba(34,211,238,.06),transparent 30%),
+    radial-gradient(circle at 82% 78%,rgba(139,92,246,.05),transparent 32%);
+  background-size:140% 140%;
+  transition:background-color .65s ease,background-image .65s ease,background-size .65s ease;
+}
+.focus-overlay.is-running{
+  background-color:#06111a;
+  background-image:
+    radial-gradient(circle at 50% 42%,rgba(34,211,238,.18),transparent 34%),
+    radial-gradient(circle at 18% 22%,rgba(59,130,246,.13),transparent 30%),
+    radial-gradient(circle at 82% 78%,rgba(139,92,246,.11),transparent 32%);
+  background-size:155% 155%;
+}
+@media(prefers-reduced-motion:reduce){
+  .focus-overlay{transition:none}
+}
