@@ -1866,7 +1866,8 @@ function init(){
   // Service worker
   if ('serviceWorker' in navigator){
     window.addEventListener('load', () => {
-      navigator.serviceWorker.register('sw.js').catch(()=>{});
+      const buildId = document.querySelector('meta[name="build-id"]')?.content || 'dev';
+      navigator.serviceWorker.register('sw.js?build=' + encodeURIComponent(buildId), { updateViaCache: 'none' }).catch(()=>{});
     });
   }
 
