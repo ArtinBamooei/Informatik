@@ -1202,7 +1202,7 @@ function loadTimer(){
   try {
     const t = JSON.parse(localStorage.getItem(TIMER_KEY) || 'null');
     if (t && typeof t === 'object'){
-      timer.duration = t.duration || 1500;
+      timer.duration = t.duration || 300;
       timer.remaining = typeof t.remaining === 'number' ? t.remaining : timer.duration;
       timer.skillId = t.skillId || null;
       if (t.running && t.endTime){
@@ -1256,11 +1256,11 @@ function commitSessionTime(){
 }
 
 const PRESETS = [
-  { label:'۵ د',  sec:300 },
-  { label:'۱۵ د', sec:900 },
-  { label:'۲۵ د', sec:1500 },
-  { label:'۴۵ د', sec:2700 },
-  { label:'۱ س',  sec:3600 }
+  { label:'5m',  sec:300 },
+  { label:'15m', sec:900 },
+  { label:'25m', sec:1500 },
+  { label:'45m', sec:2700 },
+  { label:'1h',  sec:3600 }
 ];
 
 function renderPresets(){
