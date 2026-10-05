@@ -203,7 +203,8 @@ function roadmapHTML(s,c){
   ];
   const steps=cats.map((g,i)=>{
     const names=g[1],found=names.map(n=>s.skills.find(x=>x.name===n)).filter(Boolean);
-    const avg=found.length?Math.round(found.reduce((a,x)=>a+({todo:0,learning:40,practice:75,done:100}[s.progress[x.id]]||0),0)/found.length):0;
+    const stepOf=x=>Number.isFinite(Number(s.skillProgress?.[x.id]))?Math.max(0,Math.min(10,Math.round(Number(s.skillProgress[x.id])))):({todo:0,learning:4,practice:7,done:10}[s.progress?.[x.id]]||0);
+    const avg=found.length?Math.round(found.reduce((a,x)=>a+stepOf(x)*10,0)/found.length):0;
     return '<div class="road-node"><span>'+String(i+1).padStart(2,'0')+'</span><div><b>'+esc(g[0])+'</b><small>'+esc(names.join(' → '))+'</small><i><em style="width:'+avg+'%"></em></i></div><strong>'+avg+'%</strong></div>';
   }).join('');
   return '<div class="pro-section"><div class="pro-section-head"><h4>مسیر یادگیری</h4><span>مسیر پیشنهادی بر اساس ساختار فعلی</span></div><div class="roadmap">'+steps+'</div></div>'+
@@ -266,10 +267,11 @@ function exportJSON(){
 }
 function exportCSV(){
   const s=readState();if(!s)return;
-  const rows=[['id','name','category','status','target_level','study_seconds','subtopics','subtopics_done']];
+  const rows=[['id','name','category','progress_step','progress_percent','status','target_level','study_seconds','subtopics','subtopics_done']];
   (s.skills||[]).forEach(x=>{
     const subs=Array.isArray(s.subs?.[x.id])?s.subs[x.id]:[];
-    rows.push([x.id,x.name,x.cat,STATUS[s.progress?.[x.id]]||'شروع',LEVELS[s.targetLevels?.[x.id]]||'متوسط',Math.round(s.skillTime?.[x.id]||0),subs.length,subs.filter(z=>z.done).length]);
+    const step=Number.isFinite(Number(s.skillProgress?.[x.id]))?Math.max(0,Math.min(10,Math.round(Number(s.skillProgress[x.id])))):({todo:0,learning:4,practice:7,done:10}[s.progress?.[x.id]]||0);
+    rows.push([x.id,x.name,x.cat,step,step*10,STATUS[s.progress?.[x.id]]||'شروع',LEVELS[s.targetLevels?.[x.id]]||'متوسط',Math.round(s.skillTime?.[x.id]||0),subs.length,subs.filter(z=>z.done).length]);
   });
   const csv='﻿'+rows.map(r=>r.map(v=>'"'+String(v??'').replace(/"/g,'""')+'"').join(',')).join('\\n');
   download('informatik-skills.csv','text/csv;charset=utf-8',csv);
@@ -358,8 +360,8 @@ function applyجستجو(){
         const x=map.get(a.dataset.id)||{},y=map.get(b.dataset.id)||{};
         if(sortMode==='name')return x.name.localeCompare(y.name,'fa');
         if(sortMode==='time')return (s.skillTime?.[y.id]||0)-(s.skillTime?.[x.id]||0);
-        const pv={todo:0,learning:40,practice:75,done:100};
-        return (pv[s.progress?.[y.id]]||0)-(pv[s.progress?.[x.id]]||0);
+        const stepOf=x=>Number.isFinite(Number(s.skillProgress?.[x.id]))?Math.max(0,Math.min(10,Math.round(Number(s.skillProgress[x.id])))):({todo:0,learning:4,practice:7,done:10}[s.progress?.[x.id]]||0);
+        return stepOf(y)-stepOf(x);
       }).forEach(x=>list.appendChild(x));
     });
   }
@@ -367,8 +369,8 @@ function applyجستجو(){
 }
 function focusNext(){
   const s=readState();if(!s||!s.skills?.length)return;
-  const rank={todo:0,learning:1,practice:2,done:3};
-  const x=s.skills.slice().sort((a,b)=>(rank[s.progress?.[a.id]]??0)-(rank[s.progress?.[b.id]]??0))[0];
+  const stepOf=x=>Number.isFinite(Number(s.skillProgress?.[x.id]))?Math.max(0,Math.min(10,Math.round(Number(s.skillProgress[x.id])))):({todo:0,learning:4,practice:7,done:10}[s.progress?.[x.id]]||0);
+  const x=s.skills.slice().sort((a,b)=>stepOf(a)-stepOf(b))[0];
   if(x)document.querySelector('.card[data-id="'+CSS.escape(x.id)+'"] .tool-btn[data-tool="focus"]')?.click();
 }
 async function loadGitHub(){
