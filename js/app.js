@@ -406,6 +406,14 @@ function applyTheme(){
   root.setProperty('--text', t.text);
   root.setProperty('--dim', t.dim);
   root.setProperty('--line', t.line);
+  const light = themeKey === 'light';
+  root.setProperty('--surface-1', light ? 'rgba(255,255,255,.88)' : 'rgba(255,255,255,.045)');
+  root.setProperty('--surface-2', light ? 'rgba(255,255,255,.68)' : 'rgba(255,255,255,.028)');
+  root.setProperty('--surface-3', light ? 'rgba(255,255,255,.52)' : 'rgba(255,255,255,.018)');
+  root.setProperty('--surface-input', light ? 'rgba(17,24,39,.035)' : 'rgba(0,0,0,.25)');
+  root.setProperty('--surface-soft', light ? 'rgba(17,24,39,.045)' : 'rgba(0,0,0,.15)');
+  root.setProperty('--track', light ? 'rgba(17,24,39,.10)' : 'rgba(255,255,255,.07)');
+  root.setProperty('--overlay', light ? 'rgba(255,255,255,.82)' : 'rgba(8,9,13,.78)');
   document.body.style.background = t.bg;
   document.body.style.backgroundImage = t.grad;
   document.body.style.backgroundAttachment = 'fixed';
@@ -1843,7 +1851,22 @@ document.getElementById('resetBtn').addEventListener('click', () => {
 /* ═══════════════════════════════════════════
    INIT
    ═══════════════════════════════════════════ */
+function setupNavigationGuard(){
+  const state={informatik:true,root:true};
+  history.replaceState(state,'',location.href);
+  history.pushState(state,'',location.href);
+  window.addEventListener('popstate',()=>{
+    const focus=document.getElementById('focusOverlay');
+    const openModal=document.querySelector('.mb.open');
+    if(focus?.classList.contains('open')){closeFocus();history.pushState(state,'',location.href);return;}
+    if(openModal){openModal.classList.remove('open');history.pushState(state,'',location.href);return;}
+    window.scrollTo({top:0,left:0,behavior:'smooth'});
+    history.pushState(state,'',location.href);
+  });
+}
+
 function init(){
+  setupNavigationGuard();
   loadTimer();
   applyTheme();
   renderAll();
