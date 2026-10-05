@@ -63,12 +63,7 @@ function calc(s){
   const stepOf=x=>Number.isFinite(Number(skillProgress[x.id]))?Math.max(0,Math.min(10,Math.round(Number(skillProgress[x.id])))):({todo:0,learning:4,practice:7,done:10}[progress[x.id]]||0);
   const done=skills.filter(x=>stepOf(x)>=10).length;
   const learning=skills.filter(x=>stepOf(x)>0&&stepOf(x)<10).length;
-  const overall=Math.round(skills.reduce((a,x)=>{
-    const base=stepOf(x)*10;
-    const list=Array.isArray(subs[x.id])?subs[x.id]:[];
-    const subPct=list.length?Math.round(list.filter(z=>z&&z.done).length/list.length*100):base;
-    return a+Math.max(base,subPct);
-  },0)/total);
+  const overall=Math.round(skills.reduce((a,x)=>a+stepOf(x)*10,0)/total);
   const totalTime=Object.values(times).reduce((a,v)=>a+(Number(v)||0),0);
   const subTotal=Object.values(subs).reduce((a,v)=>a+(Array.isArray(v)?v.length:0),0);
   const subDone=Object.values(subs).reduce((a,v)=>a+(Array.isArray(v)?v.filter(z=>z&&z.done).length:0),0);
