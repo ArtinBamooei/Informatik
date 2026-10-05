@@ -12,5 +12,6 @@ Sources:
 - GitHub: https://github.com/devicons/devicon/tree/master/icons/github
 - Git: https://github.com/devicons/devicon/tree/master/icons/git
 - scikit-learn: https://github.com/devicons/devicon/tree/master/icons/scikitlearn
-- Microsoft SQL Server: https://github.com/devicons/devicon/tree/master/icons/microsoftsqlserver
-- FastAPI: https://github.com/devicons/devicon/tree/master/icons/fastapi
+- Power BI: https://github.com/microsoft/PowerBI-Icons/tree/main/SVG
+
+Power BI assets are provided under CC BY 4.0; Microsoft product and brand marks remain trademarks of their respective owners.
