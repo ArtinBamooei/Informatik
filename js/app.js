@@ -565,7 +565,7 @@ function buildCard(sk){
   card.innerHTML = `
     <div class="card-summary">
       <div class="icon skill-icon" data-skill-icon="${esc(sk.id)}" aria-hidden="true">
-        ${({numpy:'<img src="assets/skills/numpy.svg" alt="" loading="lazy" decoding="async">',pandas:'<img src="assets/skills/pandas.svg" alt="" loading="lazy" decoding="async">',mpl:'<img src="assets/skills/matplotlib.svg" alt="" loading="lazy" decoding="async">',docker:'<img src="assets/skills/docker.svg" alt="" loading="lazy" decoding="async">',git:'<img src="assets/skills/github.svg" alt="" loading="lazy" decoding="async">',ml:'<img src="assets/skills/scikitlearn.svg" alt="" loading="lazy" decoding="async">',powerbi:'<img src="assets/skills/powerbi.svg" alt="" loading="lazy" decoding="async">'}[sk.id]||`<span>${esc(sk.icon)}</span>`)}<i></i></div>
+        ${({numpy:'<img src="assets/skills/numpy.svg" alt="" loading="lazy" decoding="async">',pandas:'<img src="assets/skills/pandas.svg" alt="" loading="lazy" decoding="async">',mpl:'<img src="assets/skills/matplotlib.svg" alt="" loading="lazy" decoding="async">',docker:'<img src="assets/skills/docker.svg" alt="" loading="lazy" decoding="async">',git:'<img src="assets/skills/github.svg" alt="" loading="lazy" decoding="async">',ml:'<img src="assets/skills/scikitlearn.svg" alt="" loading="lazy" decoding="async">',powerbi:'<img src="assets/skills/powerbi.svg" alt="" loading="lazy" decoding="async">'}[sk.id]||`<span>${esc(sk.icon)}</span>`)}</div>
       <div class="info">
         <h3>${esc(sk.name)}${timeBadge}</h3>
         <div class="state">${stData.label}${stateExtra}</div>
