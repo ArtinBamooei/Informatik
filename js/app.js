@@ -143,7 +143,7 @@ if (!s.skills || !Array.isArray(s.skills) || s.skills.length === 0){
         progress: {}, notes: {}, subs: {},
         order: DEFAULT_SKILLS.map(x=>x.id),
         dates: [], theme: 'violet', unlocked: [],
-        studyTime: 0, skillTime: {}, skillProgress: {}, customCount: 0,
+        studyTime: 0, skillTime: {}, customCount: 0,
         reminder: { enabled: false, time: '20:00', lastNotified: null },
         sync: { token: '', gistId: '', lastSync: null },
         timerStarted: 0, focusUsed: 0
@@ -155,7 +155,7 @@ if (!s.skills || !Array.isArray(s.skills) || s.skills.length === 0){
       progress: {}, notes: {}, subs: {},
       order: DEFAULT_SKILLS.map(x=>x.id),
       dates: [], theme: 'violet', unlocked: [],
-      studyTime: 0, skillTime: {}, skillProgress: {}, customCount: 0,
+      studyTime: 0, skillTime: {}, customCount: 0,
       reminder: { enabled: false, time: '20:00', lastNotified: null },
       sync: { token: '', gistId: '', lastSync: null },
       timerStarted: 0, focusUsed: 0
@@ -168,7 +168,6 @@ s.progress = s.progress || {};
 s.notes = s.notes || {};
 s.subs = s.subs || {};
 s.skillTime = s.skillTime || {};
-s.skillProgress = s.skillProgress || {};
 s.targetLevels = s.targetLevels || {};
 s.order = Array.isArray(s.order) ? s.order : s.skills.map(x=>x.id);
 s.dates = Array.isArray(s.dates) ? s.dates : [];
@@ -185,7 +184,6 @@ s.focusUsed = s.focusUsed || 0;
 
 s.skills.forEach(sk => {
   if (!s.progress[sk.id]) s.progress[sk.id] = 'todo';
-  if (!Number.isFinite(Number(s.skillProgress[sk.id]))) s.skillProgress[sk.id] = ({todo:0,learning:4,practice:7,done:10}[s.progress[sk.id]] || 0);
   if (!Array.isArray(s.subs[sk.id])) s.subs[sk.id] = [];
   if (!s.skillTime[sk.id]) s.skillTime[sk.id] = 0;
   if (!s.targetLevels[sk.id]) s.targetLevels[sk.id] = 'intermediate';
@@ -206,7 +204,6 @@ function sanitizeStateMaps(out){
   out.notes=filterKeys(out.notes);
   out.subs=filterKeys(out.subs);
   out.skillTime=filterKeys(out.skillTime);
-  out.skillProgress=filterKeys(out.skillProgress);
   out.targetLevels=filterKeys(out.targetLevels);
 }
 function normalizeState(input){
@@ -231,7 +228,6 @@ function normalizeState(input){
     notes:sanitizePlainRecord(base.notes),
     subs:sanitizePlainRecord(base.subs),
     skillTime:sanitizePlainRecord(base.skillTime),
-    skillProgress:sanitizePlainRecord(base.skillProgress),
     targetLevels:sanitizePlainRecord(base.targetLevels),
     order:Array.isArray(base.order)?[...base.order.filter(x=>typeof x==='string').slice(0,500)]:[],
     dates:Array.isArray(base.dates)?[...new Set(base.dates.filter(x=>/^\d{4}-\d{2}-\d{2}$/.test(x)).slice(-400))]:[],
@@ -258,10 +254,6 @@ function normalizeState(input){
     if(!Array.isArray(out.subs[sk.id])) out.subs[sk.id]=[];
     out.subs[sk.id]=out.subs[sk.id].slice(0,200).filter(x=>x&&typeof x==='object'&&typeof x.text==='string').map(x=>({text:x.text.trim().slice(0,300),done:!!x.done})).filter(x=>x.text);
     out.skillTime[sk.id]=Number.isFinite(Number(out.skillTime[sk.id]))?Math.min(315360000,Math.max(0,Number(out.skillTime[sk.id]))):0;
-    const legacyStatus=validStatuses.has(out.progress[sk.id])?out.progress[sk.id]:'todo';
-    const legacyValue={todo:0,learning:4,practice:7,done:10}[legacyStatus];
-    out.skillProgress[sk.id]=Number.isFinite(Number(out.skillProgress[sk.id]))?Math.min(10,Math.max(0,Math.round(Number(out.skillProgress[sk.id])))):legacyValue;
-    out.progress[sk.id]=out.skillProgress[sk.id]>=10?'done':out.skillProgress[sk.id]>=7?'practice':out.skillProgress[sk.id]>=1?'learning':'todo';
     out.targetLevels[sk.id]=['beginner','intermediate','advanced'].includes(out.targetLevels[sk.id])?out.targetLevels[sk.id]:'intermediate';
     if(typeof out.notes[sk.id]==='string') out.notes[sk.id]=out.notes[sk.id].slice(0,20000); else delete out.notes[sk.id];
   });
@@ -462,22 +454,26 @@ const expanded = new Set();
 function skillById(id){ return s.skills.find(x => x.id === id); }
 function catById(id){ return CATS.find(x => x.id === id); }
 
-function getSkillStep(id){
-  const n=Number(s.skillProgress[id]);
-  return Number.isFinite(n)?Math.min(10,Math.max(0,Math.round(n))):0;
+function getSkillValue(id){
+  const subs = s.subs[id] || [];
+  if (subs.length > 0){
+    const done = subs.filter(x => x.done).length;
+    return Math.round((done / subs.length) * 100);
+  }
+  const st = s.progress[id] || 'todo';
+  return STAT[st] ? STAT[st].value : 0;
 }
-function getSkillValue(id){ return getSkillStep(id)*10; }
+
 function getSkillStatus(id){
-  const step=getSkillStep(id);
-  if(step>=10)return 'done';
-  if(step>=7)return 'practice';
-  if(step>=1)return 'learning';
-  return 'todo';
-}
-function setSkillStep(id,step){
-  const n=Math.min(10,Math.max(0,Math.round(Number(step)||0)));
-  s.skillProgress[id]=n;
-  s.progress[id]=n>=10?'done':n>=7?'practice':n>=1?'learning':'todo';
+  const subs = s.subs[id] || [];
+  if (subs.length > 0){
+    const pct = (subs.filter(x => x.done).length / subs.length) * 100;
+    if (pct >= 100) return 'done';
+    if (pct >= 75) return 'practice';
+    if (pct >= 40) return 'learning';
+    return 'todo';
+  }
+  return s.progress[id] || 'todo';
 }
 
 function renderFilters(){
@@ -549,30 +545,32 @@ function buildCard(sk){
     `<button class="target-level ${level} ${targetLevel===level?'active':''}" data-target-level="${level}" title="هدف: ${levelNames[level]}">${levelNames[level]}</button>`
   ).join('');
 
-  const step=getSkillStep(id);
-  const stepColors=['#3b82f6','#6366f1','#8b5cf6','#a855f7','#d946ef','#ec4899','#f59e0b','#f97316','#ef4444','#22c55e'];
-  const segments=stepColors.map((color,i)=>`<i class="progress-segment${i<step?' active':''}" style="--segment-color:${color}" aria-hidden="true"></i>`).join('');
+  const statusBtns = STAT_ORDER.map(k => {
+    const S = STAT[k];
+    return `<button class="status${k===st?' active':''}" data-st="${k}" style="--st:${S.color}">
+      <span class="n">${S.n}</span>${S.label}
+    </button>`;
+  }).join('');
+
   card.innerHTML = `
     <div class="card-summary">
       <div class="icon">${esc(sk.icon)}</div>
       <div class="info">
         <h3>${esc(sk.name)}${timeBadge}</h3>
-        <div class="state">${stData.label}</div>
-        <div class="skill-progress" data-progress-wrap style="--progress-color:${stepColors[Math.max(0,step-1)]||'var(--line)'}">
-          <div class="skill-progress-head"><span>پیشرفت</span><output data-progress-value>${step*10}%</output></div>
-          <div class="progress-track">
-            <div class="progress-segments">${segments}</div>
-            <input class="progress-range" type="range" min="0" max="10" step="1" value="${step}" data-progress-range aria-label="پیشرفت ${esc(sk.name)}">
-          </div>
-          <div class="progress-scale" aria-hidden="true">${Array.from({length:10},(_,i)=>`<span>${(i+1)*10}</span>`).join('')}</div>
-        </div>
+        <div class="state">${stData.label}${stateExtra}</div>
         <div class="target-levels" role="group" aria-label="سطح هدف">
           <span class="target-level-label">هدف</span>
           <span class="target-current ${targetLevel}">${levelNames[targetLevel]}</span>
           <div class="target-level-options">${levelButtons}</div>
         </div>
       </div>
-      <div class="skill-percent" data-percent>${val}%</div>
+      <div class="mini">
+        <svg viewBox="0 0 52 52">
+          <circle class="t" cx="26" cy="26" r="23"/>
+          <circle class="f" cx="26" cy="26" r="23"/>
+        </svg>
+        <span class="n">${val}</span>
+      </div>
       <span class="expand-arrow">▼</span>
     </div>
     <div class="card-body">
@@ -712,9 +710,29 @@ container.addEventListener('click', e => {
     return;
   }
 
-  const progressRange = e.target.closest('[data-progress-range]');
-  if(progressRange){
+  const statusBtn = e.target.closest('.status');
+  if (statusBtn){
     e.stopPropagation();
+    const st = statusBtn.dataset.st;
+    if ((s.subs[id] || []).length){
+      toast('این مهارت با زیرموضوع‌ها کنترل می‌شود');
+      return;
+    }
+    if (s.progress[id] !== st){
+      const old = s.progress[id];
+      s.progress[id] = st;
+      save();
+      recordActivity();
+      rerenderCard(id);
+      updateOverall();
+      checkAchievements();
+      if (st === 'done' && old !== 'done'){
+        burst(card);
+        vibrate([20, 40, 30]);
+      } else {
+        vibrate(12);
+      }
+    }
     return;
   }
 
@@ -732,7 +750,6 @@ container.addEventListener('click', e => {
       delete s.notes[id];
       delete s.subs[id];
       delete s.skillTime[id];
-      delete s.skillProgress[id];
       delete s.targetLevels[id];
       expanded.delete(id);
       if (timer && timer.skillId === id){
@@ -786,35 +803,9 @@ container.addEventListener('click', e => {
 });
 
 let noteSaveTimer = null;
-container.addEventListener('change', e => {
-  const range=e.target.closest('[data-progress-range]');
-  const card=e.target.closest('.card');
-  if(range&&card){
-    const id=card.dataset.id, next=Number(range.value), old=getSkillStep(id);
-    if(next!==old){
-      setSkillStep(id,next); save(); recordActivity(); rerenderCard(id); updateOverall(); checkAchievements();
-      if(next===10&&old!==10){burst(card);vibrate([20,40,30]);}else vibrate(8);
-    }
-    return;
-  }
-});
-
 container.addEventListener('input', e => {
-  const card=e.target.closest('.card');
-  if(!card)return;
-  const range=e.target.closest('[data-progress-range]');
-  if(range){
-    const step=Math.min(10,Math.max(0,Number(range.value)));
-    const colors=['#3b82f6','#6366f1','#8b5cf6','#a855f7','#d946ef','#ec4899','#f59e0b','#f97316','#ef4444','#22c55e'];
-    const wrap=card.querySelector('[data-progress-wrap]');
-    if(wrap){
-      wrap.style.setProperty('--progress-color',colors[Math.max(0,step-1)]||'var(--line)');
-      wrap.querySelectorAll('.progress-segment').forEach((seg,i)=>seg.classList.toggle('active',i<step));
-      const out=wrap.querySelector('[data-progress-value]'); if(out)out.textContent=step*10+'%';
-      const pct=card.querySelector('[data-percent]'); if(pct)pct.textContent=step*10+'%';
-    }
-    return;
-  }
+  const card = e.target.closest('.card');
+  if (!card) return;
   if (e.target.classList.contains('note-area')){
     const id = card.dataset.id;
     s.notes[id] = e.target.value;
